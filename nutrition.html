@@ -486,7 +486,7 @@
             // --- CORE & HELPER FUNCTIONS ---
             function dateToKey(date) { return date.toISOString().split('T')[0]; }
             function getCurrentDayLog() { return allDailyLogs[dateToKey(viewDate)] || []; }
-            function getApiUrl(model, action = 'generateContent') { const apiKey = "AIzaSyDY48xF1byvU05kS9qKvN8iyrIR3hheP8w"; return `https://generativelanguage.googleapis.com/v1beta/models/${model}:${action}?key=${apiKey}`; };
+            function getApiUrl(model, action = 'generateContent') { const apiKey = ""; return `https://generativelanguage.googleapis.com/v1beta/models/${model}:${action}?key=${apiKey}`; };
             function showModal(modalElement) { modalElement.style.display = 'flex'; }
             function hideModal(modalElement) { modalElement.style.display = 'none'; }
             function showCustomAlert(title, text) { ui.alertModalTitle.textContent = title; ui.alertModalText.textContent = text; showModal(ui.alertModal); }
@@ -1229,4 +1229,5 @@
     </script>
 </body>
 </html>
+
 
