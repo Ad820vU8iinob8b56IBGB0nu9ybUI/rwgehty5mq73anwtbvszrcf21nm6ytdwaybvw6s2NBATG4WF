@@ -425,23 +425,20 @@
             
             <div class="grid grid-cols-1 gap-4 sm:gap-8 grid-layout">
                 <div id="day-navigation-card" class="col-span-full content-card">
-                    <div id="plan-view-header" class="flex flex-col justify-between items-center gap-4">
+                    <!-- MODIFIED: Changed to flex-row and added progress bar -->
+                    <div id="plan-view-header" class="flex flex-row justify-between items-center gap-4">
                            <div class="flex-1">
                                <button id="day-view-date-display-btn" class="text-left hover:bg-input-bg px-4 py-2 rounded-lg transition-colors w-full">
                                    <span id="day-view-title-span" class="text-xl font-semibold block"></span>
                                    <span id="day-view-date-span" class="text-sm text-secondary-text"></span>
                                </button>
                            </div>
-                         <div class="flex flex-col items-center justify-center gap-2">
-                             <div class="flex items-center justify-center">
-                                 <span id="day-view-status" class="text-sm font-bold text-secondary-text w-full text-center"></span>
-                             </div>
-                             <div id="workout-status-controls" class="flex gap-2 text-sm">
-                                 <button class="status-btn btn !p-2 !py-1" data-status="full">Full</button>
-                                 <button class="status-btn btn !p-2 !py-1" data-status="partial">Partial</button>
-                                 <button class="status-btn btn !p-2 !py-1" data-status="none">None</button>
-                             </div>
-                         </div>
+                         <div class="flex items-center gap-2">
+                            <div id="workout-progress-container" class="w-24 h-2 bg-input-bg rounded-full overflow-hidden" title="Workout Progress">
+                                <div id="workout-progress-bar" class="h-full bg-red-500 rounded-full transition-all duration-500" style="width: 0%;"></div>
+                            </div>
+                            <span id="workout-progress-text" class="text-sm font-medium text-secondary-text w-10 text-right">0/0</span>
+                        </div>
                     </div>
                 </div>
 
@@ -728,11 +725,10 @@
                 exerciseGifLoader: document.getElementById('exercise-gif-loader'), exerciseGifAnimation: document.getElementById('exercise-gif-animation'), redoGifBtn: document.getElementById('redo-gif-btn'),
                 exerciseDetailInstructions: document.getElementById('exercise-detail-instructions'), saveInstructionsBtn: document.getElementById('save-instructions-btn'), exerciseDetailRepRange: document.getElementById('exercise-detail-rep-range'),
                 exerciseDetailNotes: document.getElementById('exercise-detail-notes'), saveExerciseNotesBtn: document.getElementById('save-exercise-notes-btn'), logFromDetailBtn: document.getElementById('log-from-detail-btn'),
-                dayViewDateDisplayBtn: document.getElementById('day-view-date-display-btn'), dayViewStatus: document.getElementById('day-view-status'), dayViewDateDisplay: document.getElementById('day-view-date-display-btn'),
+                dayViewDateDisplayBtn: document.getElementById('day-view-date-display-btn'), dayViewDateDisplay: document.getElementById('day-view-date-display-btn'),
                 workoutPlanForDay: document.getElementById('workout-plan-for-day'),
                 dayNavigationCard: document.getElementById('day-navigation-card'), 
                 aiTabSpecific: document.getElementById('ai-tab-specific'), aiTabGeneral: document.getElementById('ai-tab-general'), aiPanelSpecific: document.getElementById('ai-panel-specific'), openWorkoutChatBtn: document.getElementById('open-workout-chat-btn'),
-                workoutStatusControls: document.getElementById('workout-status-controls'),
                 reorganizeAiBtn: document.getElementById('reorganize-ai-btn'),
                 unitToggleKg: document.getElementById('unit-toggle-kg'), unitToggleLbs: document.getElementById('unit-toggle-lbs'),
                 aiPlanGeneratorModal: document.getElementById('ai-plan-generator-modal'), closeAiPlanGeneratorModalBtn: document.getElementById('close-ai-plan-generator-modal-btn'),
@@ -1062,8 +1058,7 @@
                 viewDate = date;
                 
                 renderWorkoutPlanForDate(date);
-                // REMOVED: renderHistoryForDate(date);
-                updateWorkoutStatusControls(date);
+                updateWorkoutProgressBar(date);
 
                 const today = new Date(); today.setHours(0,0,0,0);
                 const isToday = dateToKey(date) === dateToKey(today);
@@ -1182,55 +1177,73 @@
                 lucide.createIcons();
             }
 
-            // REMOVED: renderHistoryForDate - Not needed anymore
-
             // --- HISTORY & STATUS FUNCTIONS ---
-            function calculateAutoStatus(date) {
+            function updateWorkoutProgressBar(date) {
+                const progressBar = document.getElementById('workout-progress-bar');
+                const progressText = document.getElementById('workout-progress-text');
+                const progressContainer = document.getElementById('workout-progress-container');
+
+                if (!progressBar || !progressText || !progressContainer) return;
+
                 const dayType = getWorkoutDayType(date);
-                if (dayType === 'Rest') return 'full';
-                const workoutForDay = (workoutPlan.workouts || []).find(w => w.day === dayType);
-                const plannedExercises = workoutForDay?.exercises || [];
-                if (plannedExercises.length === 0) return 'none';
                 const dateKey = dateToKey(date);
-                const loggedExercises = new Set(workoutHistory.filter(log => log.date === dateKey).map(log => log.name));
-                const completedCount = plannedExercises.filter(ex => loggedExercises.has(ex)).length;
-                if (completedCount === 0) return 'none';
-                if (completedCount >= plannedExercises.length) return 'full';
-                return 'partial';
-            }
+                const loggedExercisesForDay = new Set(workoutHistory.filter(log => log.date === dateKey).map(l => l.name));
 
-            function updateWorkoutStatusControls(date) {
-                const dateKey = dateToKey(date);
-                const today = new Date(); today.setHours(0,0,0,0);
-                const isFutureDay = date > today;
-                let currentStatus = workoutStatusHistory[dateKey];
-                if(currentStatus === undefined || currentStatus === 'auto'){ currentStatus = calculateAutoStatus(date); }
-                
-                ui.workoutStatusControls.classList.toggle('hidden', isFutureDay);
-                ui.workoutStatusControls.querySelectorAll('.status-btn').forEach(btn => {
-                    btn.classList.remove('selected-full', 'selected-partial', 'selected-none');
-                    if (btn.dataset.status === currentStatus) btn.classList.add(`selected-${currentStatus}`);
-                });
+                let completedCount = 0;
+                let totalCount = 0;
+                let status = 'none';
 
-                let statusText, statusClass;
-                if (isFutureDay) { statusText = 'Plan for the Future'; statusClass = 'text-secondary-text'; } 
-                else {
-                    switch(currentStatus) {
-                        case 'full': statusText = 'Workout: Full'; statusClass = 'text-green-400'; break;
-                        case 'partial': statusText = 'Workout: Partial'; statusClass = 'text-yellow-400'; break;
-                        case 'none': statusText = 'Workout: None'; statusClass = 'text-red-400'; break;
-                        default: statusText = 'Status Not Logged'; statusClass = 'text-secondary-text';
+                if (dayType === 'Rest') {
+                    completedCount = 1;
+                    totalCount = 1;
+                    status = 'full';
+                    progressText.textContent = 'Rest';
+                } else {
+                    const modsForDay = dailyModifications[dateKey] || { removed: [], added: [] };
+                    const removedExercises = new Set(modsForDay.removed);
+                    const addedExercises = modsForDay.added || [];
+
+                    const workoutForDay = (workoutPlan.workouts || []).find(w => w.day === dayType);
+                    const plannedExercises = workoutForDay?.exercises || [];
+                    
+                    const finalPlannedExercises = plannedExercises.filter(exName => !removedExercises.has(exName));
+                    const allExercisesForDay = [...new Set([...finalPlannedExercises, ...addedExercises])];
+                    totalCount = allExercisesForDay.length;
+                    
+                    if (totalCount > 0) {
+                        completedCount = allExercisesForDay.filter(exName => loggedExercisesForDay.has(exName)).length;
+                    }
+                    progressText.textContent = `${completedCount}/${totalCount}`;
+
+                    if (totalCount === 0) {
+                        status = 'none'; 
+                    } else if (completedCount === 0) {
+                        status = 'none';
+                    } else if (completedCount >= totalCount) {
+                        status = 'full';
+                    } else {
+                        status = 'partial';
                     }
                 }
-                ui.dayViewStatus.textContent = statusText;
-                ui.dayViewStatus.className = `text-sm font-bold ${statusClass} w-full text-center`;
+                
+                const percentage = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
+                progressBar.style.width = `${percentage}%`;
+                
+                // Update status for other pages
+                workoutStatusHistory[dateKey] = status;
+                saveData();
 
-                const dayType = getWorkoutDayType(date);
-                const shouldShowReorganize = !isFutureDay && currentStatus === 'none' && dayType !== 'Rest';
-                // REORGANIZE BUTTON LOGIC REMOVED
+                // Change bar color based on progress
+                progressBar.classList.remove('bg-green-500', 'bg-yellow-500', 'bg-red-500');
+                if (status === 'full') {
+                    progressBar.classList.add('bg-green-500');
+                } else if (status === 'partial') {
+                    progressBar.classList.add('bg-yellow-500');
+                } else {
+                    progressBar.classList.add('bg-red-500');
+                }
             }
 
-            // REMOVED: renderHistoryForDate - Replaced by local persistence logic
 
             // --- UNIFIED SWIPE & TAP HANDLERS (UPDATED FOR DOUBLE TAP) ---
             let pointerStart = { x: 0, y: 0 };
@@ -1295,7 +1308,6 @@
                     saveData(); updateUI(); 
 
                 } 
-                // REMOVED HISTORY ITEM DELETION LOGIC (Since UI is gone)
             }
             
             function handleItemEdit(element) {
@@ -1305,7 +1317,6 @@
                     if (type === 'exercise') { showPermanentEditWarningModal(); } 
                     else if (type === 'warmup') { openEditPlanModal(); }
                 } 
-                // REMOVED: else if (element.classList.contains('history-item-container')) { ... }
             }
             
             function showPermanentEditWarningModal() {
@@ -1528,7 +1539,6 @@
             // --- EVENT LISTENERS (REMOVED HISTORY LISTENERS) ---
             ui.workoutPlanForDay.addEventListener('mousedown', handlePointerDown);
             ui.workoutPlanForDay.addEventListener('touchstart', handlePointerDown, { passive: true });
-            // REMOVED: ui.historyDayContent listeners
             
             ui.workoutPlanForDay.addEventListener('click', (e) => {
                 const infoBtn = e.target.closest('.info-btn');
@@ -1537,8 +1547,6 @@
                     const { name, type, dayType } = infoBtn.dataset;
                     openExerciseDetailModal(name, type, dayType);
                 }
-
-                // Double tap is now handled in handlePointerUp, so we don't need the single-tap log modal logic here.
             });
 
             document.getElementById('undo-toast-btn').addEventListener('click', () => {
@@ -1618,14 +1626,6 @@
             
             ui.dayViewDateDisplayBtn.addEventListener('click', () => { const today = new Date(); today.setHours(0,0,0,0); viewDate = today; updateUI(); });
             
-            ui.workoutStatusControls.addEventListener('click', (e) => {
-                const btn = e.target.closest('.status-btn');
-                if (btn) { const status = btn.dataset.status; const dateKey = dateToKey(viewDate); workoutStatusHistory[dateKey] = status; saveData(); updateWorkoutStatusControls(viewDate); }
-            });
-
-            // REORGANIZE BUTTON LISTENER REMOVED
-            // ui.reorganizeAiBtn.addEventListener('click', ...)
-
             document.getElementById('progress-range-selector').addEventListener('click', e => {
                 const btn = e.target.closest('.progress-range-btn');
                 if (btn) {
@@ -1958,7 +1958,6 @@
                 else if (removePartBtn) { const partRow = removePartBtn.closest('.set-part-row'), partsContainer = partRow.parentElement; if (partsContainer.children.length > 1) { partRow.remove(); } else { showCustomAlert("Action blocked", "A set must have at least one part."); } }
             });
 
-            // REMOVED: ui.clearHistoryBtn.addEventListener('click', ...) - Obsolete
             
             // --- PLAN GENERATOR FUNCTIONS ---
             function openAiPlanGenerator() {
