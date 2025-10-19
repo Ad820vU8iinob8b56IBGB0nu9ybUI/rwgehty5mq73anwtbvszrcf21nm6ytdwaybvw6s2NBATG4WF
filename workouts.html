@@ -22,10 +22,13 @@
             --accent-hover: #DDDDDD;
             --danger: #E53E3E;
             --edit: #3B82F6;
+            --nav-footer-height: 64px; /* Set height of the new fixed footer nav */
         }
 
         html, body {
             overscroll-behavior-y: contain;
+            /* Ensure content has room above the fixed footer */
+            padding-bottom: var(--nav-footer-height); 
         }
 
         body {
@@ -46,10 +49,18 @@
         }
 
         .nav-link {
-            transition: color 0.3s ease, border-color 0.3s ease;
-            border-bottom: 2px solid transparent;
+            /* Styles for the footer navigation links */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
+            height: 100%;
+            transition: color 0.3s ease;
             color: var(--secondary-text);
-            padding-bottom: 4px;
+            font-size: 0.75rem;
+            text-decoration: none;
+            padding-top: 4px;
         }
 
         .nav-link:hover {
@@ -58,7 +69,21 @@
 
         .nav-link.active {
             color: var(--primary-text);
-            border-bottom-color: var(--primary-text);
+        }
+
+        .nav-link.active .nav-icon {
+            color: var(--primary-text);
+        }
+
+        .nav-icon {
+            margin-bottom: 2px;
+            width: 24px;
+            height: 24px;
+        }
+        
+        /* NEW: Footer Nav Opacity Fix */
+        #mobile-footer-nav {
+            background-color: var(--card-bg); /* Ensure it is fully opaque */
         }
 
         .content-card {
@@ -68,10 +93,9 @@
             padding: 1.5rem; /* Adjusted for mobile */
         }
         
-        @media (min-width: 640px) {
-            .content-card {
-                padding: 2rem;
-            }
+        /* Removed all md: media queries for full mobile optimization */
+        .content-card {
+            padding: 1.5rem;
         }
 
 
@@ -254,7 +278,7 @@
             display: block;
         }
         
-        /* --- NEW & IMPROVED SWIPE STYLES --- */
+        /* --- NEW & IMPROVED SWIPE STYLES (Mobile Focus) --- */
         .swipe-item {
             position: relative;
             overflow: hidden;
@@ -325,7 +349,7 @@
             opacity: 1;
         }
 
-        /* --- DAY NAVIGATION SWIPE --- */
+        /* --- DAY NAVIGATION SWIPE (Mobile Focus) --- */
         #day-navigation-card {
             touch-action: pan-y;
             cursor: grab;
@@ -364,89 +388,53 @@
             to { background-position: 100% 0; }
         }
 
+        /* Force mobile layout classes (removed all md: and lg: prefixes) */
+        .grid-layout {
+            grid-template-columns: 1fr;
+        }
+        .col-span-full {
+            grid-column: span 1 / span 1;
+        }
+
     </style>
 </head>
 <body class="antialiased">
 
     <div class="container mx-auto max-w-7xl px-2 sm:px-4 py-8">
-        <!-- Header with Hamburger Menu -->
-        <header class="relative flex items-center justify-between mb-8 sm:mb-16 pb-4 border-b border-gray-900">
+        <!-- Header (Simple Mobile Title Only) -->
+        <header class="flex items-center justify-between mb-8 pb-4 border-b border-gray-900">
             <a href="index.html" class="flex items-center gap-3">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white"><path d="m6.5 6.5 11 11"/><path d="m21 21-1-1"/><path d="m3 3 1 1"/><path d="m18 22 4-4"/><path d="m6 2 4 4"/><path d="m3 10.5 4.5-4.5"/><path d="m13.5 21 4.5-4.5"/></svg>
                 <h1 class="text-2xl font-bold">FitTrack AI</h1>
             </a>
-            <!-- Main Navigation -->
-            <nav id="main-nav" class="hidden md:flex md:items-center">
-                <ul class="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0 md:space-x-6 text-sm sm:text-base font-medium">
-                    <li><a href="index.html" class="nav-link">Home</a></li>
-                    <li><a href="nutrition.html" class="nav-link">Nutrition</a></li>
-                    <li><a href="workouts.html" class="nav-link active">Workouts</a></li>
-                    <li><a href="sleep.html" class="nav-link">Sleep</a></li>
-                    <li><a href="settings.html" class="nav-link">Settings</a></li>
-                </ul>
-            </nav>
-            <!-- Hamburger Button -->
-            <button id="menu-toggle-btn" class="md:hidden btn btn-secondary !p-2">
-                <i data-lucide="menu" class="w-6 h-6"></i>
+            <!-- AI Plan Generator remains here as a quick action in the app header (but is hidden) -->
+            <button id="ai-plan-generator-btn" class="btn btn-primary !p-2 hidden">
+                <i data-lucide="wand-2" class="w-5 h-5"></i>
             </button>
         </header>
-        
-        <!-- Mobile Menu Overlay -->
-        <div id="mobile-menu-overlay" class="fixed inset-0 bg-black bg-opacity-70 z-40 hidden"></div>
-        <div id="mobile-menu" class="fixed top-0 right-0 h-full w-4/5 max-w-sm bg-card-bg border-l border-border-color p-6 z-50 transform translate-x-full transition-transform duration-300 ease-in-out">
-            <div class="flex justify-between items-center mb-10">
-                <a href="index.html" class="flex items-center gap-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white"><path d="m6.5 6.5 11 11"/><path d="m21 21-1-1"/><path d="m3 3 1 1"/><path d="m18 22 4-4"/><path d="m6 2 4 4"/><path d="m3 10.5 4.5-4.5"/><path d="m13.5 21 4.5-4.5"/></svg>
-                    <h1 class="text-xl font-bold">FitTrack AI</h1>
-                </a>
-                <button id="mobile-menu-close-btn" class="btn btn-secondary !p-2">
-                    <i data-lucide="x" class="w-6 h-6"></i>
-                </button>
-            </div>
-            <nav>
-                <ul class="flex flex-col space-y-4 text-lg font-medium">
-                        <li><a href="index.html" class="nav-link w-full block">Home</a></li>
-                        <li><a href="nutrition.html" class="nav-link w-full block">Nutrition</a></li>
-                        <li><a href="workouts.html" class="nav-link active w-full block">Workouts</a></li>
-                        <li><a href="goals.html" class="nav-link w-full block">Goals</a></li>
-                        <li><a href="sleep.html" class="nav-link w-full block">Sleep</a></li>
-                        <li><a href="settings.html" class="nav-link w-full block">Settings</a></li>
-                </ul>
-            </nav>
-        </div>
 
 
         <main>
-             <div class="flex flex-col sm:flex-row justify-between items-center mb-8 px-2">
+             <div class="flex flex-col justify-between items-center mb-8 px-2">
                     <div>
-                        <h2 id="plan-main-title" class="text-2xl sm:text-3xl font-bold">Your Workout Plan</h2>
-                        <p id="plan-subtitle" class="text-gray-400 mt-1 sm:mt-2">Your personalized workout schedule.</p>
+                        <h2 id="plan-main-title" class="text-2xl font-bold">Your Workout Plan</h2>
+                        <p id="plan-subtitle" class="text-gray-400 mt-1">Your personalized workout schedule.</p>
                     </div>
-                    <div class="flex flex-col sm:flex-row gap-2 mt-4 sm:mt-0 w-full sm:w-auto">
-                      <button id="edit-plan-btn" class="btn btn-secondary w-full sm:w-auto">
-                          <i data-lucide="edit" class="w-4 h-4"></i>
-                          <span>Edit Current Plan</span>
-                      </button>
-                      <button id="ai-plan-generator-btn" class="btn btn-primary w-full sm:w-auto">
-                          <i data-lucide="wand-2" class="w-4 h-4"></i>
-                          <span>New AI Plan</span>
-                      </button>
-                    </div>
+                    <!-- REMOVED ORIGINAL BUTTON CONTAINER -->
                 </div>
             
-            <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-8">
-                <div id="day-navigation-card" class="lg:col-span-4 content-card">
-                    <div id="plan-view-header" class="flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="grid grid-cols-1 gap-4 sm:gap-8 grid-layout">
+                <div id="day-navigation-card" class="col-span-full content-card">
+                    <div id="plan-view-header" class="flex flex-col justify-between items-center gap-4">
                            <div class="flex-1">
                                <button id="day-view-date-display-btn" class="text-left hover:bg-input-bg px-4 py-2 rounded-lg transition-colors w-full">
-                                   <span id="day-view-title-span" class="text-xl sm:text-2xl font-semibold block"></span>
-                                   <span id="day-view-date-span" class="text-sm sm:text-base text-secondary-text"></span>
+                                   <span id="day-view-title-span" class="text-xl font-semibold block"></span>
+                                   <span id="day-view-date-span" class="text-sm text-secondary-text"></span>
                                </button>
                            </div>
-                         <div class="flex flex-col items-center justify-center sm:justify-between gap-2">
+                         <div class="flex flex-col items-center justify-center gap-2">
                              <div class="flex items-center justify-center">
-                                 <span id="day-view-status" class="text-sm font-bold text-secondary-text w-full sm:w-auto text-center"></span>
-                                 <!-- REORGANIZE BUTTON REMOVED HERE -->
+                                 <span id="day-view-status" class="text-sm font-bold text-secondary-text w-full text-center"></span>
                              </div>
                              <div id="workout-status-controls" class="flex gap-2 text-sm">
                                  <button class="status-btn btn !p-2 !py-1" data-status="full">Full</button>
@@ -458,40 +446,41 @@
                 </div>
 
                 <!-- Plan Card (Modified to remove History column for space) -->
-                <div id="plan-history-container-card" class="content-card lg:col-span-4">
-                    <!-- Updated grid class to remove the second column for history -->
+                <div id="plan-history-container-card" class="col-span-full content-card">
                     <div id="plan-history-grid" class="grid grid-cols-1 gap-x-8 gap-y-4">
                         <div>
                             <div class="flex justify-between items-center mb-2 border-b border-border-color pb-1">
                                 <h5 class="font-semibold text-lg">Plan</h5>
                                 <div class="flex items-center gap-2">
+                                    <button id="edit-plan-btn" class="btn btn-secondary !p-1.5" title="Edit Current Plan"><i data-lucide="edit" class="w-4 h-4"></i></button>
+                                    <!-- MODIFIED: Changed to btn-secondary for black color -->
+                                    <button id="ai-plan-generator-btn-inline" class="btn btn-secondary !p-1.5" title="New AI Plan"><i data-lucide="wand-2" class="w-4 h-4"></i></button>
+                                    <button id="add-temporary-warmup-btn" class="btn btn-secondary !p-1.5 hidden" title="Add Warm-up for Today"><i data-lucide="sun" class="w-4 h-4"></i></button>
                                     <button id="add-temporary-exercise-btn" class="btn btn-secondary !p-1.5 hidden" title="Add Exercise for Today"><i data-lucide="plus" class="w-4 h-4"></i></button>
                                 </div>
                             </div>
-                            <!-- Increased max-height slightly to utilize the newly freed vertical space -->
                             <div id="workout-plan-for-day" class="space-y-2 max-h-[28rem] overflow-y-auto custom-scrollbar pr-2"></div>
                         </div>
-                        <!-- HISTORY SECTION REMOVED AS REQUESTED -->
                     </div>
                 </div>
 
-                <div class="content-card lg:col-span-4 lg:col-start-1">
-                    <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
-                        <h3 class="text-xl sm:text-2xl font-semibold">Progression Chart</h3>
+                <div class="col-span-full content-card">
+                    <div class="flex flex-col justify-between items-center mb-4 gap-4">
+                        <h3 class="text-xl font-semibold">Progression Chart</h3>
                         <div class="flex gap-2 flex-wrap justify-center" id="progress-range-selector">
                             <button class="btn btn-secondary !py-1 !px-3 text-xs progress-range-btn" data-range="month">1M</button>
                             <button class="btn btn-secondary !py-1 !px-3 text-xs progress-range-btn" data-range="3month">3M</button>
                             <button class="btn btn-secondary !py-1 !px-3 text-xs progress-range-btn selected-full" data-range="year">1Y</button>
                             <button class="btn btn-secondary !py-1 !px-3 text-xs progress-range-btn" data-range="all">All Time</button>
                         </div>
-                        <select id="progress-exercise-select" class="w-full sm:w-auto form-select"></select>
+                        <select id="progress-exercise-select" class="w-full form-select"></select>
                     </div>
                     <div class="w-full h-80 flex items-center justify-center">
                         <canvas id="progress-chart"></canvas>
                     </div>
                 </div>
-                 <div class="content-card lg:col-span-4">
-                        <h3 class="text-xl sm:text-2xl font-semibold mb-4 text-center">AI Coach</h3>
+                 <div class="col-span-full content-card">
+                        <h3 class="text-xl font-semibold mb-4 text-center">AI Coach</h3>
                         
                         <div class="flex border-b border-border-color mb-4">
                             <button id="ai-tab-specific" class="flex-1 py-2 text-center font-semibold border-b-2 border-accent text-primary-text">Specific Advice</button>
@@ -500,11 +489,11 @@
 
                         <div id="ai-panel-specific">
                             <p class="text-gray-400 text-sm mb-3 text-center">Select an exercise to get science-based advice on when to add weight or reps.</p>
-                            <div class="flex flex-col sm:flex-row gap-2">
+                            <div class="flex flex-col gap-2">
                                 <select id="ai-advice-exercise-select" class="w-full form-select">
                                     <option value="">Select an exercise...</option>
                                 </select>
-                                <button id="get-ai-advice-btn" class="btn btn-secondary w-full sm:w-auto">
+                                <button id="get-ai-advice-btn" class="btn btn-secondary w-full">
                                     <span class="btn-text">Get Advice</span>
                                     <div class="loader hidden ml-2"></div>
                                 </button>
@@ -524,6 +513,30 @@
         </main>
     </div>
 
+    <!-- FIXED MOBILE FOOTER NAV BAR (Replaces Hamburger Menu) -->
+    <nav id="mobile-footer-nav" class="fixed bottom-0 left-0 right-0 h-16 bg-card-bg border-t border-border-color z-50 flex justify-around items-center">
+        <a href="index.html" class="nav-link">
+            <i data-lucide="home" class="nav-icon"></i>
+            <span>Home</span>
+        </a>
+        <a href="nutrition.html" class="nav-link">
+            <i data-lucide="utensils" class="nav-icon"></i>
+            <span>Nutrition</span>
+        </a>
+        <a href="workouts.html" class="nav-link active">
+            <i data-lucide="dumbbell" class="nav-icon"></i>
+            <span>Workouts</span>
+        </a>
+        <a href="sleep.html" class="nav-link">
+            <i data-lucide="moon" class="nav-icon"></i>
+            <span>Sleep</span>
+        </a>
+        <a href="settings.html" class="nav-link">
+            <i data-lucide="settings" class="nav-icon"></i>
+            <span>Settings</span>
+        </a>
+    </nav>
+    
     <!-- Modals here... -->
     <div id="ai-plan-generator-modal" class="modal-backdrop"><div class="modal-content !max-w-3xl"><div class="flex justify-between items-center mb-4"><h2 class="text-xl sm:text-2xl font-bold">AI Plan Generator</h2><button id="close-ai-plan-generator-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button></div><div id="ai-plan-panel"><form id="ai-plan-generator-form" class="space-y-4"><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label for="ai-plan-goal" class="form-label">Primary Goal</label><select id="ai-plan-goal" class="form-select mt-1"><option value="muscle hypertrophy">Muscle Hypertrophy</option><option value="fat loss">Fat Loss</option><option value="body recomposition">Body Recomposition</option><option value="general fitness">General Fitness</option><option value="strength gain">Strength Gain</option><option value="custom">Custom</option></select></div><div id="ai-plan-split-container"><label for="ai-plan-split-select" class="form-label">Workout Split Template</label><select id="ai-plan-split-select" class="form-select mt-1"><option value="Push, Pull, Legs">Push, Pull, Legs</option><option value="Optimized PPL">Optimized PPL (Pre-built)</option><option value="Upper, Lower">Upper, Lower</option><option value="Full Body">Full Body</option></select></div></div><div id="ai-plan-goal-text-container" class="hidden"><label for="ai-plan-goal-text" class="form-label">Describe Your Goal</label><textarea id="ai-plan-goal-text" rows="2" class="form-input mt-1" placeholder="e.g., 'I want to build bigger arms and get a six-pack.'"></textarea></div><details class="pt-2" open><summary class="cursor-pointer text-sm text-gray-400 hover:text-white flex items-center justify-between"><span>Weekly Schedule & Duration</span><i data-lucide="chevron-down" class="w-4 h-4"></i></summary><div class="pt-4 mt-4 border-t border-gray-800 space-y-4"><p class="text-xs text-secondary-text">Click each day to cycle through available workout types to build your weekly schedule.</p><div id="ai-plan-schedule-builder"></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label for="ai-plan-duration" class="form-label">Default Duration (minutes)</label><input type="number" id="ai-plan-duration" value="60" class="form-input mt-1"><button type="button" id="customize-duration-btn" class="text-sm text-blue-400 hover:underline mt-2">Customize per day</button><div id="ai-plan-durations-container" class="space-y-2 mt-2 hidden"></div></div><div><label for="ai-plan-rest" class="form-label">Rest Between Sets (minutes)</label><input type="number" id="ai-plan-rest" value="2" step="0.5" min="0" class="form-input mt-1"></div></div></div></details><details class="pt-2" open><summary class="cursor-pointer text-sm text-gray-400 hover:text-white flex items-center justify-between"><span>Equipment & Focus</span><i data-lucide="chevron-down" class="w-4 h-4"></i></summary><div class="space-y-4 pt-4 mt-4 border-t border-gray-800">
         <div>
@@ -549,27 +562,27 @@
             </div>
             <div><label for="ai-plan-unit" class="form-label">Weight Unit</label><select id="ai-plan-unit" class="form-select mt-1"><option value="kg">Kilograms (kg)</option><option value="lbs">Pounds (lbs)</option></select></div>
         </div>
-    </div></details><details class="pt-2" open><summary class="cursor-pointer text-sm text-gray-400 hover:text-white flex items-center justify-between"><span>Exercise Preferences</span><i data-lucide="chevron-down" class="w-4 h-4"></i></summary><div id="ai-plan-exercise-prefs-container" class="grid grid-cols-2 md:grid-cols-3 gap-2 pt-4 mt-4 border-t border-gray-800"></div></details><details class="pt-2"><summary class="cursor-pointer text-sm text-gray-400 hover:text-white flex items-center justify-between"><span>Advanced: Target Sets</span><i data-lucide="chevron-down" class="w-4 h-4"></i></summary><div class="pt-4 mt-4 border-t border-gray-800"><div class="mb-4"><label for="ai-plan-default-sets" class="form-label">Default Sets Per Muscle Group</label><input type="number" id="ai-plan-default-sets" class="form-input mt-1" placeholder="Auto"><button type="button" id="customize-sets-btn" class="text-sm text-blue-400 hover:underline mt-2">Customize per muscle group</button></div><div id="ai-plan-sets-container" class="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-2 hidden"></div></div></details><button type="submit" class="w-full btn btn-primary !mt-6"><span class="btn-text">Generate My Plan</span><div class="loader hidden"></div></button></form><div id="ai-plan-output" class="mt-6 hidden"><div id="ai-plan-explanation" class="text-sm p-3 bg-black/30 rounded-lg mb-4"></div><pre id="ai-plan-json-output" class="hidden"></pre><div class="flex justify-end gap-4"><button id="cancel-new-plan-btn" class="btn btn-secondary">Cancel</button><button id="save-new-plan-btn" class="btn btn-primary">Save & Apply Plan</button></div></div></div></div></div>
+    </div></details><details class="pt-2"><summary class="cursor-pointer text-sm text-gray-400 hover:text-white flex items-center justify-between"><span>Exercise Preferences</span><i data-lucide="chevron-down" class="w-4 h-4"></i></summary><div id="ai-plan-exercise-prefs-container" class="grid grid-cols-2 md:grid-cols-3 gap-2 pt-4 mt-4 border-t border-gray-800"></div></details><details class="pt-2"><summary class="cursor-pointer text-sm text-gray-400 hover:text-white flex items-center justify-between"><span>Advanced: Target Sets</span><i data-lucide="chevron-down" class="w-4 h-4"></i></summary><div class="pt-4 mt-4 border-t border-gray-800"><div class="mb-4"><label for="ai-plan-default-sets" class="form-label">Default Sets Per Muscle Group</label><input type="number" id="ai-plan-default-sets" class="form-input mt-1" placeholder="Auto"><button type="button" id="customize-sets-btn" class="text-sm text-blue-400 hover:underline mt-2">Customize per muscle group</button></div><div id="ai-plan-sets-container" class="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-2 hidden"></div></div></details><button type="submit" class="w-full btn btn-primary !mt-6"><span class="btn-text">Generate My Plan</span><div class="loader hidden"></div></button></form><div id="ai-plan-output" class="mt-6 hidden"><div id="ai-plan-explanation" class="text-sm p-3 bg-black/30 rounded-lg mb-4"></div><pre id="ai-plan-json-output" class="hidden"></pre><div class="flex justify-end gap-4"><button id="cancel-new-plan-btn" class="btn btn-secondary">Cancel</button><button id="save-new-plan-btn" class="btn btn-primary">Save & Apply Plan</button></div></div></div></div></div>
     
     <!-- NEW EDIT PLAN MODAL -->
     <div id="edit-plan-modal" class="modal-backdrop">
         <div class="modal-content !max-w-4xl custom-scrollbar">
             <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl sm:text-2xl font-bold">Edit Current Plan</h2>
+                <h2 class="text-xl font-bold">Edit Current Plan</h2>
                 <button id="close-edit-plan-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button>
             </div>
             <div class="space-y-8">
                  <div>
                         <h3 class="font-bold text-lg text-blue-400 mb-2">Weekly Schedule</h3>
                         <p class="text-sm text-secondary-text mb-4">Tap a day to cycle through your available workout types. This changes when you do each workout.</p>
-                        <div id="edit-plan-schedule-builder" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2"></div>
+                        <div id="edit-plan-schedule-builder" class="grid grid-cols-2 gap-2"></div>
                  </div>
                  <div>
                     <h3 class="font-bold text-lg text-blue-400 mb-2">Manage Warmups</h3>
                     <p class="text-sm text-secondary-text mb-4">Select a workout type to manage its warm-up routine.</p>
-                    <div class="flex flex-col sm:flex-row gap-2 items-center mb-4">
+                    <div class="flex flex-col gap-2 items-center mb-4">
                          <select id="edit-plan-warmup-day-type-select" class="form-select"></select>
-                         <button id="edit-plan-add-warmup-btn" class="btn btn-secondary w-full sm:w-auto">
+                         <button id="edit-plan-add-warmup-btn" class="btn btn-secondary w-full">
                              <i data-lucide="plus" class="w-4 h-4"></i>
                              <span>Add Warmup</span>
                          </button>
@@ -580,9 +593,9 @@
                 <div>
                     <h3 class="font-bold text-lg text-blue-400 mb-2">Manage Workouts</h3>
                     <p class="text-sm text-secondary-text mb-4">Select a workout type to add, remove, or reorder its exercises.</p>
-                    <div class="flex flex-col sm:flex-row gap-2 items-center mb-4">
+                    <div class="flex flex-col gap-2 items-center mb-4">
                         <select id="edit-plan-day-type-select" class="form-select"></select>
-                        <button id="edit-plan-add-exercise-btn" class="btn btn-secondary w-full sm:w-auto">
+                        <button id="edit-plan-add-exercise-btn" class="btn btn-secondary w-full">
                             <i data-lucide="plus" class="w-4 h-4"></i>
                             <span>Add Exercise</span>
                         </button>
@@ -595,24 +608,31 @@
         </div>
     </div>
 
-    <div id="custom-exercise-modal" class="modal-backdrop"><div class="modal-content"><div class="flex justify-between items-center mb-6"><h2 id="custom-exercise-modal-title" class="text-xl sm:text-2xl font-bold">Add Custom Exercise</h2><button id="close-custom-exercise-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button></div><div id="custom-exercise-initial-choice" class="flex gap-4"><button id="custom-exercise-ai-choice-btn" class="btn btn-primary w-full"><i data-lucide="sparkles"></i>Use AI</button><button id="custom-exercise-manual-choice-btn" class="btn btn-secondary w-full"><i data-lucide="edit-3"></i>Manual</button></div><form id="custom-exercise-form" class="hidden space-y-4 mt-4"><div><label for="custom-exercise-name" class="form-label">Exercise Name *</label><div class="flex gap-2"><input type="text" id="custom-exercise-name" class="form-input" required placeholder="e.g., Kneeling Landmine Press"><button type="button" id="ai-generate-exercise-details-btn" class="btn btn-secondary !px-3 hidden"><i data-lucide="sparkles"></i></button></div></div><div id="custom-exercise-details-container" class="space-y-4 pt-4 border-t border-border-color"><div class="w-full aspect-video bg-black rounded-lg flex items-center justify-center overflow-hidden border border-border-color"><div id="custom-exercise-img-loader" class="loader hidden"></div><img id="custom-exercise-img" src="" class="w-full h-full object-contain hidden"></div><div class="grid grid-cols-2 gap-2"><label for="custom-img-upload" class="btn btn-secondary !py-1 text-xs cursor-pointer">Upload Image<input type="file" id="custom-img-upload" class="hidden" accept="image/*"></label><input type="url" id="custom-img-url" class="form-input !py-1 text-xs" placeholder="Or paste image/video URL"></div><div><label for="custom-exercise-instructions" class="form-label">Instructions</label><textarea id="custom-exercise-instructions" rows="5" class="form-input mt-1"></textarea></div><div><label for="custom-exercise-rep-range" class="form-label">Rep Range</label><input type="text" id="custom-exercise-rep-range" class="form-input mt-1"></div><div class="grid grid-cols-2 gap-4"><div><label for="custom-exercise-group" class="form-label">Muscle Group</label><select id="custom-exercise-group" class="form-select mt-1"></select></div><div><label for="custom-exercise-type" class="form-label">Equipment</label><select id="custom-exercise-type" class="form-select mt-1"></select></div></div><div id="custom-exercise-action-buttons" class="flex flex-col sm:flex-row gap-2 pt-2"></div></div></form></div></div>
-    <div id="exercise-detail-modal" class="modal-backdrop"><div class="modal-content !max-w-xl custom-scrollbar"><div class="flex justify-between items-center mb-4"><h2 id="exercise-detail-title" class="text-xl sm:text-2xl font-bold">Exercise Details</h2><button id="close-exercise-detail-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button></div><div class="space-y-4">
+    <div id="custom-exercise-modal" class="modal-backdrop"><div class="modal-content"><div class="flex justify-between items-center mb-6"><h2 id="custom-exercise-modal-title" class="text-xl font-bold">Add Custom Exercise</h2><button id="close-custom-exercise-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button></div><div id="custom-exercise-initial-choice" class="flex gap-4"><button id="custom-exercise-ai-choice-btn" class="btn btn-primary w-full"><i data-lucide="sparkles"></i>Use AI</button><button id="custom-exercise-manual-choice-btn" class="btn btn-secondary w-full"><i data-lucide="edit-3"></i>Manual</button></div><form id="custom-exercise-form" class="hidden space-y-4 mt-4"><div><label for="custom-exercise-name" class="form-label">Exercise Name *</label><div class="flex gap-2"><input type="text" id="custom-exercise-name" class="form-input" required placeholder="e.g., Kneeling Landmine Press"><button type="button" id="ai-generate-exercise-details-btn" class="btn btn-secondary !px-3 hidden"><i data-lucide="sparkles"></i></button></div></div><div id="custom-exercise-details-container" class="space-y-4 pt-4 border-t border-border-color"><div class="w-full aspect-video bg-black rounded-lg flex items-center justify-center overflow-hidden border border-border-color relative"><div id="custom-exercise-img-loader" class="loader hidden"></div>
+        <!-- MODIFIED: Added a container for media display and AI sprite -->
+        <div id="custom-exercise-media-container" class="w-full h-full">
+            <img id="custom-exercise-img" src="" class="w-full h-full object-contain hidden">
+        </div>
+        <!-- Old sprite div removed to use innerHTML in media container -->
+    </div><div class="grid grid-cols-2 gap-2"><label for="custom-img-upload" class="btn btn-secondary !py-1 text-xs cursor-pointer">Upload Image<input type="file" id="custom-img-upload" class="hidden" accept="image/*"></label><input type="url" id="custom-img-url" class="form-input !py-1 text-xs" placeholder="Or paste image/video URL"></div><div><label for="custom-exercise-instructions" class="form-label">Instructions</label><textarea id="custom-exercise-instructions" rows="5" class="form-input mt-1"></textarea></div><div><label for="custom-exercise-rep-range" class="form-label">Rep Range</label><input type="text" id="custom-exercise-rep-range" class="form-input mt-1"></div><div class="grid grid-cols-2 gap-4"><div><label for="custom-exercise-group" class="form-label">Muscle Group</label><select id="custom-exercise-group" class="form-select mt-1"></select></div><div><label for="custom-exercise-type" class="form-label">Equipment</label><select id="custom-exercise-type" class="form-select mt-1"></select></div></div><div id="custom-exercise-action-buttons" class="flex flex-col gap-2 pt-2"></div></div></form></div></div>
+    <div id="exercise-detail-modal" class="modal-backdrop"><div class="modal-content !max-w-xl custom-scrollbar"><div class="flex justify-between items-center mb-4"><h2 id="exercise-detail-title" class="text-xl font-bold">Exercise Details</h2><button id="close-exercise-detail-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button></div><div class="space-y-4">
         <!-- MODIFIED: Replaced img with a div container for the animation -->
         <div class="w-full aspect-video bg-black rounded-lg flex items-center justify-center overflow-hidden border border-gray-800 relative">
             <div id="exercise-gif-loader" class="loader hidden"></div>
+            <!-- This div will now hold either an <img/> for static media, a <video/> for video, or be styled as a background for the sprite animation -->
             <div id="exercise-gif-animation" class="w-full h-full bg-no-repeat bg-contain bg-center"></div>
              <button id="redo-gif-btn" class="absolute bottom-2 right-2 btn btn-secondary !p-1.5 hidden" title="Redo Animation">
                  <i data-lucide="refresh-cw" class="w-4 h-4"></i>
              </button>
         </div>
         <div><h3 class="font-bold text-lg text-blue-400 mb-2">Instructions</h3><textarea id="exercise-detail-instructions" class="form-input mt-1 w-full bg-input-bg text-sm transition-colors" disabled style="resize: none; overflow-y: hidden;"></textarea><button id="save-instructions-btn" class="mt-2 w-full btn btn-secondary">Edit Instructions</button></div><div class="grid grid-cols-2 gap-4"><div><h3 class="font-bold text-lg text-blue-400 mb-2">Sets</h3><p id="exercise-detail-sets" class="text-gray-300"></p></div><div><h3 class="font-bold text-lg text-blue-400 mb-2">Rep Range</h3><p id="exercise-detail-rep-range" class="text-gray-300"></p></div></div><div><h3 class="font-bold text-lg text-blue-400 mb-2">Personal Notes & Advice</h3><textarea id="exercise-detail-notes" rows="4" class="form-input mt-1" placeholder="Add your personal cues, weight progression goals, etc."></textarea><button id="save-exercise-notes-btn" class="mt-2 w-full btn btn-secondary">Save Notes</button></div><button id="log-from-detail-btn" class="w-full btn btn-primary mt-4">Log This Exercise</button></div></div></div>
-    <div id="warmup-manage-modal" class="modal-backdrop"><div class="modal-content"><div class="flex justify-between items-center mb-4"><h2 id="warmup-form-title" class="text-xl sm:text-2xl font-bold">Manage Warm-up</h2><button id="close-warmup-manage-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button></div><form id="warmup-form" class="space-y-3"><div><label for="warmup-name" class="form-label">Name</label><input type="text" id="warmup-name" class="form-input mt-1" required></div><div><label for="warmup-instructions" class="form-label">Instructions (one per line)</label><textarea id="warmup-instructions" rows="4" class="form-input mt-1"></textarea></div><button type="submit" id="save-warmup-btn" class="w-full btn btn-primary">Add Warm-up</button></form></div></div>
-    <div id="workout-modal" class="modal-backdrop"><div class="modal-content"><div class="flex justify-between items-center mb-4"><h2 id="modal-title" class="text-xl sm:text-2xl font-bold">Log Exercise</h2><div class="flex items-center gap-1 border border-border-color rounded-lg p-1"><button type="button" id="unit-toggle-kg" class="btn !py-1 !px-3 text-sm unit-toggle-btn">kg</button><button type="button" id="unit-toggle-lbs" class="btn !py-1 !px-3 text-sm unit-toggle-btn">lbs</button></div><button id="close-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button></div><form id="workout-log-form"><div class="space-y-4"><div id="sets-container"></div><button type="button" id="add-set-btn" class="w-full btn btn-secondary">Add Set</button><button type="submit" id="save-workout-btn" class="w-full btn btn-primary mt-2">Save Workout</button></div></form></div></div>
-    <div id="exercise-library-modal" class="modal-backdrop"><div class="modal-content !max-w-2xl"><div class="flex justify-between items-center mb-4"><h2 class="text-xl sm:text-2xl font-bold" id="exercise-library-title">Exercise Library</h2><button id="close-exercise-library-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button></div>
+    <div id="warmup-manage-modal" class="modal-backdrop"><div class="modal-content"><div class="flex justify-between items-center mb-4"><h2 id="warmup-form-title" class="text-xl font-bold">Manage Warm-up</h2><button id="close-warmup-manage-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button></div><form id="warmup-form" class="space-y-3"><div><label for="warmup-name" class="form-label">Name</label><input type="text" id="warmup-name" class="form-input mt-1" required></div><div><label for="warmup-instructions" class="form-label">Instructions (one per line)</label><textarea id="warmup-instructions" rows="4" class="form-input mt-1"></textarea></div><button type="submit" id="save-warmup-btn" class="w-full btn btn-primary">Add Warm-up</button></form></div></div>
+    <div id="workout-modal" class="modal-backdrop"><div class="modal-content"><div class="flex justify-between items-center mb-4"><h2 id="modal-title" class="text-xl font-bold">Log Exercise</h2><div class="flex items-center gap-1 border border-border-color rounded-lg p-1"><button type="button" id="unit-toggle-kg" class="btn !py-1 !px-3 text-sm unit-toggle-btn">kg</button><button type="button" id="unit-toggle-lbs" class="btn !py-1 !px-3 text-sm unit-toggle-btn">lbs</button></div><button id="close-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button></div><form id="workout-log-form"><div class="space-y-4"><div id="sets-container"></div><button type="button" id="add-set-btn" class="w-full btn btn-secondary">Add Set</button><button type="submit" id="save-workout-btn" class="w-full btn btn-primary mt-2">Save Workout</button></div></form></div></div>
+    <div id="exercise-library-modal" class="modal-backdrop"><div class="modal-content !max-w-2xl"><div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold" id="exercise-library-title">Exercise Library</h2><button id="close-exercise-library-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button></div>
     <div class="flex flex-wrap gap-2 mb-4">
         <input type="search" id="exercise-library-search" class="form-input flex-grow" placeholder="Search exercises...">
-        <select id="exercise-library-filter" class="form-select w-full sm:w-48"><option value="">All Muscle Groups</option></select>
-        <select id="exercise-library-equipment-filter" class="form-select w-full sm:w-48"><option value="">All Equipment</option></select>
+        <select id="exercise-library-filter" class="form-select w-full"><option value="">All Muscle Groups</option></select>
+        <select id="exercise-library-equipment-filter" class="form-select w-full"><option value="">All Equipment</option></select>
         <button id="create-new-exercise-from-library-btn" class="btn btn-secondary !px-3" title="Create New Exercise"><i data-lucide="plus"></i></button>
     </div>
     <div id="exercise-library-list" class="space-y-2 max-h-80 overflow-y-auto custom-scrollbar pr-2"></div><button id="add-selected-exercises-btn" class="btn btn-primary w-full mt-4">Add Selected</button></div></div>
@@ -636,7 +656,7 @@
 
     <!-- AI Workout Coach Chat Modal -->
     <div id="ai-workout-chat-modal" class="modal-backdrop">
-        <div class="modal-content !max-w-2xl flex flex-col">
+        <div class="modal-content flex flex-col">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-2xl font-bold">AI Workout Coach</h2>
                 <button id="close-ai-workout-chat-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button>
@@ -747,7 +767,7 @@
                 editPlanWarmupDayTypeSelect: document.getElementById('edit-plan-warmup-day-type-select'),
                 editPlanAddWarmupBtn: document.getElementById('edit-plan-add-warmup-btn'),
                 editPlanWarmupList: document.getElementById('edit-plan-warmup-list'),
-                // Mobile Menu
+                // Mobile Menu (Removed references to side menu, kept only for consistency/easy re-addition if needed)
                 menuToggleBtn: document.getElementById('menu-toggle-btn'),
                 mobileMenu: document.getElementById('mobile-menu'),
                 mobileMenuOverlay: document.getElementById('mobile-menu-overlay'),
@@ -858,8 +878,8 @@
                 exerciseDB = [...baseExercises, ...uniqueCustomExercises];
                 
                 workoutPlan = localWorkoutPlan;
-                workoutHistory = localWorkoutHistory;
                 warmups = Object.keys(localWarmups).length > 0 ? localWarmups : baseWarmups;
+                workoutHistory = localWorkoutHistory;
                 workoutStatusHistory = localStatusHistory;
                 userSettings = {...{ unit: 'kg', showPermanentEditWarning: true }, ...localUserSettings}; // Ensure defaults
                 workoutChatHistory = localChatHistory;
@@ -1052,8 +1072,12 @@
                 ui.dayViewDateDisplay.querySelector('#day-view-title-span').textContent = date.toLocaleDateString(undefined, { weekday: 'long' }) + (isToday ? ' (Today)' : '');
                 ui.dayViewDateDisplay.querySelector('#day-view-date-span').textContent = date.toLocaleDateString(undefined, { month: 'long', day: 'numeric' });
                 
-                const addTempBtn = document.getElementById('add-temporary-exercise-btn');
-                if (addTempBtn) addTempBtn.classList.toggle('hidden', isFutureDay);
+                const addTempExBtn = document.getElementById('add-temporary-exercise-btn');
+                const addTempWarmupBtn = document.getElementById('add-temporary-warmup-btn');
+                
+                if (addTempExBtn) addTempExBtn.classList.toggle('hidden', isFutureDay);
+                // Show Add Temporary Warmup button only if it's not a future day
+                if (addTempWarmupBtn) addTempWarmupBtn.classList.toggle('hidden', isFutureDay);
 
                 lucide.createIcons();
             }
@@ -1070,41 +1094,33 @@
                 const loggedExercisesForDay = new Set(workoutHistory.filter(log => log.date === dateKey).map(l => l.name));
                 let exercisesHtml = '';
 
-                const modsForDay = dailyModifications[dateKey] || { removed: [], added: [] };
+                const modsForDay = dailyModifications[dateKey] || { removed: [], added: [], warmups: [] };
                 const removedExercises = new Set(modsForDay.removed);
                 const addedExercises = modsForDay.added || [];
+                const addedWarmups = modsForDay.warmups || [];
 
-                const createExerciseHTML = (exName, type, isTemporary = false) => {
-                    const ex = type === 'exercise' ? exerciseDB.find(e => e.name === exName) : { name: exName };
-                    if (!ex) return '';
-                    const isLogged = loggedExercisesForDay.has(ex.name);
-                    const isFavorite = type === 'exercise' && ex.favorite;
+                const createItemHTML = (itemName, type, isTemporary = false) => {
+                    const isExercise = type === 'exercise';
+                    const item = isExercise ? exerciseDB.find(e => e.name === itemName) : warmups[dayType]?.find(w => w.name === itemName);
+                    if (!item) return '';
                     
-                    // CHANGE 2: Add cross for un-logged exercises
+                    const isLogged = isExercise && loggedExercisesForDay.has(item.name);
+                    const isFavorite = isExercise && item.favorite;
+                    
                     const statusIcon = isLogged
                         ? '<i data-lucide="check-circle-2" class="w-5 h-5 text-green-400"></i>'
                         : '<i data-lucide="x-circle" class="w-5 h-5 text-gray-600"></i>';
                     
-                    const temporaryBadge = isTemporary ? '<span class="text-xs ml-2 bg-blue-500/30 text-blue-300 px-1.5 py-0.5 rounded">Today</span>' : '';
+                    const temporaryBadge = isTemporary ? `<span class="text-xs ml-2 bg-${isExercise ? 'blue' : 'green'}-500/30 text-${isExercise ? 'blue' : 'green'}-300 px-1.5 py-0.5 rounded">Today</span>` : '';
 
-                    // CHANGE 3: New button logic (removed favorite button)
-                    let buttonHtml = '';
-                    if (type === 'exercise') {
-                        buttonHtml = `
-                            <button class="btn btn-secondary !p-2 info-btn" data-name="${ex.name}" data-type="${type}" data-day-type="${dayType}" title="View Info">
-                                <i data-lucide="info" class="w-4 h-4 pointer-events-none"></i>
-                            </button>
-                        `;
-                    } else { // for warmups, just show the info button
-                        buttonHtml = `
-                            <button class="btn btn-secondary !p-2 info-btn" data-name="${ex.name}" data-type="${type}" data-day-type="${dayType}" title="View Info">
-                                <i data-lucide="info" class="w-4 h-4 pointer-events-none"></i>
-                            </button>
-                        `;
-                    }
+                    let buttonHtml = `
+                        <button class="btn btn-secondary !p-2 info-btn" data-name="${item.name}" data-type="${type}" data-day-type="${dayType}" title="View Info">
+                            <i data-lucide="info" class="w-4 h-4 pointer-events-none"></i>
+                        </button>
+                    `;
 
                     return `
-                        <div class="swipe-item plan-item-container rounded-lg" data-name="${ex.name}" data-type="${type}" data-day-type="${dayType}" draggable="true">
+                        <div class="swipe-item plan-item-container rounded-lg" data-name="${item.name}" data-type="${type}" data-day-type="${dayType}" draggable="true">
                             <div class="swipe-actions">
                                 <div class="swipe-action-container left"><div class="action delete"><i data-lucide="trash-2" class="pointer-events-none"></i><span class="ml-2 pointer-events-none">Remove</span></div></div>
                                 <div class="swipe-action-container right"><div class="action edit"><span class="mr-2 pointer-events-none">Edit</span><i data-lucide="pencil" class="pointer-events-none"></i></div></div>
@@ -1114,8 +1130,8 @@
                                     <div class="flex-grow flex items-center gap-3">
                                         <div class="w-5 h-5 flex-shrink-0 flex items-center justify-center">${statusIcon}</div>
                                         <div>
-                                            <span class="flex-grow text-left flex items-center">${ex.name}${temporaryBadge}</span>
-                                            ${type === 'exercise' ? `<p class="text-xs text-blue-400">${ex.group}</p>` : ''}
+                                            <span class="flex-grow text-left flex items-center">${item.name}${temporaryBadge}</span>
+                                            ${isExercise ? `<p class="text-xs text-blue-400">${item.group}</p>` : ''}
                                         </div>
                                     </div>
                                     <div class="flex items-center gap-2">
@@ -1132,25 +1148,33 @@
                     exercisesHtml = `<div class="flex flex-col items-center justify-center h-full text-center p-4"><i data-lucide="bed-double" class="w-12 h-12 text-gray-500 mb-2"></i><p class="text-gray-500 italic mt-2">Rest Day</p></div>`;
                 } else {
                     const workoutForDay = (workoutPlan.workouts || []).find(w => w.day === dayType);
-                    const warmupExercises = warmups[dayType] || [];
+                    let planWarmupExercises = warmups[dayType] || [];
                     
-                    if (warmupExercises.length > 0) {
-                        exercisesHtml += `<div><h5 class="font-semibold text-green-400 text-sm mb-1">Warm-up</h5><div class="space-y-1 warmup-list">${warmupExercises.map(w => createExerciseHTML(w.name, 'warmup')).join('')}</div></div>`;
+                    // Combine permanent and temporary warmups
+                    const finalWarmups = [...planWarmupExercises.map(w => w.name).filter(name => !modsForDay.removedWarmups?.includes(name) ), ...addedWarmups];
+                    const uniqueFinalWarmups = [...new Set(finalWarmups)];
+
+
+                    if (uniqueFinalWarmups.length > 0) {
+                        exercisesHtml += `<div><h5 class="font-semibold text-green-400 text-sm mb-1">Warm-up</h5><div class="space-y-1 warmup-list">${uniqueFinalWarmups.map(name => {
+                            const isTemporary = addedWarmups.includes(name);
+                            return createItemHTML(name, 'warmup', isTemporary);
+                        }).join('')}</div></div>`;
                     }
                     
                     let planExercisesHtml = '';
                     if (workoutForDay && workoutForDay.exercises && workoutForDay.exercises.length > 0) {
                         const finalExercises = workoutForDay.exercises.filter(exName => !removedExercises.has(exName));
-                        planExercisesHtml = finalExercises.map(exName => createExerciseHTML(exName, 'exercise', false)).join('');
+                        planExercisesHtml = finalExercises.map(exName => createItemHTML(exName, 'exercise', false)).join('');
                     }
                     
-                    let temporaryExercisesHtml = addedExercises.map(exName => createExerciseHTML(exName, 'exercise', true)).join('');
+                    let temporaryExercisesHtml = addedExercises.map(exName => createItemHTML(exName, 'exercise', true)).join('');
 
                     if (planExercisesHtml || temporaryExercisesHtml) {
                         exercisesHtml += `<div><h5 class="font-semibold text-blue-400 text-sm my-2">Workout</h5><div class="space-y-1 exercise-list">${planExercisesHtml}${temporaryExercisesHtml}</div></div>`;
                     }
                     
-                    if (!planExercisesHtml && !temporaryExercisesHtml && warmupExercises.length === 0) {
+                    if (!planExercisesHtml && !temporaryExercisesHtml && uniqueFinalWarmups.length === 0) {
                         exercisesHtml += `<p class="text-secondary-text mt-4">No exercises planned for ${dayType} day. Use the Plan Editor to add some!</p>`;
                     }
                 }
@@ -1199,7 +1223,7 @@
                     }
                 }
                 ui.dayViewStatus.textContent = statusText;
-                ui.dayViewStatus.className = `text-sm font-bold ${statusClass} w-full sm:w-auto text-center`;
+                ui.dayViewStatus.className = `text-sm font-bold ${statusClass} w-full text-center`;
 
                 const dayType = getWorkoutDayType(date);
                 const shouldShowReorganize = !isFutureDay && currentStatus === 'none' && dayType !== 'Rest';
@@ -1224,16 +1248,33 @@
                 
                 if (element.classList.contains('plan-item-container')) {
                     if (type === 'warmup') {
-                        showConfirmModal('Delete Warmup?', `Permanently remove "${name}" from your ${dayType} warm-up?`, () => {
-                            if(warmups[dayType]) {
-                                warmups[dayType] = warmups[dayType].filter(w => w.name !== name);
-                                saveData(); updateUI();
-                            }
+                         if (!dailyModifications[dateKey]) dailyModifications[dateKey] = { removed: [], added: [], warmups: [] };
+                         const modsForDay = dailyModifications[dateKey];
+                         
+                         // If it's a permanent warmup, add to removed list
+                         if (warmups[dayType] && warmups[dayType].some(w => w.name === name)) {
+                             if (!modsForDay.removedWarmups) modsForDay.removedWarmups = [];
+                             if (!modsForDay.removedWarmups.includes(name)) modsForDay.removedWarmups.push(name);
+                         } else {
+                            // If it's a temporary warmup, remove from temporary list
+                            const index = modsForDay.warmups.indexOf(name);
+                            if (index > -1) modsForDay.warmups.splice(index, 1);
+                         }
+
+                        showUndoToast(`${name} removed for today.`, () => {
+                             if (modsForDay.removedWarmups?.includes(name)) {
+                                 const index = modsForDay.removedWarmups.indexOf(name);
+                                 if (index > -1) modsForDay.removedWarmups.splice(index, 1);
+                             } else if (warmups[dayType] && !warmups[dayType].some(w => w.name === name)) {
+                                 modsForDay.warmups.push(name);
+                             }
+                            saveData(); updateUI();
                         });
+                        saveData(); updateUI();
                         return;
                     }
                     
-                    if (!dailyModifications[dateKey]) dailyModifications[dateKey] = { removed: [], added: [] };
+                    if (!dailyModifications[dateKey]) dailyModifications[dateKey] = { removed: [], added: [], warmups: [] };
                     const modsForDay = dailyModifications[dateKey];
                     const addedIndex = (modsForDay.added || []).indexOf(name);
                     
@@ -1497,7 +1538,7 @@
                     openExerciseDetailModal(name, type, dayType);
                 }
 
-                // Double tap is now handled in handlePointerUp, so we don't need the single-tap favorite toggle here.
+                // Double tap is now handled in handlePointerUp, so we don't need the single-tap log modal logic here.
             });
 
             document.getElementById('undo-toast-btn').addEventListener('click', () => {
@@ -1524,11 +1565,19 @@
                     const { dateKey } = libraryModalContext;
                     if (selected.length > 0 && dateKey) {
                         if (!dailyModifications[dateKey]) {
-                            dailyModifications[dateKey] = { removed: [], added: [] };
+                            dailyModifications[dateKey] = { removed: [], added: [], warmups: [] };
                         }
-                        const existingAdded = new Set(dailyModifications[dateKey].added || []);
-                        selected.forEach(name => existingAdded.add(name));
-                        dailyModifications[dateKey].added = Array.from(existingAdded);
+                        
+                        if (libraryModalContext.type === 'warmup') {
+                            const existingAddedWarmups = new Set(dailyModifications[dateKey].warmups || []);
+                            selected.forEach(name => existingAddedWarmups.add(name));
+                            dailyModifications[dateKey].warmups = Array.from(existingAddedWarmups);
+                        } else {
+                            const existingAddedExercises = new Set(dailyModifications[dateKey].added || []);
+                            selected.forEach(name => existingAddedExercises.add(name));
+                            dailyModifications[dateKey].added = Array.from(existingAddedExercises);
+                        }
+
                         saveData();
                         updateUI();
                     }
@@ -1714,13 +1763,46 @@
                 showModal(ui.workoutModal);
             };
 
-            // --- GIF Generation & Display ---
-            async function loadExerciseGif(exerciseName, forceRedo = false) {
+            // --- MEDIA DISPLAY FUNCTIONS (MODIFIED FOR MEDIA/ FOLDER FIX AND ANTI-DOWNLOAD) ---
+            async function displayExerciseMedia(exerciseName, forceRedo = false) {
                 ui.exerciseGifLoader.classList.remove('hidden');
                 ui.exerciseGifAnimation.style.backgroundImage = 'none';
                 ui.exerciseGifAnimation.style.animation = 'none';
+                ui.exerciseGifAnimation.innerHTML = ''; // Clear content
                 ui.redoGifBtn.classList.add('hidden');
+                
+                const item = exerciseDB.find(ex => ex.name === exerciseName);
+                
+                // Use default logo if the exercise is custom and no media is provided
+                let mediaFilename = item?.media || item?.videoPlaceholder;
+                if (item?.isCustom && !mediaFilename) {
+                    mediaFilename = 'logo.png'; // Fallback to logo.png for custom exercises
+                }
 
+                const antiDownloadAttributes = 'oncontextmenu="return false;" draggable="false"';
+                const preventInteractions = 'pointer-events: none;'; // Prevents tap-to-fullscreen/pause on some mobile videos
+
+                if (mediaFilename && !mediaFilename.startsWith('data:')) {
+                    const mediaPath = mediaFilename.startsWith('media/') || mediaFilename.startsWith('logo.png') ? mediaFilename : `media/${mediaFilename}`;
+                    const mediaType = mediaFilename.toLowerCase().match(/\.(mp4|mov|webm)$/) ? 'video' : 'image';
+
+                    if (mediaType === 'video') {
+                        // Apply controlsList="nodownload" for video to hide download option
+                        ui.exerciseGifAnimation.innerHTML = `<video src="${mediaPath}" loop autoplay muted playsinline controls controlsList="nodownload" class="w-full h-full object-contain rounded-lg" style="${preventInteractions}" ${antiDownloadAttributes} onerror="this.onerror=null; this.parentNode.innerHTML='<p class=\\"text-red-400 text-center p-4\\">Video not found at ${mediaPath}</p>'"></video>`;
+                        ui.exerciseGifLoader.classList.add('hidden');
+                        ui.redoGifBtn.classList.add('hidden');
+                        return;
+                    }
+                    if (mediaType === 'image' || mediaFilename.toLowerCase().match(/\.(jpg|png|jpeg|gif)$/)) {
+                         // Apply anti-download attributes to image
+                         ui.exerciseGifAnimation.innerHTML = `<img src="${mediaPath}" alt="${exerciseName}" class="w-full h-full object-contain rounded-lg" ${antiDownloadAttributes} onerror="this.onerror=null; this.parentNode.innerHTML='<p class=\\"text-red-400 text-center p-4\\">Image not found at ${mediaPath}</p>'">`;
+                         ui.exerciseGifLoader.classList.add('hidden');
+                         ui.redoGifBtn.classList.add('hidden');
+                         return;
+                    }
+                }
+                
+                // --- AI/IndexedDB Logic (Original Fallback for Sprite Animation) ---
                 try {
                     let gifBlob = forceRedo ? null : await getGif(exerciseName);
 
@@ -1776,7 +1858,7 @@
                 currentlyLoggingExercise = item.name;
                 ui.exerciseDetailTitle.textContent = item.name;
 
-                loadExerciseGif(item.name);
+                displayExerciseMedia(item.name); // MODIFIED CALL
                 
                 const instructions = Array.isArray(item.instructions) ? item.instructions : (item.instructions || "").split('\n');
                 
@@ -1890,7 +1972,7 @@
                 focusMuscleContainer.dispatchEvent(new Event('change'));
                 showModal(ui.aiPlanGeneratorModal);
             }
-            ui.aiPlanGeneratorBtn.addEventListener('click', openAiPlanGenerator);
+            document.getElementById('ai-plan-generator-btn-inline').addEventListener('click', openAiPlanGenerator);
             // AI Coach Tab Listeners
             ui.aiTabSpecific.addEventListener('click', () => { ui.aiTabSpecific.classList.add('border-accent', 'text-primary-text'); ui.aiTabSpecific.classList.remove('border-transparent', 'text-secondary-text'); ui.aiTabGeneral.classList.add('border-transparent', 'text-secondary-text'); ui.aiTabGeneral.classList.remove('border-accent', 'text-primary-text'); ui.aiPanelSpecific.classList.remove('hidden'); document.getElementById('ai-panel-general').classList.add('hidden'); });
             ui.aiTabGeneral.addEventListener('click', () => { ui.aiTabGeneral.classList.add('border-accent', 'text-primary-text'); ui.aiTabGeneral.classList.remove('border-transparent', 'text-secondary-text'); ui.aiTabSpecific.classList.add('border-transparent', 'text-secondary-text'); ui.aiTabSpecific.classList.remove('border-accent', 'text-primary-text'); document.getElementById('ai-panel-general').classList.remove('hidden'); ui.aiPanelSpecific.classList.add('hidden'); });
@@ -1909,11 +1991,11 @@
             
              const renderScheduleBuilder = (splitTypes) => {
                  const dayGrid = document.getElementById('ai-plan-schedule-builder');
-                 dayGrid.className = "grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2";
+                 dayGrid.className = "grid grid-cols-2 gap-2";
                  const weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
                  const isPPL = splitTypes.join(',') === 'Push,Pull,Legs'; const defaultPPLSchedule = { Monday: "Push", Tuesday: "Pull", Wednesday: "Legs", Thursday: "Push", Friday: "Pull", Saturday: "Legs", Sunday: "Rest" };
                  const isUpperLower = splitTypes.join(',') === 'Upper,Lower'; const defaultULSchedule = { Monday: "Upper", Tuesday: "Lower", Wednesday: "Rest", Thursday: "Upper", Friday: "Lower", Saturday: "Rest", Sunday: "Rest" };
-                 dayGrid.innerHTML = weekDays.map(day => { let defaultType = 'Rest'; if(isPPL) defaultType = defaultPPLSchedule[day]; if(isUpperLower) defaultType = defaultULSchedule[day]; const defaultIndex = ALL_SPLIT_TYPES.indexOf(defaultType); return ` <button type="button" class="text-center p-2 rounded-lg bg-input-bg day-schedule-btn" data-day="${day}" data-current-index="${defaultIndex > -1 ? defaultIndex : 0}"> <p class="font-semibold text-sm sm:text-base">${day.substring(0, 3)}</p> <p class="text-xs text-blue-400" id="day-type-${day.substring(0, 3)}">${defaultType}</p> </button> `}).join('');
+                 dayGrid.innerHTML = weekDays.map(day => { let defaultType = 'Rest'; if(isPPL) defaultType = defaultPPLSchedule[day]; if(isUpperLower) defaultType = defaultULSchedule[day]; const defaultIndex = ALL_SPLIT_TYPES.indexOf(defaultType); return ` <button type="button" class="text-center p-2 rounded-lg bg-input-bg day-schedule-btn" data-day="${day}" data-current-index="${defaultIndex > -1 ? defaultIndex : 0}"> <p class="font-semibold text-sm">${day.substring(0, 3)}</p> <p class="text-xs text-blue-400">${defaultType}</p> </button> `; }).join('');
                  dayGrid.querySelectorAll('.day-schedule-btn').forEach(btn => { btn.addEventListener('click', () => { let currentIndex = parseInt(btn.dataset.currentIndex) + 1; if (currentIndex >= ALL_SPLIT_TYPES.length) currentIndex = 0; btn.dataset.currentIndex = currentIndex; btn.querySelector('.text-xs').textContent = ALL_SPLIT_TYPES[currentIndex]; renderDurations(); }); });
                  renderDurations();
              };
@@ -1932,20 +2014,81 @@
             document.getElementById('customize-sets-btn').addEventListener('click', (e) => { const container = ui.aiPlanSetsContainer; container.classList.toggle('hidden'); e.target.textContent = container.classList.contains('hidden') ? 'Customize per muscle group' : 'Use default sets'; });
             
             const openExerciseLibrary = (group) => {
-                if (libraryModalContext.purpose === 'edit-plan-add' || libraryModalContext.purpose === 'add-temporary') { ui.exerciseLibraryTitle.textContent = `Add to ${libraryModalContext.dayType || 'Today'}`; ui.addSelectedExercisesBtn.textContent = 'Add to Plan'; } 
+                if (libraryModalContext.purpose === 'edit-plan-add' || libraryModalContext.purpose === 'add-temporary') { 
+                    ui.exerciseLibraryTitle.textContent = `Add ${libraryModalContext.type === 'warmup' ? 'Warm-up' : 'Exercise'} to ${libraryModalContext.dayType || 'Today'}`; 
+                    ui.addSelectedExercisesBtn.textContent = `Add Selected ${libraryModalContext.type === 'warmup' ? 'Warm-ups' : 'Exercises'}`; 
+                } 
                 else if (libraryModalContext.purpose === 'manage') { ui.exerciseLibraryTitle.textContent = 'Manage Exercise Library'; ui.addSelectedExercisesBtn.textContent = 'Done'; }
                 else { ui.exerciseLibraryTitle.textContent = `Select Preferred Exercises for ${group}`; ui.addSelectedExercisesBtn.textContent = 'Confirm Selection'; }
+                
                 const libraryList = document.getElementById('exercise-library-list'), filterSelect = document.getElementById('exercise-library-filter'), equipmentFilterSelect = document.getElementById('exercise-library-equipment-filter'), searchInput = document.getElementById('exercise-library-search');
+                
+                // Toggle filters visibility based on type
+                const isWarmupMode = libraryModalContext.type === 'warmup' && libraryModalContext.purpose === 'add-temporary';
+                filterSelect.style.display = isWarmupMode ? 'none' : 'block';
+                equipmentFilterSelect.style.display = isWarmupMode ? 'none' : 'block';
+                document.getElementById('create-new-exercise-from-library-btn').classList.toggle('hidden', isWarmupMode);
+                
+                let libraryToUse = isWarmupMode ? (warmups[libraryModalContext.dayType] || []) : exerciseDB;
+                
+                // If adding temporary warmups, we only allow selection from the current day's permanent warmups list.
+                if (isWarmupMode) {
+                    const GeneralWarmups = warmups['General'] || [];
+                    libraryToUse = [...libraryToUse, ...GeneralWarmups]; // Allow general warmups to be added temporarily
+                    libraryToUse = [...new Map(libraryToUse.map(item => [item.name, item])).values()]; // Deduplicate
+                }
+
                 filterSelect.innerHTML = '<option value="">All Groups</option>' + ALL_MUSCLE_GROUPS.map(g => `<option value="${g}">${g}</option>`).join('');
                 equipmentFilterSelect.innerHTML = '<option value="">All Equipment</option>' + ALL_EQUIPMENT_TYPES.map(t => `<option value="${t}">${t}</option>`).join('');
                 filterSelect.value = group || ""; equipmentFilterSelect.value = ""; searchInput.value = '';
+                
                 const preSelected = libraryModalContext.purpose === 'pref' ? exercisePrefs[group] : undefined;
+                
                 const renderLibrary = (muscleFilter = '', search = '', equipmentFilter = '') => {
-                    libraryList.innerHTML = exerciseDB.filter(ex => (muscleFilter ? ex.group === muscleFilter : true) && (equipmentFilter ? ex.type === equipmentFilter : true) && (search ? ex.name.toLowerCase().includes(search.toLowerCase()) : true)).sort((a,b) => a.name.localeCompare(b.name)).map(ex => ` <div class="flex items-center justify-between p-2 rounded-md hover:bg-input-bg group"> <label class="flex-grow flex items-center gap-3 cursor-pointer"> <input type="checkbox" value="${ex.name}" ${ (libraryModalContext.purpose === 'add' && false) || (libraryModalContext.purpose === 'pref' && (preSelected === undefined || preSelected.includes(ex.name))) ? 'checked' : ''} class="form-checkbox h-4 w-4 bg-input-bg border-border-color rounded text-blue-500 focus:ring-blue-500"> <div><p>${ex.name}</p><p class="text-xs text-blue-400">${ex.group}</p></div> </label> <div class="hidden group-hover:flex items-center gap-1"> <button class="btn !p-1.5 !bg-transparent edit-exercise-library-btn" data-id="${ex.id}" title="Edit"><i data-lucide="pencil" class="w-4 h-4 pointer-events-none"></i></button> <button class="btn !p-1.5 !bg-transparent delete-exercise-library-btn" data-id="${ex.id}" title="Delete"><i data-lucide="trash-2" class="w-4 h-4 text-red-500/80 pointer-events-none"></i></button> </div> </div> `).join('');
+                    libraryList.innerHTML = libraryToUse
+                        .filter(item => {
+                            if (isWarmupMode) {
+                                return search ? item.name.toLowerCase().includes(search.toLowerCase()) : true;
+                            } else {
+                                return (muscleFilter ? item.group === muscleFilter : true) && 
+                                       (equipmentFilter ? item.type === equipmentFilter : true) && 
+                                       (search ? item.name.toLowerCase().includes(search.toLowerCase()) : true);
+                            }
+                        })
+                        .sort((a,b) => a.name.localeCompare(b.name))
+                        .map(item => {
+                            const isSelected = (libraryModalContext.purpose === 'add' && false) || 
+                                               (libraryModalContext.purpose === 'pref' && (preSelected === undefined || preSelected.includes(item.name))) ||
+                                               (libraryModalContext.purpose === 'add-temporary' && libraryModalContext.type === 'warmup' && dailyModifications[libraryModalContext.dateKey]?.warmups?.includes(item.name));
+                            
+                            return `
+                                <div class="flex items-center justify-between p-2 rounded-md hover:bg-input-bg group">
+                                    <label class="flex-grow flex items-center gap-3 cursor-pointer">
+                                        <input type="checkbox" value="${item.name}" ${isSelected ? 'checked' : ''} class="form-checkbox h-4 w-4 bg-input-bg border-border-color rounded text-blue-500 focus:ring-blue-500">
+                                        <div>
+                                            <p>${item.name}</p>
+                                            <p class="text-xs text-blue-400">${isWarmupMode ? 'Warm-up' : item.group}</p>
+                                        </div>
+                                    </label>
+                                    ${!isWarmupMode ? `
+                                    <div class="hidden group-hover:flex items-center gap-1">
+                                        <button class="btn !p-1.5 !bg-transparent edit-exercise-library-btn" data-id="${item.id}" title="Edit"><i data-lucide="pencil" class="w-4 h-4 pointer-events-none"></i></button>
+                                        <button class="btn !p-1.5 !bg-transparent delete-exercise-library-btn" data-id="${item.id}" title="Delete"><i data-lucide="trash-2" class="w-4 h-4 text-red-500/80 pointer-events-none"></i></button>
+                                    </div>` : ''}
+                                </div>
+                            `;
+                        }).join('');
                         lucide.createIcons();
                 };
-                const renderFilteredLibrary = () => { renderLibrary(filterSelect.value, searchInput.value, equipmentFilterSelect.value); };
-                renderFilteredLibrary(); searchInput.oninput = renderFilteredLibrary; filterSelect.onchange = renderFilteredLibrary; equipmentFilterSelect.onchange = renderFilteredLibrary;
+                
+                const renderFilteredLibrary = () => { 
+                    renderLibrary(filterSelect.value, searchInput.value, equipmentFilterSelect.value); 
+                };
+                
+                renderFilteredLibrary(); 
+                searchInput.oninput = renderFilteredLibrary; 
+                filterSelect.onchange = renderFilteredLibrary; 
+                equipmentFilterSelect.onchange = renderFilteredLibrary;
                 showModal(ui.exerciseLibraryModal);
             };
 
@@ -1967,7 +2110,7 @@
                 e.preventDefault();
                 const splitSelectVal = document.getElementById('ai-plan-split-select').value;
                 if (splitSelectVal === 'Optimized PPL') {
-                    const optimizedPlan = { name: "Optimized PPL", schedule: { "Monday": "Push", "Tuesday": "Pull", "Wednesday": "Legs", "Thursday": "Push", "Friday": "Pull", "Saturday": "Legs", "Sunday": "Rest" }, workouts: [ { day: "Push", exercises: ["Dumbell Incline bench press", "Cable Tricep Pushdown", "Cable Forearm Straight bar Pull", "Machine Chest Press", "Cable Tricep Kickbacks", "Cable Forearm Curl"] }, { day: "Pull", exercises: ["Cable close grip Lat pulldowns", "Bayseian Bicep cable curls", "Cable lateral raises", "Machine bench supported rows", "Cable Hammer curls", "Cable shoulder press"] }, { day: "Legs", exercises: ["Leg extensions", "Leg curls", "Bodyweight captain chair leg raises", "Calf raises", "Hip thrust", "Hacksmith squats", "Cable ab crunches"] } ], restTime: 2, reasoning: "This is your custom-built Optimized Push, Pull, Legs split. It ensures each muscle group is trained twice a week with a variety of compound and isolation movements for balanced development." };
+                    const optimizedPlan = { name: "Optimized PPL", schedule: { "Monday": "Push", "Tuesday": "Pull", "Wednesday": "Legs", "Thursday": "Push", "Friday": "Pull", "Saturday": "Legs", "Sunday": "Rest" }, workouts: [ { day: "Push", exercises: ["Dumbell Incline bench press", "Overhead Press (Dumbbell)", "Triceps Pushdown", "Tricep Kickback (Dumbbell)", "Front Raise (Dumbbell)", "Plate Squeeze (Svend Press)"] }, { day: "Pull", exercises: ["Lat Pulldown (Cable)", "Seated Cable Row - V Grip (Cable)", "Dumbbell Row", "Bicep Curl (Dumbbell)", "Face Pull", "Shrug (Dumbbell)"] }, { day: "Legs", exercises: ["Squat (Barbell)", "Romanian Deadlift (Barbell)", "Leg Extension (Machine)", "Lying Leg Curl (Machine)", "Standing Calf Raise (Machine)", "Hanging Leg Raise"] } ], restTime: 2, reasoning: "This is your custom-built Optimized Push, Pull, Legs split. It ensures each muscle group is trained twice a week with a variety of compound and isolation movements for balanced development." };
                     ui.aiPlanOutput.classList.remove('hidden'); ui.aiPlanExplanation.innerHTML = `<strong>${optimizedPlan.name}</strong><br>${optimizedPlan.reasoning}`; ui.aiPlanJsonOutput.textContent = JSON.stringify(optimizedPlan, null, 2); 
                     return; 
                 }
@@ -2022,8 +2165,8 @@
                 if (!workoutPlan || !workoutPlan.schedule) { showCustomAlert("No Plan", "You don't have a plan to edit yet. Create one with the 'New AI Plan' button first!"); return; }
                 const schedule = workoutPlan.schedule || {}; const workoutTypes = [...new Set(Object.values(schedule))].filter(t => t !== "Rest");
                 const allCycleTypes = ['Rest', ...workoutTypes]; const weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-                ui.editPlanScheduleBuilder.innerHTML = weekDays.map(day => { const currentType = schedule[day] || 'Rest'; const currentIndex = allCycleTypes.indexOf(currentType); return ` <button type="button" class="text-center p-2 rounded-lg bg-input-bg day-schedule-btn" data-day="${day}" data-current-index="${currentIndex > -1 ? currentIndex : 0}"> <p class="font-semibold text-sm sm:text-base">${day.substring(0, 3)}</p> <p class="text-xs text-blue-400">${currentType}</p> </button> `; }).join('');
-                ui.editPlanScheduleBuilder.querySelectorAll('.day-schedule-btn').forEach(btn => { btn.addEventListener('click', () => { let currentIndex = parseInt(btn.dataset.currentIndex) + 1; if (currentIndex >= allCycleTypes.length) currentIndex = 0; btn.dataset.currentIndex = currentIndex; btn.querySelector('.text-xs').textContent = allCycleTypes[currentIndex]; }); });
+                ui.editPlanScheduleBuilder.innerHTML = weekDays.map(day => { const currentType = schedule[day] || 'Rest'; const currentIndex = allCycleTypes.indexOf(currentType); return ` <button type="button" class="text-center p-2 rounded-lg bg-input-bg day-schedule-btn" data-day="${day}" data-current-index="${currentIndex > -1 ? currentIndex : 0}"> <p class="font-semibold text-sm">${day.substring(0, 3)}</p> <p class="text-xs text-blue-400">${currentType}</p> </button> `; }).join('');
+                ui.editPlanScheduleBuilder.querySelectorAll('.day-schedule-btn').forEach(btn => { btn.addEventListener('click', () => { let currentIndex = parseInt(btn.dataset.currentIndex) + 1; if (currentIndex >= allCycleTypes.length) currentIndex = 0; btn.dataset.currentIndex = currentIndex; btn.querySelector('.text-xs').textContent = ALL_SPLIT_TYPES[currentIndex]; }); });
                 const dayTypesForSelect = (workoutPlan.workouts || []).map(w => w.day).sort();
                 ui.editPlanDayTypeSelect.innerHTML = dayTypesForSelect.map(day => `<option value="${day}">${day}</option>`).join('');
                 ui.editPlanWarmupDayTypeSelect.innerHTML = dayTypesForSelect.map(day => `<option value="${day}">${day}</option>`).join('');
@@ -2055,7 +2198,20 @@
             ui.editPlanAddExerciseBtn.addEventListener('click', () => {
                 const dayType = ui.editPlanDayTypeSelect.value;
                 if (!dayType) { showCustomAlert("Select Day", "Please select a workout day type first."); return; }
-                libraryModalContext = { purpose: 'edit-plan-add', dayType: dayType }; openExerciseLibrary();
+                libraryModalContext = { purpose: 'edit-plan-add', dayType: dayType, type: 'exercise' }; openExerciseLibrary();
+            });
+            
+            // NEW: Add temporary Warmup button handler
+            document.getElementById('add-temporary-warmup-btn').addEventListener('click', () => {
+                const dayType = getWorkoutDayType(viewDate);
+                if (!dayType || dayType === 'Rest') {
+                    showCustomAlert("Action Not Available", "Cannot add warm-ups to a rest day.");
+                    return;
+                }
+                // Use the warmups stored in state for the current day type to populate the library
+                const allWarmupNames = (warmups[dayType] || []).map(w => w.name);
+                libraryModalContext = { purpose: 'add-temporary', dateKey: dateToKey(viewDate), dayType: dayType, type: 'warmup', predefinedNames: allWarmupNames };
+                openExerciseLibrary();
             });
 
             document.getElementById('add-temporary-exercise-btn').addEventListener('click', () => {
@@ -2064,7 +2220,7 @@
                     showCustomAlert("Action Not Available", "Cannot add exercises to a rest day.");
                     return;
                 }
-                libraryModalContext = { purpose: 'add-temporary', dateKey: dateToKey(viewDate), dayType: dayType };
+                libraryModalContext = { purpose: 'add-temporary', dateKey: dateToKey(viewDate), dayType: dayType, type: 'exercise' };
                 openExerciseLibrary();
             });
 
@@ -2196,8 +2352,28 @@
                     ui.customExerciseNameInput.value = exercise.name;
                     ui.customExerciseInstructions.value = Array.isArray(exercise.instructions) ? exercise.instructions.join('\n') : '';
                     ui.customExerciseRepRange.value = exercise.repRange || ''; ui.customExerciseGroup.value = exercise.group; document.getElementById('custom-exercise-type').value = exercise.type;
-                    if(exercise.videoPlaceholder && (exercise.videoPlaceholder.startsWith('http') || exercise.videoPlaceholder.startsWith('data:'))){ ui.customExerciseImg.src = exercise.videoPlaceholder; ui.customExerciseImg.classList.remove('hidden'); } 
-                    else { ui.customExerciseImg.classList.add('hidden'); }
+                    
+                    const mediaContainer = document.getElementById('custom-exercise-media-container');
+                    mediaContainer.innerHTML = ''; // Clear container for media
+                    
+                    if(exercise.videoPlaceholder && (exercise.videoPlaceholder.startsWith('http') || exercise.videoPlaceholder.startsWith('data:'))){ 
+                        // For custom exercises, we use the videoPlaceholder field if manually entered.
+                        const isVideo = exercise.videoPlaceholder.toLowerCase().match(/\.(mp4|mov|webm)$/);
+                        const mediaElement = isVideo 
+                            ? `<video src="${exercise.videoPlaceholder}" loop autoplay muted playsinline class="w-full h-full object-contain rounded-lg" oncontextmenu="return false;" draggable="false" onerror="this.onerror=null; this.parentNode.innerHTML='<p class=\\"text-red-400 text-center p-4\\">Video not found</p>'"></video>`
+                            : `<img src="${exercise.videoPlaceholder}" class="w-full h-full object-contain hidden" oncontextmenu="return false;" draggable="false">`;
+
+                        mediaContainer.innerHTML = mediaElement;
+                        ui.customExerciseImg = mediaContainer.querySelector('img') || mediaContainer.querySelector('video');
+                        ui.customExerciseImg.classList.remove('hidden'); 
+                    } else { 
+                        // NEW: Show logo.png for custom exercise if no media is present
+                        mediaContainer.innerHTML = `<img id="custom-exercise-img" src="logo.png" class="w-full h-full object-contain rounded-lg" oncontextmenu="return false;" draggable="false">`;
+                        ui.customExerciseImg = document.getElementById('custom-exercise-img');
+                        ui.customExerciseImg.classList.remove('hidden'); 
+                    }
+                    
+                    ui.customExerciseImgLoader.classList.add('hidden');
                     ui.customExerciseActionButtons.innerHTML = ` <button type="submit" id="save-custom-exercise-changes-btn" class="btn btn-primary w-full">Save Changes</button> <button type="button" id="save-as-variation-btn" class="btn btn-secondary w-full">Save as New Variation</button> `;
                 } else { ui.customExerciseActionButtons.innerHTML = '<button type="submit" id="save-new-custom-exercise-btn" class="w-full btn btn-primary">Save Custom Exercise</button>'; }
                 showModal(ui.customExerciseModal);
@@ -2227,7 +2403,12 @@
                 if(!exerciseName) { showCustomAlert("Input Needed", "Please enter an exercise name first."); return; }
                 const btn = ui.aiGenerateExerciseDetailsBtn; btn.disabled = true;
                 const originalIcon = btn.innerHTML; btn.innerHTML = '<div class="loader"></div>';
-                ui.customExerciseDetailsContainer.classList.remove('hidden'); ui.customExerciseImg.classList.add('hidden'); ui.customExerciseImgLoader.classList.remove('hidden');
+                ui.customExerciseDetailsContainer.classList.remove('hidden'); 
+                
+                const mediaContainer = document.getElementById('custom-exercise-media-container');
+                mediaContainer.innerHTML = '';
+                ui.customExerciseImgLoader.classList.remove('hidden');
+
                 try {
                     const textPrompt = `Generate a concise set of instructions and a recommended rep range for hypertrophy for the exercise: '${exerciseName}'. Respond in a valid JSON object with keys "instructions" (an array of strings) and "repRange" (a string).`;
                     const textApiUrl = getApiUrl('gemini-2.5-flash-preview-05-20');
@@ -2240,22 +2421,30 @@
                     const imageResponse = await fetch(imageApiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ instances: [{ prompt: imagePrompt }], parameters: { "sampleCount": 1 } }) });
                     if(!imageResponse.ok) throw new Error(`Image Gen Error: ${imageResponse.status}`);
                     const imageResult = await imageResponse.json(); const base64Data = imageResult.predictions[0].bytesBase64Encoded;
-                    ui.customExerciseImg.src = `data:image/png;base64,${base64Data}`;
+                    
+                    mediaContainer.innerHTML = `<img id="custom-exercise-img" src="data:image/png;base64,${base64Data}" class="w-full h-full object-contain" oncontextmenu="return false;" draggable="false">`;
+                    ui.customExerciseImg = document.getElementById('custom-exercise-img'); // Re-map the element
+                    
                 } catch (error) { console.error("AI Custom Exercise Error:", error); showCustomAlert("AI Error", "Could not generate all details. Please try again or fill them manually.");
-                } finally { ui.customExerciseImgLoader.classList.add('hidden'); ui.customExerciseImg.classList.remove('hidden'); btn.disabled = false; btn.innerHTML = originalIcon; lucide.createIcons(); }
+                } finally { ui.customExerciseImgLoader.classList.add('hidden'); btn.disabled = false; btn.innerHTML = originalIcon; lucide.createIcons(); }
             });
 
             document.getElementById('custom-img-upload').addEventListener('change', (e) => {
                 const file = e.target.files[0];
                 if (file) {
                     const reader = new FileReader();
-                    reader.onload = (e) => { ui.customExerciseImg.src = e.target.result; ui.customExerciseImg.classList.remove('hidden'); ui.customExerciseImgLoader.classList.add('hidden'); };
+                    reader.onload = (e) => { 
+                        const mediaContainer = document.getElementById('custom-exercise-media-container');
+                        mediaContainer.innerHTML = `<img id="custom-exercise-img" src="${e.target.result}" class="w-full h-full object-contain" oncontextmenu="return false;" draggable="false">`;
+                        ui.customExerciseImg = document.getElementById('custom-exercise-img'); // Re-map the element
+                        ui.customExerciseImgLoader.classList.add('hidden'); 
+                    };
                     reader.readAsDataURL(file);
                 }
             });
 
             function handleSaveCustomExercise(isNewVariation = false) {
-             const newExerciseData = { id: (editingExerciseId && !isNewVariation) ? editingExerciseId : crypto.randomUUID(), isCustom: true, name: ui.customExerciseNameInput.value.trim(), instructions: ui.customExerciseInstructions.value.split('\n').filter(Boolean), repRange: ui.customExerciseRepRange.value, group: document.getElementById('custom-exercise-group').value, type: document.getElementById('custom-exercise-type').value, videoPlaceholder: document.getElementById('custom-img-url').value.trim() || ui.customExerciseImg.src, notes: '', favorite: false, };
+             const newExerciseData = { id: (editingExerciseId && !isNewVariation) ? editingExerciseId : crypto.randomUUID(), isCustom: true, name: ui.customExerciseNameInput.value.trim(), instructions: ui.customExerciseInstructions.value.split('\n').filter(Boolean), repRange: ui.customExerciseRepRange.value, group: document.getElementById('custom-exercise-group').value, type: document.getElementById('custom-exercise-type').value, videoPlaceholder: document.getElementById('custom-img-url').value.trim() || ui.customExerciseImg?.src || '', notes: '', favorite: false, };
              if (!newExerciseData.name || !newExerciseData.group) { showCustomAlert("Missing Info", "Exercise name and muscle group are required."); return; }
              const isNameDuplicate = exerciseDB.some(ex => ex.name.toLowerCase() === newExerciseData.name.toLowerCase() && ex.id !== newExerciseData.id);
              if (isNameDuplicate) { showCustomAlert("Duplicate Name", "An exercise with this name already exists. Please choose a different name."); return; }
@@ -2352,23 +2541,6 @@
             ui.dayNavigationCard.addEventListener('mousedown', handleDayNavPointerDown);
             ui.dayNavigationCard.addEventListener('touchstart', handleDayNavPointerDown, { passive: true });
             
-            // --- NEW: Mobile Menu Listeners ---
-            const openMenu = () => {
-                ui.mobileMenu.classList.remove('translate-x-full');
-                ui.mobileMenuOverlay.classList.remove('hidden');
-                document.body.classList.add('menu-open');
-            };
-
-            const closeMenu = () => {
-                ui.mobileMenu.classList.add('translate-x-full');
-                ui.mobileMenuOverlay.classList.add('hidden');
-                document.body.classList.remove('menu-open');
-            };
-
-            ui.menuToggleBtn.addEventListener('click', openMenu);
-            ui.mobileMenuCloseBtn.addEventListener('click', closeMenu);
-            ui.mobileMenuOverlay.addEventListener('click', closeMenu);
-
             // --- NEW: Permanent Edit Warning Listener ---
             ui.permanentEditOkBtn.addEventListener('click', () => {
                 if (ui.permanentEditDontShowAgain.checked) {
@@ -2382,7 +2554,7 @@
             // --- NEW: Redo GIF Listener ---
             ui.redoGifBtn.addEventListener('click', () => {
                 if(currentlyLoggingExercise) {
-                    loadExerciseGif(currentlyLoggingExercise, true); // forceRedo = true
+                    displayExerciseMedia(currentlyLoggingExercise, true); // forceRedo = true
                 }
             });
             
@@ -2403,9 +2575,9 @@
                             name: "Optimized PPL",
                             schedule: { "Monday": "Push", "Tuesday": "Pull", "Wednesday": "Legs", "Thursday": "Push", "Friday": "Pull", "Saturday": "Legs", "Sunday": "Rest" },
                             workouts: [
-                                { day: "Push", exercises: ["Dumbell Incline bench press", "Cable Tricep Pushdown", "Cable Forearm Straight bar Pull", "Machine Chest Press", "Cable Tricep Kickbacks", "Cable Forearm Curl"] },
-                                { day: "Pull", exercises: ["Cable close grip Lat pulldowns", "Bayseian Bicep cable curls", "Cable lateral raises", "Machine bench supported rows", "Cable Hammer curls", "Cable shoulder press"] },
-                                { day: "Legs", exercises: ["Leg extensions", "Leg curls", "Bodyweight captain chair leg raises", "Calf raises", "Hip thrust", "Hacksmith squats", "Cable ab crunches"] }
+                                { day: "Push", exercises: ["Bench Press (Dumbbell)", "Overhead Press (Dumbbell)", "Triceps Pushdown", "Tricep Kickback (Dumbbell)", "Front Raise (Dumbbell)", "Plate Squeeze (Svend Press)"] },
+                                { day: "Pull", exercises: ["Lat Pulldown (Cable)", "Seated Cable Row - V Grip (Cable)", "Dumbbell Row", "Bicep Curl (Dumbbell)", "Face Pull", "Shrug (Dumbbell)"] },
+                                { day: "Legs", exercises: ["Squat (Barbell)", "Romanian Deadlift (Barbell)", "Leg Extension (Machine)", "Lying Leg Curl (Machine)", "Standing Calf Raise (Machine)", "Hanging Leg Raise"] }
                             ],
                             restTime: 2
                         };
@@ -2420,5 +2592,4 @@
         });
     </script>
 </body>
-
 </html>
