@@ -608,7 +608,7 @@
     <div id="custom-exercise-modal" class="modal-backdrop"><div class="modal-content"><div class="flex justify-between items-center mb-6"><h2 id="custom-exercise-modal-title" class="text-xl font-bold">Add Custom Exercise</h2><button id="close-custom-exercise-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button></div><div id="custom-exercise-initial-choice" class="flex gap-4"><button id="custom-exercise-ai-choice-btn" class="btn btn-primary w-full"><i data-lucide="sparkles"></i>Use AI</button><button id="custom-exercise-manual-choice-btn" class="btn btn-secondary w-full"><i data-lucide="edit-3"></i>Manual</button></div><form id="custom-exercise-form" class="hidden space-y-4 mt-4"><div><label for="custom-exercise-name" class="form-label">Exercise Name *</label><div class="flex gap-2"><input type="text" id="custom-exercise-name" class="form-input" required placeholder="e.g., Kneeling Landmine Press"><button type="button" id="ai-generate-exercise-details-btn" class="btn btn-secondary !px-3 hidden"><i data-lucide="sparkles"></i></button></div></div><div id="custom-exercise-details-container" class="space-y-4 pt-4 border-t border-border-color"><div class="w-full aspect-video bg-black rounded-lg flex items-center justify-center overflow-hidden border border-border-color relative"><div id="custom-exercise-img-loader" class="loader hidden"></div>
         <!-- MODIFIED: Added a container for media display and AI sprite -->
         <div id="custom-exercise-media-container" class="w-full h-full">
-            <img id="custom-exercise-img" src="" class="w-full h-full object-contain hidden">
+            <img id="custom-exercise-img" src="" class="w-full h-full object-cover hidden">
         </div>
         <!-- Old sprite div removed to use innerHTML in media container -->
     </div><div class="grid grid-cols-2 gap-2"><label for="custom-img-upload" class="btn btn-secondary !py-1 text-xs cursor-pointer">Upload Image<input type="file" id="custom-img-upload" class="hidden" accept="image/*"></label><input type="url" id="custom-img-url" class="form-input !py-1 text-xs" placeholder="Or paste image/video URL"></div><div><label for="custom-exercise-instructions" class="form-label">Instructions</label><textarea id="custom-exercise-instructions" rows="5" class="form-input mt-1"></textarea></div><div><label for="custom-exercise-rep-range" class="form-label">Rep Range</label><input type="text" id="custom-exercise-rep-range" class="form-input mt-1"></div><div class="grid grid-cols-2 gap-4"><div><label for="custom-exercise-group" class="form-label">Muscle Group</label><select id="custom-exercise-group" class="form-select mt-1"></select></div><div><label for="custom-exercise-type" class="form-label">Equipment</label><select id="custom-exercise-type" class="form-select mt-1"></select></div></div><div id="custom-exercise-action-buttons" class="flex flex-col gap-2 pt-2"></div></div></form></div></div>
@@ -617,7 +617,7 @@
         <div class="w-full aspect-video bg-black rounded-lg flex items-center justify-center overflow-hidden border border-gray-800 relative">
             <div id="exercise-gif-loader" class="loader hidden"></div>
             <!-- This div will now hold either an <img/> for static media, a <video/> for video, or be styled as a background for the sprite animation -->
-            <div id="exercise-gif-animation" class="w-full h-full bg-no-repeat bg-contain bg-center"></div>
+            <div id="exercise-gif-animation" class="w-full h-full bg-no-repeat bg-cover bg-center"></div>
              <button id="redo-gif-btn" class="absolute bottom-2 right-2 btn btn-secondary !p-1.5 hidden" title="Redo Animation">
                  <i data-lucide="refresh-cw" class="w-4 h-4"></i>
              </button>
@@ -627,8 +627,9 @@
     <div id="workout-modal" class="modal-backdrop"><div class="modal-content"><div class="flex justify-between items-center mb-4"><h2 id="modal-title" class="text-xl font-bold">Log Exercise</h2><div class="flex items-center gap-1 border border-border-color rounded-lg p-1"><button type="button" id="unit-toggle-kg" class="btn !py-1 !px-3 text-sm unit-toggle-btn">kg</button><button type="button" id="unit-toggle-lbs" class="btn !py-1 !px-3 text-sm unit-toggle-btn">lbs</button></div><button id="close-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button></div><form id="workout-log-form"><div class="space-y-4"><div id="sets-container"></div><button type="button" id="add-set-btn" class="w-full btn btn-secondary">Add Set</button><button type="submit" id="save-workout-btn" class="w-full btn btn-primary mt-2">Save Workout</button></div></form></div></div>
     <div id="exercise-library-modal" class="modal-backdrop"><div class="modal-content !max-w-2xl"><div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold" id="exercise-library-title">Exercise Library</h2><button id="close-exercise-library-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button></div>
     <div class="flex flex-wrap gap-2 mb-4">
-        <input type="search" id="exercise-library-search" class="form-input flex-grow" placeholder="Search exercises...">
+        <input type="search" id="exercise-library-search" class="form-input flex-grow" placeholder="Search...">
         <select id="exercise-library-filter" class="form-select w-full"><option value="">All Muscle Groups</option></select>
+        <select id="warmup-library-filter" class="form-select w-full hidden"><option value="">All Muscle Groups</option></select>
         <select id="exercise-library-equipment-filter" class="form-select w-full"><option value="">All Equipment</option></select>
         <button id="create-new-exercise-from-library-btn" class="btn btn-secondary !px-3" title="Create New Exercise"><i data-lucide="plus"></i></button>
     </div>
@@ -725,7 +726,7 @@
                 exerciseGifLoader: document.getElementById('exercise-gif-loader'), exerciseGifAnimation: document.getElementById('exercise-gif-animation'), redoGifBtn: document.getElementById('redo-gif-btn'),
                 exerciseDetailInstructions: document.getElementById('exercise-detail-instructions'), saveInstructionsBtn: document.getElementById('save-instructions-btn'), exerciseDetailRepRange: document.getElementById('exercise-detail-rep-range'),
                 exerciseDetailNotes: document.getElementById('exercise-detail-notes'), saveExerciseNotesBtn: document.getElementById('save-exercise-notes-btn'), logFromDetailBtn: document.getElementById('log-from-detail-btn'),
-                dayViewDateDisplayBtn: document.getElementById('day-view-date-display-btn'), dayViewDateDisplay: document.getElementById('day-view-date-display-btn'),
+                dayViewDateDisplayBtn: document.getElementById('day-view-date-display-btn'),
                 workoutPlanForDay: document.getElementById('workout-plan-for-day'),
                 dayNavigationCard: document.getElementById('day-navigation-card'), 
                 aiTabSpecific: document.getElementById('ai-tab-specific'), aiTabGeneral: document.getElementById('ai-tab-general'), aiPanelSpecific: document.getElementById('ai-panel-specific'), openWorkoutChatBtn: document.getElementById('open-workout-chat-btn'),
@@ -1064,8 +1065,9 @@
                 const isToday = dateToKey(date) === dateToKey(today);
                 const isFutureDay = date > today;
 
-                ui.dayViewDateDisplay.querySelector('#day-view-title-span').textContent = date.toLocaleDateString(undefined, { weekday: 'long' }) + (isToday ? ' (Today)' : '');
-                ui.dayViewDateDisplay.querySelector('#day-view-date-span').textContent = date.toLocaleDateString(undefined, { month: 'long', day: 'numeric' });
+                const dayViewBtn = document.getElementById('day-view-date-display-btn');
+                dayViewBtn.querySelector('#day-view-title-span').textContent = date.toLocaleDateString(undefined, { weekday: 'long' }) + (isToday ? ' (Today)' : '');
+                dayViewBtn.querySelector('#day-view-date-span').textContent = date.toLocaleDateString(undefined, { month: 'long', day: 'numeric' });
                 
                 const addTempExBtn = document.getElementById('add-temporary-exercise-btn');
                 const addTempWarmupBtn = document.getElementById('add-temporary-warmup-btn');
@@ -1096,7 +1098,8 @@
 
                 const createItemHTML = (itemName, type, isTemporary = false) => {
                     const isExercise = type === 'exercise';
-                    const item = isExercise ? exerciseDB.find(e => e.name === itemName) : warmups[dayType]?.find(w => w.name === itemName);
+                    const item = isExercise ? exerciseDB.find(e => e.name === itemName) : Object.values(warmups).flat().find(w => w.name === itemName);
+
                     if (!item) return '';
                     
                     const isLogged = isExercise && loggedExercisesForDay.has(item.name);
@@ -1108,11 +1111,9 @@
                     
                     const temporaryBadge = isTemporary ? `<span class="text-xs ml-2 bg-${isExercise ? 'blue' : 'green'}-500/30 text-${isExercise ? 'blue' : 'green'}-300 px-1.5 py-0.5 rounded">Today</span>` : '';
 
-                    let buttonHtml = `
-                        <button class="btn btn-secondary !p-2 info-btn" data-name="${item.name}" data-type="${type}" data-day-type="${dayType}" title="View Info">
-                            <i data-lucide="info" class="w-4 h-4 pointer-events-none"></i>
-                        </button>
-                    `;
+                    const buttonHtml = isExercise
+                        ? `<button class="btn btn-secondary !p-2 info-btn" data-name="${item.name}" data-type="exercise" data-day-type="${dayType}" title="View Info"><i data-lucide="info" class="w-4 h-4 pointer-events-none"></i></button>`
+                        : ''; // No button for warmups
 
                     return `
                         <div class="swipe-item plan-item-container rounded-lg" data-name="${item.name}" data-type="${type}" data-day-type="${dayType}" draggable="true">
@@ -1251,7 +1252,6 @@
             let isSwiping = false;
             let swipedElement = null;
             let lastTap = 0; // For double tap detection
-            let tapTimeout = null;
 
             function handleItemDelete(element) {
                 const name = element.dataset.name;
@@ -1381,17 +1381,16 @@
                      if (elementToClean.classList.contains('plan-item-container')) {
                         const today = new Date(); today.setHours(0,0,0,0);
                         const isFutureDay = viewDate > today;
-                        const { name, type } = swipedElement.dataset;
+                        const { name, type, dayType } = swipedElement.dataset;
 
-                        if (type === 'exercise' && isDoubleTap) {
+                        if (isDoubleTap && type === 'exercise') {
                             toggleFavoriteByName(name);
-                            // Prevent normal single-tap log modal from opening on double-tap
-                            swipedElement = null;
-                            isSwiping = false;
+                            swipedElement = null; isSwiping = false;
                             return; 
-                        } else if (!isFutureDay && !isNativeDragging && type === 'exercise') {
-                            // Single tap opens log modal (Only for exercises, not warmups)
+                        } else if (type === 'exercise' && !isFutureDay && !isNativeDragging) {
                             openWorkoutModal(name);
+                        } else if (type === 'warmup' && !isNativeDragging) {
+                            openExerciseDetailModal(name, 'warmup', dayType);
                         }
                     }
                 }
@@ -1411,8 +1410,7 @@
             let isDayNavSwiping = false;
 
             function handleDayNavPointerDown(e) {
-                // CHANGE 1: Allow swipe to start on the date/title button
-                if (e.target.closest('.swipe-item, a, select, input')) return;
+                if (e.target.closest('.swipe-item, a, select, input, button') && !e.target.closest('#day-view-date-display-btn')) return;
                 const coords = getPointerCoordinates(e);
                 dayNavPointerStart.x = coords.x; dayNavPointerStart.y = coords.y;
                 dayNavCurrentX = 0; isDayNavSwiping = false;
@@ -1787,15 +1785,13 @@
                     const mediaType = mediaFilename.toLowerCase().match(/\.(mp4|mov|webm)$/) ? 'video' : 'image';
 
                     if (mediaType === 'video') {
-                        // Apply controlsList="nodownload" for video to hide download option
-                        ui.exerciseGifAnimation.innerHTML = `<video src="${mediaPath}" loop autoplay muted playsinline controls controlsList="nodownload" class="w-full h-full object-contain rounded-lg" style="${preventInteractions}" ${antiDownloadAttributes} onerror="this.onerror=null; this.parentNode.innerHTML='<p class=\\"text-red-400 text-center p-4\\">Video not found at ${mediaPath}</p>'"></video>`;
+                        ui.exerciseGifAnimation.innerHTML = `<video src="${mediaPath}" loop autoplay muted playsinline class="w-full h-full object-cover rounded-lg" style="${preventInteractions}" ${antiDownloadAttributes} onerror="this.onerror=null; this.parentNode.innerHTML='<p class=\\"text-red-400 text-center p-4\\">Video not found at ${mediaPath}</p>'"></video>`;
                         ui.exerciseGifLoader.classList.add('hidden');
                         ui.redoGifBtn.classList.add('hidden');
                         return;
                     }
                     if (mediaType === 'image' || mediaFilename.toLowerCase().match(/\.(jpg|png|jpeg|gif)$/)) {
-                         // Apply anti-download attributes to image
-                         ui.exerciseGifAnimation.innerHTML = `<img src="${mediaPath}" alt="${exerciseName}" class="w-full h-full object-contain rounded-lg" ${antiDownloadAttributes} onerror="this.onerror=null; this.parentNode.innerHTML='<p class=\\"text-red-400 text-center p-4\\">Image not found at ${mediaPath}</p>'">`;
+                         ui.exerciseGifAnimation.innerHTML = `<img src="${mediaPath}" alt="${exerciseName}" class="w-full h-full object-cover rounded-lg" ${antiDownloadAttributes} onerror="this.onerror=null; this.parentNode.innerHTML='<p class=\\"text-red-400 text-center p-4\\">Image not found at ${mediaPath}</p>'">`;
                          ui.exerciseGifLoader.classList.add('hidden');
                          ui.redoGifBtn.classList.add('hidden');
                          return;
@@ -1848,8 +1844,7 @@
             function openExerciseDetailModal(itemName, itemType = 'exercise', dayType = null) {
                 let item;
                 if (itemType === 'warmup') {
-                    if (!dayType || !warmups[dayType]) return;
-                    item = warmups[dayType].find(w => w.name === itemName);
+                    item = Object.values(warmups).flat().find(w => w.name === itemName);
                 } else {
                     item = exerciseDB.find(ex => ex.name === itemName);
                 }
@@ -1858,7 +1853,7 @@
                 currentlyLoggingExercise = item.name;
                 ui.exerciseDetailTitle.textContent = item.name;
 
-                displayExerciseMedia(item.name); // MODIFIED CALL
+                displayExerciseMedia(item.name); 
                 
                 const instructions = Array.isArray(item.instructions) ? item.instructions : (item.instructions || "").split('\n');
                 
@@ -2025,41 +2020,51 @@
             document.getElementById('customize-sets-btn').addEventListener('click', (e) => { const container = ui.aiPlanSetsContainer; container.classList.toggle('hidden'); e.target.textContent = container.classList.contains('hidden') ? 'Customize per muscle group' : 'Use default sets'; });
             
             const openExerciseLibrary = (group) => {
+                const libraryList = document.getElementById('exercise-library-list');
+                const exerciseFilterSelect = document.getElementById('exercise-library-filter');
+                const warmupFilterSelect = document.getElementById('warmup-library-filter');
+                const equipmentFilterSelect = document.getElementById('exercise-library-equipment-filter');
+                const searchInput = document.getElementById('exercise-library-search');
+
+                const isWarmupMode = libraryModalContext.type === 'warmup';
+
+                exerciseFilterSelect.style.display = isWarmupMode ? 'none' : 'block';
+                warmupFilterSelect.style.display = isWarmupMode ? 'block' : 'none';
+                equipmentFilterSelect.style.display = isWarmupMode ? 'none' : 'block';
+                document.getElementById('create-new-exercise-from-library-btn').classList.toggle('hidden', isWarmupMode);
+
+                let libraryToUse = isWarmupMode ? Object.values(warmups).flat() : exerciseDB;
+                if (isWarmupMode) {
+                    libraryToUse = [...new Map(libraryToUse.map(item => [item.name, item])).values()];
+                }
+                
                 if (libraryModalContext.purpose === 'edit-plan-add' || libraryModalContext.purpose === 'add-temporary') { 
-                    ui.exerciseLibraryTitle.textContent = `Add ${libraryModalContext.type === 'warmup' ? 'Warm-up' : 'Exercise'} to ${libraryModalContext.dayType || 'Today'}`; 
-                    ui.addSelectedExercisesBtn.textContent = `Add Selected ${libraryModalContext.type === 'warmup' ? 'Warm-ups' : 'Exercises'}`; 
+                    ui.exerciseLibraryTitle.textContent = `Add ${isWarmupMode ? 'Warm-up' : 'Exercise'} to ${libraryModalContext.dayType || 'Today'}`; 
+                    ui.addSelectedExercisesBtn.textContent = `Add Selected ${isWarmupMode ? 'Warm-ups' : 'Exercises'}`; 
                 } 
                 else if (libraryModalContext.purpose === 'manage') { ui.exerciseLibraryTitle.textContent = 'Manage Exercise Library'; ui.addSelectedExercisesBtn.textContent = 'Done'; }
                 else { ui.exerciseLibraryTitle.textContent = `Select Preferred Exercises for ${group}`; ui.addSelectedExercisesBtn.textContent = 'Confirm Selection'; }
-                
-                const libraryList = document.getElementById('exercise-library-list'), filterSelect = document.getElementById('exercise-library-filter'), equipmentFilterSelect = document.getElementById('exercise-library-equipment-filter'), searchInput = document.getElementById('exercise-library-search');
-                
-                // Toggle filters visibility based on type
-                const isWarmupMode = libraryModalContext.type === 'warmup' && libraryModalContext.purpose === 'add-temporary';
-                filterSelect.style.display = isWarmupMode ? 'none' : 'block';
-                equipmentFilterSelect.style.display = isWarmupMode ? 'none' : 'block';
-                document.getElementById('create-new-exercise-from-library-btn').classList.toggle('hidden', isWarmupMode);
-                
-                let libraryToUse = isWarmupMode ? (warmups[libraryModalContext.dayType] || []) : exerciseDB;
-                
-                // If adding temporary warmups, we only allow selection from the current day's permanent warmups list.
+
                 if (isWarmupMode) {
-                    const GeneralWarmups = warmups['General'] || [];
-                    libraryToUse = [...libraryToUse, ...GeneralWarmups]; // Allow general warmups to be added temporarily
-                    libraryToUse = [...new Map(libraryToUse.map(item => [item.name, item])).values()]; // Deduplicate
+                    const ALL_WARMUP_GROUPS = [...new Set(libraryToUse.map(w => w.group).filter(Boolean))].sort();
+                    warmupFilterSelect.innerHTML = '<option value="">All Groups</option>' + ALL_WARMUP_GROUPS.map(g => `<option value="${g}">${g}</option>`).join('');
+                    warmupFilterSelect.value = group || "";
+                } else {
+                    exerciseFilterSelect.innerHTML = '<option value="">All Groups</option>' + ALL_MUSCLE_GROUPS.map(g => `<option value="${g}">${g}</option>`).join('');
+                    equipmentFilterSelect.innerHTML = '<option value="">All Equipment</option>' + ALL_EQUIPMENT_TYPES.map(t => `<option value="${t}">${t}</option>`).join('');
+                    exerciseFilterSelect.value = group || ""; 
+                    equipmentFilterSelect.value = ""; 
                 }
 
-                filterSelect.innerHTML = '<option value="">All Groups</option>' + ALL_MUSCLE_GROUPS.map(g => `<option value="${g}">${g}</option>`).join('');
-                equipmentFilterSelect.innerHTML = '<option value="">All Equipment</option>' + ALL_EQUIPMENT_TYPES.map(t => `<option value="${t}">${t}</option>`).join('');
-                filterSelect.value = group || ""; equipmentFilterSelect.value = ""; searchInput.value = '';
-                
+                searchInput.value = '';
                 const preSelected = libraryModalContext.purpose === 'pref' ? exercisePrefs[group] : undefined;
                 
                 const renderLibrary = (muscleFilter = '', search = '', equipmentFilter = '') => {
                     libraryList.innerHTML = libraryToUse
                         .filter(item => {
                             if (isWarmupMode) {
-                                return search ? item.name.toLowerCase().includes(search.toLowerCase()) : true;
+                                return (muscleFilter ? item.group === muscleFilter : true) && 
+                                       (search ? item.name.toLowerCase().includes(search.toLowerCase()) : true);
                             } else {
                                 return (muscleFilter ? item.group === muscleFilter : true) && 
                                        (equipmentFilter ? item.type === equipmentFilter : true) && 
@@ -2068,9 +2073,9 @@
                         })
                         .sort((a,b) => a.name.localeCompare(b.name))
                         .map(item => {
-                            const isSelected = (libraryModalContext.purpose === 'add' && false) || 
+                             const isSelected = (libraryModalContext.purpose === 'add' && false) || 
                                                (libraryModalContext.purpose === 'pref' && (preSelected === undefined || preSelected.includes(item.name))) ||
-                                               (libraryModalContext.purpose === 'add-temporary' && libraryModalContext.type === 'warmup' && dailyModifications[libraryModalContext.dateKey]?.warmups?.includes(item.name));
+                                               (libraryModalContext.purpose === 'add-temporary' && isWarmupMode && dailyModifications[libraryModalContext.dateKey]?.warmups?.includes(item.name));
                             
                             return `
                                 <div class="flex items-center justify-between p-2 rounded-md hover:bg-input-bg group">
@@ -2078,7 +2083,7 @@
                                         <input type="checkbox" value="${item.name}" ${isSelected ? 'checked' : ''} class="form-checkbox h-4 w-4 bg-input-bg border-border-color rounded text-blue-500 focus:ring-blue-500">
                                         <div>
                                             <p>${item.name}</p>
-                                            <p class="text-xs text-blue-400">${isWarmupMode ? 'Warm-up' : item.group}</p>
+                                            <p class="text-xs text-blue-400">${item.group || (isWarmupMode ? 'Warm-up' : 'N/A')}</p>
                                         </div>
                                     </label>
                                     ${!isWarmupMode ? `
@@ -2093,13 +2098,18 @@
                 };
                 
                 const renderFilteredLibrary = () => { 
-                    renderLibrary(filterSelect.value, searchInput.value, equipmentFilterSelect.value); 
+                     if (isWarmupMode) {
+                        renderLibrary(warmupFilterSelect.value, searchInput.value);
+                    } else {
+                        renderLibrary(exerciseFilterSelect.value, searchInput.value, equipmentFilterSelect.value); 
+                    }
                 };
                 
                 renderFilteredLibrary(); 
                 searchInput.oninput = renderFilteredLibrary; 
-                filterSelect.onchange = renderFilteredLibrary; 
+                exerciseFilterSelect.onchange = renderFilteredLibrary; 
                 equipmentFilterSelect.onchange = renderFilteredLibrary;
+                warmupFilterSelect.onchange = renderFilteredLibrary;
                 showModal(ui.exerciseLibraryModal);
             };
 
@@ -2219,9 +2229,7 @@
                     showCustomAlert("Action Not Available", "Cannot add warm-ups to a rest day.");
                     return;
                 }
-                // Use the warmups stored in state for the current day type to populate the library
-                const allWarmupNames = (warmups[dayType] || []).map(w => w.name);
-                libraryModalContext = { purpose: 'add-temporary', dateKey: dateToKey(viewDate), dayType: dayType, type: 'warmup', predefinedNames: allWarmupNames };
+                libraryModalContext = { purpose: 'add-temporary', dateKey: dateToKey(viewDate), dayType: dayType, type: 'warmup' };
                 openExerciseLibrary();
             });
 
@@ -2371,15 +2379,15 @@
                         // For custom exercises, we use the videoPlaceholder field if manually entered.
                         const isVideo = exercise.videoPlaceholder.toLowerCase().match(/\.(mp4|mov|webm)$/);
                         const mediaElement = isVideo 
-                            ? `<video src="${exercise.videoPlaceholder}" loop autoplay muted playsinline class="w-full h-full object-contain rounded-lg" oncontextmenu="return false;" draggable="false" onerror="this.onerror=null; this.parentNode.innerHTML='<p class=\\"text-red-400 text-center p-4\\">Video not found</p>'"></video>`
-                            : `<img src="${exercise.videoPlaceholder}" class="w-full h-full object-contain hidden" oncontextmenu="return false;" draggable="false">`;
+                            ? `<video src="${exercise.videoPlaceholder}" loop autoplay muted playsinline class="w-full h-full object-cover rounded-lg" oncontextmenu="return false;" draggable="false" onerror="this.onerror=null; this.parentNode.innerHTML='<p class=\\"text-red-400 text-center p-4\\">Video not found</p>'"></video>`
+                            : `<img src="${exercise.videoPlaceholder}" class="w-full h-full object-cover hidden" oncontextmenu="return false;" draggable="false">`;
 
                         mediaContainer.innerHTML = mediaElement;
                         ui.customExerciseImg = mediaContainer.querySelector('img') || mediaContainer.querySelector('video');
                         ui.customExerciseImg.classList.remove('hidden'); 
                     } else { 
                         // NEW: Show logo.png for custom exercise if no media is present
-                        mediaContainer.innerHTML = `<img id="custom-exercise-img" src="logo.png" class="w-full h-full object-contain rounded-lg" oncontextmenu="return false;" draggable="false">`;
+                        mediaContainer.innerHTML = `<img id="custom-exercise-img" src="logo.png" class="w-full h-full object-cover rounded-lg" oncontextmenu="return false;" draggable="false">`;
                         ui.customExerciseImg = document.getElementById('custom-exercise-img');
                         ui.customExerciseImg.classList.remove('hidden'); 
                     }
@@ -2433,7 +2441,7 @@
                     if(!imageResponse.ok) throw new Error(`Image Gen Error: ${imageResponse.status}`);
                     const imageResult = await imageResponse.json(); const base64Data = imageResult.predictions[0].bytesBase64Encoded;
                     
-                    mediaContainer.innerHTML = `<img id="custom-exercise-img" src="data:image/png;base64,${base64Data}" class="w-full h-full object-contain" oncontextmenu="return false;" draggable="false">`;
+                    mediaContainer.innerHTML = `<img id="custom-exercise-img" src="data:image/png;base64,${base64Data}" class="w-full h-full object-cover" oncontextmenu="return false;" draggable="false">`;
                     ui.customExerciseImg = document.getElementById('custom-exercise-img'); // Re-map the element
                     
                 } catch (error) { console.error("AI Custom Exercise Error:", error); showCustomAlert("AI Error", "Could not generate all details. Please try again or fill them manually.");
@@ -2446,7 +2454,7 @@
                     const reader = new FileReader();
                     reader.onload = (e) => { 
                         const mediaContainer = document.getElementById('custom-exercise-media-container');
-                        mediaContainer.innerHTML = `<img id="custom-exercise-img" src="${e.target.result}" class="w-full h-full object-contain" oncontextmenu="return false;" draggable="false">`;
+                        mediaContainer.innerHTML = `<img id="custom-exercise-img" src="${e.target.result}" class="w-full h-full object-cover" oncontextmenu="return false;" draggable="false">`;
                         ui.customExerciseImg = document.getElementById('custom-exercise-img'); // Re-map the element
                         ui.customExerciseImgLoader.classList.add('hidden'); 
                     };
