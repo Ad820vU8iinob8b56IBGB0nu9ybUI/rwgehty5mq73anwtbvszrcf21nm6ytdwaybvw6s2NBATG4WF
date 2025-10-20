@@ -705,6 +705,9 @@
             let undoTimeout = null;
             let undoCallback = null;
 
+            // FIX 3: State for preventing tap on scroll
+            let pointerDelta = { x: 0, y: 0 };
+
             let ALL_MUSCLE_GROUPS = [];
             let ALL_EQUIPMENT_TYPES = [];
             const ALL_SPLIT_TYPES = ['Rest', 'Push', 'Pull', 'Legs', 'Upper', 'Lower', 'Full Body'];
@@ -1208,7 +1211,8 @@
                     const plannedExercises = workoutForDay?.exercises || [];
                     
                     const finalPlannedExercises = plannedExercises.filter(exName => !removedExercises.has(exName));
-                    const allExercisesForDay = [...new Set([...finalPlannedExercises, ...addedExercises])];
+                    // FIX 1: Filter out any empty/falsy values that might sneak into the arrays
+                    const allExercisesForDay = [...new Set([...finalPlannedExercises, ...addedExercises])].filter(Boolean);
                     totalCount = allExercisesForDay.length;
                     
                     if (totalCount > 0) {
@@ -1346,6 +1350,9 @@
                 if (!swipedElement) return;
                 const coords = getPointerCoordinates(e);
                 const deltaX = coords.x - pointerStart.x; const deltaY = coords.y - pointerStart.y;
+                // FIX 3: Store delta values for later use
+                pointerDelta = { x: deltaX, y: deltaY };
+
                 if (!isSwiping && Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 10) isSwiping = true;
                 if (isSwiping) {
                     if(e.cancelable) e.preventDefault();
@@ -1371,13 +1378,16 @@
                 const isDoubleTap = (currentTime - lastTap) < 300 && !isSwiping;
                 lastTap = currentTime;
 
+                // FIX 3: Check total distance moved to differentiate scroll from tap
+                const totalDistance = Math.sqrt(pointerDelta.x**2 + pointerDelta.y**2);
+
                 if (isSwiping) {
                     const elementWidth = elementToClean.offsetWidth; const swipeThreshold = elementWidth * 0.35;
                     content.classList.add('returning');
                     if (currentX < -swipeThreshold) { handleItemEdit(elementToClean); content.style.transform = 'translateX(0)'; } 
                     else if (currentX > swipeThreshold) { handleItemDelete(elementToClean); } 
                     else { content.style.transform = 'translateX(0)'; }
-                } else {
+                } else if (totalDistance < 10) { // FIX 3: Only process as a tap if movement was minimal
                      if (elementToClean.classList.contains('plan-item-container')) {
                         const today = new Date(); today.setHours(0,0,0,0);
                         const isFutureDay = viewDate > today;
@@ -1396,6 +1406,8 @@
                 }
                 
                 isSwiping = false; swipedElement = null; currentX = 0;
+                // FIX 3: Reset pointer delta
+                pointerDelta = { x: 0, y: 0 };
                 
                 setTimeout(() => {
                     content.classList.remove('swiping', 'returning');
@@ -2002,9 +2014,9 @@
 
                 if (isWarmupMode) {
                     const allWarmupItems = Object.values(warmups).flat();
+                    // FIX 2: Get all unique groups from the full list of warmups before de-duplicating by name.
+                    const ALL_WARMUP_GROUPS = [...new Set(allWarmupItems.map(w => w.group).filter(Boolean))].sort();
                     libraryToUse = [...new Map(allWarmupItems.map(item => [item.name, item])).values()];
-                    
-                    const ALL_WARMUP_GROUPS = [...new Set(libraryToUse.map(w => w.group).filter(Boolean))].sort();
                     
                     warmupFilterSelect.innerHTML = '<option value="">All Muscle Groups</option>' + ALL_WARMUP_GROUPS.map(g => `<option value="${g}">${g}</option>`).join('');
                     
