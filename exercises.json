@@ -415,49 +415,49 @@
   ],
   "warmups": {
     "Push": [
-      {"name":"Arm Circles","instructions":["Stand with feet shoulder-width apart.","Extend your arms to the sides.","Make small circles, gradually increasing to large circles.","Perform for 30 seconds forward, then 30 seconds backward."],"repRange":"1 minute total","media":"logo.png"},
-      {"name":"Torso Twists","instructions":["Stand with feet slightly wider than shoulder-width, knees slightly bent.","Hold your arms out or cross them over your chest.","Gently twist your torso from side to side.","Perform for 30-60 seconds."],"repRange":"1 minute total","media":"logo.png"},
-      {"name":"Dynamic Chest Stretches","instructions":["Stand tall.","Swing both arms outwards and backwards, feeling a stretch in your chest.","Return arms to the front, crossing them over each other.","Repeat for 10-15 repetitions."],"repRange":"10-15 reps","media":"logo.png"}
+      {"name":"Arm Circles", "group": "Shoulders", "instructions":["Stand with feet shoulder-width apart.","Extend your arms to the sides.","Make small circles, gradually increasing to large circles.","Perform for 30 seconds forward, then 30 seconds backward."],"repRange":"1 minute total","media":"logo.png"},
+      {"name":"Torso Twists", "group": "Abdominals", "instructions":["Stand with feet slightly wider than shoulder-width, knees slightly bent.","Hold your arms out or cross them over your chest.","Gently twist your torso from side to side.","Perform for 30-60 seconds."],"repRange":"1 minute total","media":"logo.png"},
+      {"name":"Dynamic Chest Stretches", "group": "Chest", "instructions":["Stand tall.","Swing both arms outwards and backwards, feeling a stretch in your chest.","Return arms to the front, crossing them over each other.","Repeat for 10-15 repetitions."],"repRange":"10-15 reps","media":"logo.png"}
     ],
     "Pull": [
-      {"name":"Cat-Cow","instructions":["Start on your hands and knees.","Inhale as you drop your belly towards the mat (Cow).","Exhale as you round your spine upwards (Cat).","Repeat for 10-15 repetitions."],"repRange":"10-15 reps","media":"logo.png"},
-      {"name":"Scapular Pull-ups","instructions":["Hang from a pull-up bar with an overhand grip.","Without bending your arms, pull your shoulder blades down and together.","Hold for a second, then relax.","Repeat for 8-12 repetitions."],"repRange":"8-12 reps","media":"logo.png"},
-      {"name":"Band Pull-Aparts","instructions":["Hold a light resistance band with both hands, shoulder-width apart.","Keeping your arms straight, pull the band apart by squeezing your shoulder blades.","Return to the start with control.","Repeat for 15-20 repetitions."],"repRange":"15-20 reps","media":"logo.png"}
+      {"name":"Cat-Cow", "group": "Back", "instructions":["Start on your hands and knees.","Inhale as you drop your belly towards the mat (Cow).","Exhale as you round your spine upwards (Cat).","Repeat for 10-15 repetitions."],"repRange":"10-15 reps","media":"logo.png"},
+      {"name":"Scapular Pull-ups", "group": "Back", "instructions":["Hang from a pull-up bar with an overhand grip.","Without bending your arms, pull your shoulder blades down and together.","Hold for a second, then relax.","Repeat for 8-12 repetitions."],"repRange":"8-12 reps","media":"logo.png"},
+      {"name":"Band Pull-Aparts", "group": "Shoulders", "instructions":["Hold a light resistance band with both hands, shoulder-width apart.","Keeping your arms straight, pull the band apart by squeezing your shoulder blades.","Return to the start with control.","Repeat for 15-20 repetitions."],"repRange":"15-20 reps","media":"logo.png"}
     ],
     "Legs": [
-      {"name":"Front-to-back Leg Swings","instructions":["Hold onto a stable surface for balance.","Swing one leg forward and backward in a controlled motion.","Keep your core engaged and torso upright.","Perform 10-15 swings per leg."],"repRange":"10-15 reps per leg","media":"logo.png"},
-      {"name":"Side-to-side Leg Swings","instructions":["Face a stable surface and hold on for balance.","Swing one leg out to the side, then across the front of your body.","Keep the movement controlled.","Perform 10-15 swings per leg."],"repRange":"10-15 reps per leg","media":"logo.png"},
-      {"name":"Side Lying Twists","instructions":["Lie on your side with your knees bent at 90 degrees.","Extend your top arm and rotate your torso, trying to touch your top shoulder blade to the floor.","Follow your hand with your eyes.","Perform 8-10 twists per side."],"repRange":"8-10 reps per side","media":"logo.png"},
-      {"name":"Step Throughs","instructions":["Start in a push-up position.","Bring your right foot forward and place it outside your right hand, sinking your hips.","Hold for a moment, then step back to the start.","Repeat with the left leg.","Alternate for 5-8 repetitions per side."],"repRange":"5-8 reps per side","media":"logo.png"}
+      {"name":"Front-to-back Leg Swings", "group": "Hamstrings", "instructions":["Hold onto a stable surface for balance.","Swing one leg forward and backward in a controlled motion.","Keep your core engaged and torso upright.","Perform 10-15 swings per leg."],"repRange":"10-15 reps per leg","media":"logo.png"},
+      {"name":"Side-to-side Leg Swings", "group": "Glutes", "instructions":["Face a stable surface and hold on for balance.","Swing one leg out to the side, then across the front of your body.","Keep the movement controlled.","Perform 10-15 swings per leg."],"repRange":"10-15 reps per leg","media":"logo.png"},
+      {"name":"Side Lying Twists", "group": "Abdominals", "instructions":["Lie on your side with your knees bent at 90 degrees.","Extend your top arm and rotate your torso, trying to touch your top shoulder blade to the floor.","Follow your hand with your eyes.","Perform 8-10 twists per side."],"repRange":"8-10 reps per side","media":"logo.png"},
+      {"name":"Step Throughs", "group": "Glutes", "instructions":["Start in a push-up position.","Bring your right foot forward and place it outside your right hand, sinking your hips.","Hold for a moment, then step back to the start.","Repeat with the left leg.","Alternate for 5-8 repetitions per side."],"repRange":"5-8 reps per side","media":"logo.png"}
     ],
     "General": [
-      {"name":"Downward Dog","instructions":["Start on hands and knees.","Lift your hips up and back to form an inverted V shape."],"repRange":"Hold for 30-60 seconds","media":"logo.png"},
-      {"name":"Stretching","instructions":["Perform various dynamic or static stretches targeting major muscle groups."],"repRange":"5-10 minutes","media":"logo.png"},
-      {"name":"Warm Up","instructions":["Perform light cardio and dynamic stretches to prepare for your workout."],"repRange":"5-10 minutes","media":"logo.png"},
-      {"name":"Yoga","instructions":["Follow a yoga routine to improve flexibility and mindfulness."],"repRange":"15-60 minutes","media":"logo.png"},
-      {"name":"Pilates","instructions":["Follow a Pilates routine to improve core strength and stability."],"repRange":"15-60 minutes","media":"logo.png"},
-      {"name":"Aerobics","instructions":["Follow an aerobics routine."],"repRange":"20-60 minutes","media":"logo.png"},
-      {"name":"Air Bike","instructions":["Sit on the air bike and pedal with your feet while pushing and pulling with your arms."],"repRange":"5-20 minutes","media":"logo.png"},
-      {"name":"Battle Ropes","instructions":["Hold the ends of the battle ropes and create waves or slams with your arms."],"repRange":"20-60 seconds","media":"logo.png"},
-      {"name":"Boxing","instructions":["Engage in boxing drills or sparring."],"repRange":"Varies","media":"logo.png"},
-      {"name":"Climbing","instructions":["Climb on a rock wall or similar structure."],"repRange":"Varies","media":"logo.png"},
-      {"name":"Cycling","instructions":["Ride a stationary or outdoor bicycle."],"repRange":"20-60 minutes","media":"logo.png"},
-      {"name":"Elliptical Trainer","instructions":["Use an elliptical machine for a low-impact cardio workout."],"repRange":"20-45 minutes","media":"logo.png"},
-      {"name":"HIIT","instructions":["Perform high-intensity interval training, alternating between intense bursts of activity and short recovery periods."],"repRange":"10-30 minutes","media":"logo.png"},
-      {"name":"Hiking","instructions":["Walk on outdoor trails, often with elevation changes."],"repRange":"Varies","media":"logo.png"},
-      {"name":"Jump Rope","instructions":["Jump over a rope as it passes under your feet."],"repRange":"5-20 minutes","media":"logo.png"},
-      {"name":"Rowing Machine","instructions":["Use a rowing machine for a full-body cardio workout."],"repRange":"10-30 minutes","media":"logo.png"},
-      {"name":"Running","instructions":["Run outdoors or on a treadmill."],"repRange":"Varies","media":"logo.png"},
-      {"name":"Skating","instructions":["Ice skate or rollerblade."],"repRange":"Varies","media":"logo.png"},
-      {"name":"Skiing","instructions":["Ski downhill or cross-country."],"repRange":"Varies","media":"logo.png"},
-      {"name":"Snowboarding","instructions":["Ride a snowboard down a snow-covered slope."],"repRange":"Varies","media":"logo.png"},
-      {"name":"Spinning","instructions":["Participate in a group indoor cycling class."],"repRange":"30-60 minutes","media":"logo.png"},
-      {"name":"Sprints","instructions":["Run at maximum speed for short distances."],"repRange":"Varies","media":"logo.png"},
-      {"name":"Stair Machine (Floors)","instructions":["Use a stair-climbing machine, tracking floors climbed."],"repRange":"10-30 minutes","media":"logo.png"},
-      {"name":"Stair Machine (Steps)","instructions":["Use a stair-climbing machine, tracking steps taken."],"repRange":"10-30 minutes","media":"logo.png"},
-      {"name":"Swimming","instructions":["Swim laps in a pool or open water."],"repRange":"20-60 minutes","media":"logo.png"},
-      {"name":"Treadmill","instructions":["Walk, jog, or run on a treadmill."],"repRange":"Varies","media":"logo.png"},
-      {"name":"Walking","instructions":["Walk at a steady pace indoors or outdoors."],"repRange":"20-60 minutes","media":"logo.png"}
+      {"name":"Downward Dog", "group": "Full Body", "instructions":["Start on hands and knees.","Lift your hips up and back to form an inverted V shape."],"repRange":"Hold for 30-60 seconds","media":"logo.png"},
+      {"name":"Stretching", "group": "Full Body", "instructions":["Perform various dynamic or static stretches targeting major muscle groups."],"repRange":"5-10 minutes","media":"logo.png"},
+      {"name":"Warm Up", "group": "Full Body", "instructions":["Perform light cardio and dynamic stretches to prepare for your workout."],"repRange":"5-10 minutes","media":"logo.png"},
+      {"name":"Yoga", "group": "Full Body", "instructions":["Follow a yoga routine to improve flexibility and mindfulness."],"repRange":"15-60 minutes","media":"logo.png"},
+      {"name":"Pilates", "group": "Full Body", "instructions":["Follow a Pilates routine to improve core strength and stability."],"repRange":"15-60 minutes","media":"logo.png"},
+      {"name":"Aerobics", "group": "Cardio", "instructions":["Follow an aerobics routine."],"repRange":"20-60 minutes","media":"logo.png"},
+      {"name":"Air Bike", "group": "Cardio", "instructions":["Sit on the air bike and pedal with your feet while pushing and pulling with your arms."],"repRange":"5-20 minutes","media":"logo.png"},
+      {"name":"Battle Ropes", "group": "Full Body", "instructions":["Hold the ends of the battle ropes and create waves or slams with your arms."],"repRange":"20-60 seconds","media":"logo.png"},
+      {"name":"Boxing", "group": "Cardio", "instructions":["Engage in boxing drills or sparring."],"repRange":"Varies","media":"logo.png"},
+      {"name":"Climbing", "group": "Full Body", "instructions":["Climb on a rock wall or similar structure."],"repRange":"Varies","media":"logo.png"},
+      {"name":"Cycling", "group": "Cardio", "instructions":["Ride a stationary or outdoor bicycle."],"repRange":"20-60 minutes","media":"logo.png"},
+      {"name":"Elliptical Trainer", "group": "Cardio", "instructions":["Use an elliptical machine for a low-impact cardio workout."],"repRange":"20-45 minutes","media":"logo.png"},
+      {"name":"HIIT", "group": "Cardio", "instructions":["Perform high-intensity interval training, alternating between intense bursts of activity and short recovery periods."],"repRange":"10-30 minutes","media":"logo.png"},
+      {"name":"Hiking", "group": "Cardio", "instructions":["Walk on outdoor trails, often with elevation changes."],"repRange":"Varies","media":"logo.png"},
+      {"name":"Jump Rope", "group": "Cardio", "instructions":["Jump over a rope as it passes under your feet."],"repRange":"5-20 minutes","media":"logo.png"},
+      {"name":"Rowing Machine", "group": "Cardio", "instructions":["Use a rowing machine for a full-body cardio workout."],"repRange":"10-30 minutes","media":"logo.png"},
+      {"name":"Running", "group": "Cardio", "instructions":["Run outdoors or on a treadmill."],"repRange":"Varies","media":"logo.png"},
+      {"name":"Skating", "group": "Cardio", "instructions":["Ice skate or rollerblade."],"repRange":"Varies","media":"logo.png"},
+      {"name":"Skiing", "group": "Cardio", "instructions":["Ski downhill or cross-country."],"repRange":"Varies","media":"logo.png"},
+      {"name":"Snowboarding", "group": "Cardio", "instructions":["Ride a snowboard down a snow-covered slope."],"repRange":"Varies","media":"logo.png"},
+      {"name":"Spinning", "group": "Cardio", "instructions":["Participate in a group indoor cycling class."],"repRange":"30-60 minutes","media":"logo.png"},
+      {"name":"Sprints", "group": "Cardio", "instructions":["Run at maximum speed for short distances."],"repRange":"Varies","media":"logo.png"},
+      {"name":"Stair Machine (Floors)", "group": "Cardio", "instructions":["Use a stair-climbing machine, tracking floors climbed."],"repRange":"10-30 minutes","media":"logo.png"},
+      {"name":"Stair Machine (Steps)", "group": "Cardio", "instructions":["Use a stair-climbing machine, tracking steps taken."],"repRange":"10-30 minutes","media":"logo.png"},
+      {"name":"Swimming", "group": "Cardio", "instructions":["Swim laps in a pool or open water."],"repRange":"20-60 minutes","media":"logo.png"},
+      {"name":"Treadmill", "group": "Cardio", "instructions":["Walk, jog, or run on a treadmill."],"repRange":"Varies","media":"logo.png"},
+      {"name":"Walking", "group": "Cardio", "instructions":["Walk at a steady pace indoors or outdoors."],"repRange":"20-60 minutes","media":"logo.png"}
     ]
   }
 }
