@@ -417,7 +417,7 @@
         <main>
              <div class="flex flex-col justify-between items-center mb-8 px-2">
                     <div>
-                        <h2 id="plan-main-title" class="text-2xl font-bold">Your Workout Plan</h2>
+                        <h2 id="plan-main-title" class="text-2xl font-bold cursor-pointer" title="Double-tap to edit plan name">Your Workout Plan</h2>
                         <p id="plan-subtitle" class="text-gray-400 mt-1">Your personalized workout schedule.</p>
                     </div>
                     <!-- REMOVED ORIGINAL BUTTON CONTAINER -->
@@ -1761,83 +1761,41 @@
                 showModal(ui.workoutModal);
             };
 
-            // --- MEDIA DISPLAY FUNCTIONS (MODIFIED FOR MEDIA/ FOLDER FIX AND ANTI-DOWNLOAD) ---
-            async function displayExerciseMedia(exerciseName, forceRedo = false) {
+            // --- MEDIA DISPLAY FUNCTIONS (MODIFIED FOR MEDIA/ FOLDER FIX AND NO AI) ---
+            async function displayExerciseMedia(exerciseName) {
                 ui.exerciseGifLoader.classList.remove('hidden');
                 ui.exerciseGifAnimation.style.backgroundImage = 'none';
                 ui.exerciseGifAnimation.style.animation = 'none';
                 ui.exerciseGifAnimation.innerHTML = ''; // Clear content
                 ui.redoGifBtn.classList.add('hidden');
                 
-                const item = exerciseDB.find(ex => ex.name === exerciseName);
+                const item = exerciseDB.find(ex => ex.name === exerciseName) || Object.values(warmups).flat().find(w => w.name === exerciseName);
                 
-                // Use default logo if the exercise is custom and no media is provided
                 let mediaFilename = item?.media || item?.videoPlaceholder;
-                if (item?.isCustom && !mediaFilename) {
-                    mediaFilename = 'logo.png'; // Fallback to logo.png for custom exercises
-                }
 
                 const antiDownloadAttributes = 'oncontextmenu="return false;" draggable="false"';
-                const preventInteractions = 'pointer-events: none;'; // Prevents tap-to-fullscreen/pause on some mobile videos
+                const preventInteractions = 'pointer-events: none;';
 
-                if (mediaFilename && !mediaFilename.startsWith('data:')) {
-                    const mediaPath = mediaFilename.startsWith('media/') || mediaFilename.startsWith('logo.png') ? mediaFilename : `media/${mediaFilename}`;
+                // Check for a specific media file (not a placeholder like logo.png)
+                if (mediaFilename && !mediaFilename.startsWith('data:') && mediaFilename !== 'logo.png') {
+                    const mediaPath = mediaFilename.startsWith('media/') ? mediaFilename : `media/${mediaFilename}`;
                     const mediaType = mediaFilename.toLowerCase().match(/\.(mp4|mov|webm)$/) ? 'video' : 'image';
 
                     if (mediaType === 'video') {
-                        ui.exerciseGifAnimation.innerHTML = `<video src="${mediaPath}" loop autoplay muted playsinline class="w-full h-full object-cover rounded-lg" style="${preventInteractions}" ${antiDownloadAttributes} onerror="this.onerror=null; this.parentNode.innerHTML='<p class=\\"text-red-400 text-center p-4\\">Video not found at ${mediaPath}</p>'"></video>`;
-                        ui.exerciseGifLoader.classList.add('hidden');
-                        ui.redoGifBtn.classList.add('hidden');
-                        return;
+                        ui.exerciseGifAnimation.innerHTML = `<video src="${mediaPath}" loop autoplay muted playsinline class="w-full h-full object-cover rounded-lg" style="${preventInteractions}" ${antiDownloadAttributes} onerror="this.onerror=null; this.src='logo.png'; this.classList.remove('object-cover'); this.classList.add('object-contain', 'p-4');"></video>`;
+                    } else if (mediaType === 'image' || mediaFilename.toLowerCase().match(/\.(jpg|png|jpeg|gif)$/)) {
+                         ui.exerciseGifAnimation.innerHTML = `<img src="${mediaPath}" alt="${exerciseName}" class="w-full h-full object-cover rounded-lg" ${antiDownloadAttributes} onerror="this.onerror=null; this.src='logo.png'; this.classList.remove('object-cover'); this.classList.add('object-contain', 'p-4');">`;
+                    } else {
+                        // Fallback for unknown file types
+                        ui.exerciseGifAnimation.innerHTML = `<img src="logo.png" alt="FitTrack AI Logo" class="w-full h-full object-contain p-4 rounded-lg">`;
                     }
-                    if (mediaType === 'image' || mediaFilename.toLowerCase().match(/\.(jpg|png|jpeg|gif)$/)) {
-                         ui.exerciseGifAnimation.innerHTML = `<img src="${mediaPath}" alt="${exerciseName}" class="w-full h-full object-cover rounded-lg" ${antiDownloadAttributes} onerror="this.onerror=null; this.parentNode.innerHTML='<p class=\\"text-red-400 text-center p-4\\">Image not found at ${mediaPath}</p>'">`;
-                         ui.exerciseGifLoader.classList.add('hidden');
-                         ui.redoGifBtn.classList.add('hidden');
-                         return;
-                    }
-                }
-                
-                // --- AI/IndexedDB Logic (Original Fallback for Sprite Animation) ---
-                try {
-                    let gifBlob = forceRedo ? null : await getGif(exerciseName);
-
-                    if (!gifBlob) {
-                        const imagePrompt = `Create an animated GIF sprite sheet of a person demonstrating the exercise '${exerciseName}'. The animation should be a seamless loop showing the full range of motion. Use a clean, white background. The sprite sheet should be a single horizontal row of 8 frames.`;
-                        const imageApiUrl = getApiUrl('imagen-3.0-generate-002', 'predict');
-                        const imageResponse = await fetch(imageApiUrl, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ instances: [{ prompt: imagePrompt }], parameters: { "sampleCount": 1 } })
-                        });
-                        if (!imageResponse.ok) throw new Error(`Image Gen Error: ${imageResponse.status}`);
-                        const imageResult = await imageResponse.json();
-                        const base64Data = imageResult.predictions[0].bytesBase64Encoded;
-                        
-                        const byteString = atob(base64Data);
-                        const mimeString = 'image/png';
-                        const ab = new ArrayBuffer(byteString.length);
-                        const ia = new Uint8Array(ab);
-                        for (let i = 0; i < byteString.length; i++) {
-                            ia[i] = byteString.charCodeAt(i);
-                        }
-                        gifBlob = new Blob([ab], { type: mimeString });
-
-                        await saveGif(exerciseName, gifBlob);
-                    }
-                    
-                    const gifUrl = URL.createObjectURL(gifBlob);
-                    ui.exerciseGifAnimation.style.backgroundImage = `url(${gifUrl})`;
-                    ui.exerciseGifAnimation.style.animation = 'play-sprite 1.5s steps(8) infinite';
-                
-                } catch (error) {
-                    console.error("Failed to load or generate exercise GIF:", error);
-                    ui.exerciseGifAnimation.style.backgroundImage = `url('https://placehold.co/400x225/111111/FFFFFF?text=Animation+Failed')`;
-                } finally {
                     ui.exerciseGifLoader.classList.add('hidden');
-                    ui.redoGifBtn.classList.remove('hidden');
-                    lucide.createIcons();
+                    return;
                 }
+                
+                // --- Fallback to logo if no specific media is found ---
+                ui.exerciseGifAnimation.innerHTML = `<img src="logo.png" alt="FitTrack AI Logo" class="w-full h-full object-contain p-4 rounded-lg">`;
+                ui.exerciseGifLoader.classList.add('hidden');
             }
 
 
@@ -2033,10 +1991,7 @@
                 equipmentFilterSelect.style.display = isWarmupMode ? 'none' : 'block';
                 document.getElementById('create-new-exercise-from-library-btn').classList.toggle('hidden', isWarmupMode);
 
-                let libraryToUse = isWarmupMode ? Object.values(warmups).flat() : exerciseDB;
-                if (isWarmupMode) {
-                    libraryToUse = [...new Map(libraryToUse.map(item => [item.name, item])).values()];
-                }
+                let libraryToUse;
                 
                 if (libraryModalContext.purpose === 'edit-plan-add' || libraryModalContext.purpose === 'add-temporary') { 
                     ui.exerciseLibraryTitle.textContent = `Add ${isWarmupMode ? 'Warm-up' : 'Exercise'} to ${libraryModalContext.dayType || 'Today'}`; 
@@ -2046,11 +2001,17 @@
                 else { ui.exerciseLibraryTitle.textContent = `Select Preferred Exercises for ${group}`; ui.addSelectedExercisesBtn.textContent = 'Confirm Selection'; }
 
                 if (isWarmupMode) {
+                    const allWarmupItems = Object.values(warmups).flat();
+                    libraryToUse = [...new Map(allWarmupItems.map(item => [item.name, item])).values()];
+                    
                     const ALL_WARMUP_GROUPS = [...new Set(libraryToUse.map(w => w.group).filter(Boolean))].sort();
-                    warmupFilterSelect.innerHTML = '<option value="">All Groups</option>' + ALL_WARMUP_GROUPS.map(g => `<option value="${g}">${g}</option>`).join('');
+                    
+                    warmupFilterSelect.innerHTML = '<option value="">All Muscle Groups</option>' + ALL_WARMUP_GROUPS.map(g => `<option value="${g}">${g}</option>`).join('');
+                    
                     warmupFilterSelect.value = group || "";
                 } else {
-                    exerciseFilterSelect.innerHTML = '<option value="">All Groups</option>' + ALL_MUSCLE_GROUPS.map(g => `<option value="${g}">${g}</option>`).join('');
+                    libraryToUse = exerciseDB;
+                    exerciseFilterSelect.innerHTML = '<option value="">All Muscle Groups</option>' + ALL_MUSCLE_GROUPS.map(g => `<option value="${g}">${g}</option>`).join('');
                     equipmentFilterSelect.innerHTML = '<option value="">All Equipment</option>' + ALL_EQUIPMENT_TYPES.map(t => `<option value="${t}">${t}</option>`).join('');
                     exerciseFilterSelect.value = group || ""; 
                     equipmentFilterSelect.value = ""; 
@@ -2582,6 +2543,42 @@
             ui.workoutPlanForDay.addEventListener('dragend', handlePlanDragEnd);
             ui.workoutPlanForDay.addEventListener('dragover', handlePlanDragOver);
             ui.workoutPlanForDay.addEventListener('drop', handlePlanDrop);
+            
+            // --- NEW: EDITABLE PLAN TITLE ---
+            const planTitleElement = document.getElementById('plan-main-title');
+            planTitleElement.addEventListener('dblclick', () => {
+                const currentTitle = planTitleElement.textContent;
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.value = currentTitle;
+                input.className = 'text-2xl font-bold bg-input-bg border border-border-color rounded-lg px-2 py-1 w-full text-center';
+                
+                planTitleElement.innerHTML = '';
+                planTitleElement.appendChild(input);
+                input.focus();
+                input.select();
+
+                const saveTitle = () => {
+                    const newTitle = input.value.trim();
+                    if (newTitle && newTitle !== currentTitle) {
+                        workoutPlan.name = newTitle;
+                        saveData();
+                        planTitleElement.textContent = newTitle;
+                    } else {
+                        planTitleElement.textContent = currentTitle;
+                    }
+                };
+
+                input.addEventListener('blur', saveTitle);
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        input.blur();
+                    } else if (e.key === 'Escape') {
+                         input.value = currentTitle; // Revert on escape
+                         input.blur();
+                    }
+                });
+            });
 
 
             // --- INITIALIZATION ---
