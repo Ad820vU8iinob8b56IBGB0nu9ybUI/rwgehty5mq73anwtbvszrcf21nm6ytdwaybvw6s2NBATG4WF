@@ -377,17 +377,6 @@
             border-top: 2px solid var(--edit);
         }
 
-        /* GIF ANIMATION STYLES */
-        #exercise-gif-animation {
-             /* The animation-name will be set dynamically if a cached image is found */
-            background-size: 800% 100%;
-        }
-        
-        @keyframes play-sprite {
-            from { background-position: 0% 0; }
-            to { background-position: 100% 0; }
-        }
-
         /* Force mobile layout classes (removed all md: and lg: prefixes) */
         .grid-layout {
             grid-template-columns: 1fr;
@@ -610,17 +599,12 @@
         <div id="custom-exercise-media-container" class="w-full h-full">
             <img id="custom-exercise-img" src="" class="w-full h-full object-cover hidden">
         </div>
-        <!-- Old sprite div removed to use innerHTML in media container -->
     </div><div class="grid grid-cols-2 gap-2"><label for="custom-img-upload" class="btn btn-secondary !py-1 text-xs cursor-pointer">Upload Image<input type="file" id="custom-img-upload" class="hidden" accept="image/*"></label><input type="url" id="custom-img-url" class="form-input !py-1 text-xs" placeholder="Or paste image/video URL"></div><div><label for="custom-exercise-instructions" class="form-label">Instructions</label><textarea id="custom-exercise-instructions" rows="5" class="form-input mt-1"></textarea></div><div><label for="custom-exercise-rep-range" class="form-label">Rep Range</label><input type="text" id="custom-exercise-rep-range" class="form-input mt-1"></div><div class="grid grid-cols-2 gap-4"><div><label for="custom-exercise-group" class="form-label">Muscle Group</label><select id="custom-exercise-group" class="form-select mt-1"></select></div><div><label for="custom-exercise-type" class="form-label">Equipment</label><select id="custom-exercise-type" class="form-select mt-1"></select></div></div><div id="custom-exercise-action-buttons" class="flex flex-col gap-2 pt-2"></div></div></form></div></div>
     <div id="exercise-detail-modal" class="modal-backdrop"><div class="modal-content !max-w-xl custom-scrollbar"><div class="flex justify-between items-center mb-4"><h2 id="exercise-detail-title" class="text-xl font-bold">Exercise Details</h2><button id="close-exercise-detail-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button></div><div class="space-y-4">
-        <!-- MODIFIED: Replaced img with a div container for the animation -->
+        <!-- MODIFIED: Container for exercise media -->
         <div class="w-full aspect-video bg-black rounded-lg flex items-center justify-center overflow-hidden border border-gray-800 relative">
-            <div id="exercise-gif-loader" class="loader hidden"></div>
-            <!-- This div will now hold either an <img/> for static media, a <video/> for video, or be styled as a background for the sprite animation -->
-            <div id="exercise-gif-animation" class="w-full h-full bg-no-repeat bg-cover bg-center"></div>
-             <button id="redo-gif-btn" class="absolute bottom-2 right-2 btn btn-secondary !p-1.5 hidden" title="Redo Animation">
-                 <i data-lucide="refresh-cw" class="w-4 h-4"></i>
-             </button>
+            <div id="exercise-media-loader" class="loader hidden"></div>
+            <div id="exercise-media-container" class="w-full h-full bg-no-repeat bg-cover bg-center"></div>
         </div>
         <div><h3 class="font-bold text-lg text-blue-400 mb-2">Instructions</h3><textarea id="exercise-detail-instructions" class="form-input mt-1 w-full bg-input-bg text-sm transition-colors" disabled style="resize: none; overflow-y: hidden;"></textarea><button id="save-instructions-btn" class="mt-2 w-full btn btn-secondary">Edit Instructions</button></div><div class="grid grid-cols-2 gap-4"><div><h3 class="font-bold text-lg text-blue-400 mb-2">Sets</h3><p id="exercise-detail-sets" class="text-gray-300"></p></div><div><h3 class="font-bold text-lg text-blue-400 mb-2">Rep Range</h3><p id="exercise-detail-rep-range" class="text-gray-300"></p></div></div><div><h3 class="font-bold text-lg text-blue-400 mb-2">Personal Notes & Advice</h3><textarea id="exercise-detail-notes" rows="4" class="form-input mt-1" placeholder="Add your personal cues, weight progression goals, etc."></textarea><button id="save-exercise-notes-btn" class="mt-2 w-full btn btn-secondary">Save Notes</button></div><button id="log-from-detail-btn" class="w-full btn btn-primary mt-4">Log This Exercise</button></div></div></div>
     <div id="warmup-manage-modal" class="modal-backdrop"><div class="modal-content"><div class="flex justify-between items-center mb-4"><h2 id="warmup-form-title" class="text-xl font-bold">Manage Warm-up</h2><button id="close-warmup-manage-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button></div><form id="warmup-form" class="space-y-3"><div><label for="warmup-name" class="form-label">Name</label><input type="text" id="warmup-name" class="form-input mt-1" required></div><div><label for="warmup-instructions" class="form-label">Instructions (one per line)</label><textarea id="warmup-instructions" rows="4" class="form-input mt-1"></textarea></div><button type="submit" id="save-warmup-btn" class="w-full btn btn-primary">Add Warm-up</button></form></div></div>
@@ -726,7 +710,7 @@
                 progressExerciseSelect: document.getElementById('progress-exercise-select'),
                 aiAdviceExerciseSelect: document.getElementById('ai-advice-exercise-select'), getAIAdviceBtn: document.getElementById('get-ai-advice-btn'), aiAdviceOutput: document.getElementById('ai-advice-output'),
                 exerciseDetailModal: document.getElementById('exercise-detail-modal'), closeExerciseDetailModalBtn: document.getElementById('close-exercise-detail-modal-btn'), exerciseDetailTitle: document.getElementById('exercise-detail-title'),
-                exerciseGifLoader: document.getElementById('exercise-gif-loader'), exerciseGifAnimation: document.getElementById('exercise-gif-animation'), redoGifBtn: document.getElementById('redo-gif-btn'),
+                exerciseMediaLoader: document.getElementById('exercise-media-loader'), exerciseMediaContainer: document.getElementById('exercise-media-container'),
                 exerciseDetailInstructions: document.getElementById('exercise-detail-instructions'), saveInstructionsBtn: document.getElementById('save-instructions-btn'), exerciseDetailRepRange: document.getElementById('exercise-detail-rep-range'),
                 exerciseDetailNotes: document.getElementById('exercise-detail-notes'), saveExerciseNotesBtn: document.getElementById('save-exercise-notes-btn'), logFromDetailBtn: document.getElementById('log-from-detail-btn'),
                 dayViewDateDisplayBtn: document.getElementById('day-view-date-display-btn'),
@@ -785,51 +769,6 @@
                 type: 'line', data: { labels: [], datasets: [] },
                 options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { color: '#FFFFFF' }, grid: { color: 'rgba(255, 255, 255, 0.2)' } }, x: { ticks: { color: '#FFFFFF' }, grid: { color: 'rgba(255, 255, 255, 0.2)' } } }, plugins: { legend: { labels: { color: '#FFFFFF' } } } }
             });
-
-            // --- IndexedDB for GIF Caching ---
-            let db;
-            function openDB() {
-                return new Promise((resolve, reject) => {
-                    const request = indexedDB.open('FitTrackGifsDB', 1);
-                    request.onupgradeneeded = event => {
-                        db = event.target.result;
-                        db.createObjectStore('gifs', { keyPath: 'name' });
-                    };
-                    request.onsuccess = event => {
-                        db = event.target.result;
-                        resolve(db);
-                    };
-                    request.onerror = event => {
-                        console.error("IndexedDB error:", event.target.errorCode);
-                        reject(event.target.errorCode);
-                    };
-                });
-            }
-
-            function saveGif(name, blob) {
-                return new Promise((resolve, reject) => {
-                    if (!db) { reject("DB not open"); return; }
-                    const transaction = db.transaction(['gifs'], 'readwrite');
-                    const store = transaction.objectStore('gifs');
-                    const request = store.put({ name, blob });
-                    request.onsuccess = () => resolve();
-                    request.onerror = (event) => reject(event.target.error);
-                });
-            }
-            
-            function getGif(name) {
-                return new Promise((resolve, reject) => {
-                     if (!db) { reject("DB not open"); return; }
-                    const transaction = db.transaction(['gifs'], 'readonly');
-                    const store = transaction.objectStore('gifs');
-                    const request = store.get(name);
-                    request.onsuccess = event => {
-                        resolve(event.target.result ? event.target.result.blob : null);
-                    };
-                    request.onerror = (event) => reject(event.target.error);
-                });
-            }
-
 
             // --- LOCALSTORAGE & DATA FUNCTIONS (UPDATED) ---
             function saveData() {
@@ -899,8 +838,8 @@
 
             // --- CORE & HELPER FUNCTIONS ---
             const getApiUrl = (model, action = 'generateContent') => {
-                const apiKey = ""; // API key is handled by the environment
-                return `https://generativelanguage.googleapis.com/v1beta/models/${model}:${action}?key=${apiKey}`;
+                const apiKey = "AIzaSyDY48xF1byvU05kS9qKvN8iyrIR3hheP8w"; // API key is handled by the environment
+                return `https://generativelanguaage.googleapis.com/v1beta/models/${model}:${action}?key=${apiKey}`;
             };
             
             function dateToKey(date) { return date.toISOString().split('T')[0]; }
@@ -1775,11 +1714,8 @@
 
             // --- MEDIA DISPLAY FUNCTIONS (MODIFIED FOR MEDIA/ FOLDER FIX AND NO AI) ---
             async function displayExerciseMedia(exerciseName) {
-                ui.exerciseGifLoader.classList.remove('hidden');
-                ui.exerciseGifAnimation.style.backgroundImage = 'none';
-                ui.exerciseGifAnimation.style.animation = 'none';
-                ui.exerciseGifAnimation.innerHTML = ''; // Clear content
-                ui.redoGifBtn.classList.add('hidden');
+                ui.exerciseMediaLoader.classList.remove('hidden');
+                ui.exerciseMediaContainer.innerHTML = ''; // Clear content
                 
                 const item = exerciseDB.find(ex => ex.name === exerciseName) || Object.values(warmups).flat().find(w => w.name === exerciseName);
                 
@@ -1794,20 +1730,20 @@
                     const mediaType = mediaFilename.toLowerCase().match(/\.(mp4|mov|webm)$/) ? 'video' : 'image';
 
                     if (mediaType === 'video') {
-                        ui.exerciseGifAnimation.innerHTML = `<video src="${mediaPath}" loop autoplay muted playsinline class="w-full h-full object-cover rounded-lg" style="${preventInteractions}" ${antiDownloadAttributes} onerror="this.onerror=null; this.src='logo.png'; this.classList.remove('object-cover'); this.classList.add('object-contain', 'p-4');"></video>`;
+                        ui.exerciseMediaContainer.innerHTML = `<video src="${mediaPath}" loop autoplay muted playsinline class="w-full h-full object-cover rounded-lg" style="${preventInteractions}" ${antiDownloadAttributes} onerror="this.onerror=null; this.src='logo.png'; this.classList.remove('object-cover'); this.classList.add('object-contain', 'p-4');"></video>`;
                     } else if (mediaType === 'image' || mediaFilename.toLowerCase().match(/\.(jpg|png|jpeg|gif)$/)) {
-                         ui.exerciseGifAnimation.innerHTML = `<img src="${mediaPath}" alt="${exerciseName}" class="w-full h-full object-cover rounded-lg" ${antiDownloadAttributes} onerror="this.onerror=null; this.src='logo.png'; this.classList.remove('object-cover'); this.classList.add('object-contain', 'p-4');">`;
+                         ui.exerciseMediaContainer.innerHTML = `<img src="${mediaPath}" alt="${exerciseName}" class="w-full h-full object-cover rounded-lg" ${antiDownloadAttributes} onerror="this.onerror=null; this.src='logo.png'; this.classList.remove('object-cover'); this.classList.add('object-contain', 'p-4');">`;
                     } else {
                         // Fallback for unknown file types
-                        ui.exerciseGifAnimation.innerHTML = `<img src="logo.png" alt="FitTrack AI Logo" class="w-full h-full object-contain p-4 rounded-lg">`;
+                        ui.exerciseMediaContainer.innerHTML = `<img src="logo.png" alt="FitTrack AI Logo" class="w-full h-full object-contain p-4 rounded-lg">`;
                     }
-                    ui.exerciseGifLoader.classList.add('hidden');
+                    ui.exerciseMediaLoader.classList.add('hidden');
                     return;
                 }
                 
                 // --- Fallback to logo if no specific media is found ---
-                ui.exerciseGifAnimation.innerHTML = `<img src="logo.png" alt="FitTrack AI Logo" class="w-full h-full object-contain p-4 rounded-lg">`;
-                ui.exerciseGifLoader.classList.add('hidden');
+                ui.exerciseMediaContainer.innerHTML = `<img src="logo.png" alt="FitTrack AI Logo" class="w-full h-full object-contain p-4 rounded-lg">`;
+                ui.exerciseMediaLoader.classList.add('hidden');
             }
 
 
@@ -2408,14 +2344,10 @@
                     if (!textResponse.ok) throw new Error(`Text Gen Error: ${textResponse.status}`);
                     const textResult = await textResponse.json(); const details = JSON.parse(textResult.candidates[0].content.parts[0].text);
                     ui.customExerciseInstructions.value = details.instructions.join('\n'); ui.customExerciseRepRange.value = details.repRange;
-                    const imagePrompt = ` an image, clean white background. A person demonstrating the exercise '${exerciseName}'. Based on an analysis of instructional videos, the image should be from an angle that clearly shows proper form. Show the moment of peak muscle contraction.`;
-                    const imageApiUrl = getApiUrl('imagen-3.0-generate-002', 'predict');
-                    const imageResponse = await fetch(imageApiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ instances: [{ prompt: imagePrompt }], parameters: { "sampleCount": 1 } }) });
-                    if(!imageResponse.ok) throw new Error(`Image Gen Error: ${imageResponse.status}`);
-                    const imageResult = await imageResponse.json(); const base64Data = imageResult.predictions[0].bytesBase64Encoded;
-                    
-                    mediaContainer.innerHTML = `<img id="custom-exercise-img" src="data:image/png;base64,${base64Data}" class="w-full h-full object-cover" oncontextmenu="return false;" draggable="false">`;
-                    ui.customExerciseImg = document.getElementById('custom-exercise-img'); // Re-map the element
+
+                    // Removed AI image generation, fallback to logo
+                    mediaContainer.innerHTML = `<img id="custom-exercise-img" src="logo.png" class="w-full h-full object-contain p-4" oncontextmenu="return false;" draggable="false">`;
+                    ui.customExerciseImg = document.getElementById('custom-exercise-img');
                     
                 } catch (error) { console.error("AI Custom Exercise Error:", error); showCustomAlert("AI Error", "Could not generate all details. Please try again or fill them manually.");
                 } finally { ui.customExerciseImgLoader.classList.add('hidden'); btn.disabled = false; btn.innerHTML = originalIcon; lucide.createIcons(); }
@@ -2542,13 +2474,6 @@
                 hideModal(ui.permanentEditWarningModal);
                 openEditPlanModal();
             });
-
-            // --- NEW: Redo GIF Listener ---
-            ui.redoGifBtn.addEventListener('click', () => {
-                if(currentlyLoggingExercise) {
-                    displayExerciseMedia(currentlyLoggingExercise, true); // forceRedo = true
-                }
-            });
             
             // --- NEW: Add Drag/Drop Listeners for Plan View Reordering ---
             ui.workoutPlanForDay.addEventListener('dragstart', handlePlanDragStart);
@@ -2595,7 +2520,6 @@
 
             // --- INITIALIZATION ---
             async function initializeApp() {
-                await openDB(); // Open IndexedDB first
                 await loadAllData();
                 if (!workoutPlan || !workoutPlan.schedule || Object.keys(workoutPlan.schedule).length === 0) {
                     if (exerciseDB.length > 0) {
