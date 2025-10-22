@@ -300,7 +300,7 @@
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <label for="food-servings-input" class="form-label">Servings *</label>
-                                    <input type="number" id="food-servings-input" placeholder="1" min="0" class="form-input mt-1">
+                                    <input type="number" id="food-servings-input" placeholder="1" value="1" min="0" class="form-input mt-1">
                                 </div>
                                 <div>
                                     <label for="food-brand-input" class="form-label">Brand (Optional)</label>
@@ -446,28 +446,8 @@
     </div>
 
     <!-- Modals -->
-    <div id="scan-modal" class="modal-backdrop" style="z-index: 60;">
-        <div class="modal-content">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold">Scan Food or Barcode</h2>
-                <button id="close-scan-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button>
-            </div>
-            <div class="space-y-4">
-                <div id="scan-initial-options">
-                    <div class="grid grid-cols-2 gap-4">
-                        <label for="scan-upload-input" class="btn btn-secondary cursor-pointer"><i data-lucide="upload"></i>Upload</label>
-                        <input type="file" id="scan-upload-input" class="hidden" accept="image/*" multiple>
-                        <label for="scan-take-picture-input" class="btn btn-secondary cursor-pointer"><i data-lucide="camera"></i>Take Photo</label>
-                        <input type="file" id="scan-take-picture-input" class="hidden" accept="image/*" capture="environment" multiple>
-                    </div>
-                    <button id="start-live-scan-btn" class="btn btn-primary w-full mt-4"><i data-lucide="scan-line"></i>Start Live Barcode Scan</button>
-                </div>
-                <div id="live-scanner-view" class="w-full aspect-square bg-black rounded-lg border border-border-color hidden"></div>
-                <p id="scan-status" class="text-center text-sm text-secondary-text h-5"></p>
-                <div id="scan-results-container" class="mt-4 space-y-3 max-h-96 overflow-y-auto custom-scrollbar"></div>
-            </div>
-        </div>
-    </div>
+    <div id="food-scanner-modal" class="modal-backdrop" style="z-index: 60;"><div class="modal-content"><div class="flex justify-between items-center mb-6"><h2 class="text-2xl font-bold">Scan Food with AI</h2><button id="close-food-scanner-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button></div><div class="space-y-4"><div class="grid grid-cols-2 gap-4"><label for="upload-photo-input" class="btn btn-secondary cursor-pointer"><i data-lucide="upload"></i>Upload Photo(s)</label><input type="file" id="upload-photo-input" class="hidden" accept="image/*" multiple><label for="take-picture-input" class="btn btn-secondary cursor-pointer"><i data-lucide="camera"></i>Take Photo(s)</label><input type="file" id="take-picture-input" class="hidden" accept="image/*" capture="environment" multiple></div><div id="scanner-results-container" class="mt-4 space-y-3 max-h-96 overflow-y-auto custom-scrollbar"></div><p id="food-scanner-status" class="text-center text-sm text-gray-400 mt-2 h-5"></p></div></div></div>
+    <div id="barcode-scanner-modal" class="modal-backdrop" style="z-index: 60;"><div class="modal-content"><div class="flex justify-between items-center mb-6"><h2 class="text-2xl font-bold">Scan Barcode</h2><button id="close-barcode-scanner-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button></div><div class="space-y-4"><div id="barcode-reader" class="w-full aspect-square bg-black rounded-lg border border-border-color hidden"></div><div id="barcode-initial-options" class="flex flex-col gap-4"><button id="start-camera-scan-btn" class="btn btn-primary w-full"><i data-lucide="camera"></i>Start Live Scan</button><label for="barcode-upload-input" class="btn btn-secondary cursor-pointer w-full"><i data-lucide="upload"></i>Upload Barcode Image(s)</label><input type="file" id="barcode-upload-input" class="hidden" accept="image/*" multiple></div><p id="barcode-scanner-status" class="text-center text-sm text-secondary-text h-5"></p><div id="barcode-results" class="mt-4 p-4 bg-black/30 rounded-lg min-h-[100px]"></div></div></div></div>
     <div id="confirm-modal" class="modal-backdrop"><div class="modal-content"><h2 id="confirm-modal-title" class="text-xl font-bold mb-4">Are you sure?</h2><p id="confirm-modal-text" class="text-gray-300 mb-6">This action cannot be undone.</p><div class="flex justify-end gap-4"><button id="confirm-modal-cancel-btn" class="btn btn-secondary">Cancel</button><button id="confirm-modal-confirm-btn" class="btn btn-danger">Confirm</button></div></div></div>
     <div id="alert-modal" class="modal-backdrop"><div class="modal-content"><h2 id="alert-modal-title" class="text-xl font-bold mb-4">Alert</h2><p id="alert-modal-text" class="text-gray-300 mb-6"></p><div class="flex justify-end"><button id="alert-modal-ok-btn" class="btn btn-primary">OK</button></div></div></div>
     <div id="ai-report-modal" class="modal-backdrop"><div class="modal-content"><div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold flex items-center gap-2"><i data-lucide="sparkles" class="w-5 h-5 text-yellow-400"></i>AI Nutrition Report</h2><button id="close-ai-report-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button></div><p id="ai-report-modal-text" class="text-gray-300 mb-6"></p><div class="flex justify-end"><button id="ai-report-modal-ok-btn" class="btn btn-primary">OK</button></div></div></div>
@@ -574,18 +554,10 @@
 
             // --- UI ELEMENT DEFINITIONS ---
             const ui = {
-                foodNameInput: document.getElementById('food-name-input'), foodBrandInput: document.getElementById('food-brand-input'), foodServingsInput: document.getElementById('food-servings-input'), foodGramsInput: document.getElementById('food-grams-input'), logMealForm: document.getElementById('log-meal-form'), addFoodBtn: document.getElementById('add-food-btn'), addFoodError: document.getElementById('add-food-error'), dailyLogContentDiv: document.getElementById('daily-log-content'), aiSuggestionBtn: document.getElementById('ai-suggestion-btn'), aiSuggestionsOutput: document.getElementById('ai-suggestions-output'), 
-                scanFoodBtn: document.getElementById('scan-food-btn'), scanBarcodeBtn: document.getElementById('scan-barcode-btn'),
-                scanModal: document.getElementById('scan-modal'), closeScanModalBtn: document.getElementById('close-scan-modal-btn'), scanUploadInput: document.getElementById('scan-upload-input'), scanTakePictureInput: document.getElementById('scan-take-picture-input'), startLiveScanBtn: document.getElementById('start-live-scan-btn'), liveScannerView: document.getElementById('live-scanner-view'), scanStatus: document.getElementById('scan-status'), scanResultsContainer: document.getElementById('scan-results-container'), scanInitialOptions: document.getElementById('scan-initial-options'),
-                confirmModal: document.getElementById('confirm-modal'), confirmModalTitle: document.getElementById('confirm-modal-title'), confirmModalText: document.getElementById('confirm-modal-text'), confirmModalCancelBtn: document.getElementById('confirm-modal-cancel-btn'), confirmModalConfirmBtn: document.getElementById('confirm-modal-confirm-btn'), 
-                alertModal: document.getElementById('alert-modal'), alertModalTitle: document.getElementById('alert-modal-title'), alertModalText: document.getElementById('alert-modal-text'), alertModalOkBtn: document.getElementById('alert-modal-ok-btn'), 
-                createRecipeBtn: document.getElementById('create-recipe-btn'), compoundFoodModal: document.getElementById('compound-food-modal'), closeCompoundFoodModalBtn: document.getElementById('close-compound-food-modal-btn'), compoundFoodForm: document.getElementById('compound-food-form'), recipeNameInput: document.getElementById('recipe-name-input'), ingredientListContainer: document.getElementById('ingredient-list-container'), addIngredientBtn: document.getElementById('add-ingredient-btn'), saveRecipeBtn: document.getElementById('save-recipe-btn'), 
-                savedItemsListDiv: document.getElementById('saved-items-list'), 
-                promptModal: document.getElementById('prompt-modal'), promptModalTitle: document.getElementById('prompt-modal-title'), promptModalText: document.getElementById('prompt-modal-text'), promptModalInput: document.getElementById('prompt-modal-input'), promptModalCancelBtn: document.getElementById('prompt-modal-cancel-btn'), promptModalOkBtn: document.getElementById('prompt-modal-ok-btn'), 
-                editFavoriteModal: document.getElementById('edit-favorite-modal'), closeEditFavoriteModalBtn: document.getElementById('close-edit-favorite-modal-btn'), editFavoriteForm: document.getElementById('edit-favorite-form'), 
-                dailySummaryCard: document.getElementById('daily-summary-card'), dayViewTitleSpan: document.getElementById('day-view-title-span'), dayViewDateSpan: document.getElementById('day-view-date-span'), 
-                aiDailyReportBtn: document.getElementById('ai-daily-report-btn'), aiReportModal: document.getElementById('ai-report-modal'), aiReportModalText: document.getElementById('ai-report-modal-text'), closeAiReportModalBtn: document.getElementById('close-ai-report-modal-btn'), aiReportModalOkBtn: document.getElementById('ai-report-modal-ok-btn'),
+                foodNameInput: document.getElementById('food-name-input'), foodBrandInput: document.getElementById('food-brand-input'), foodServingsInput: document.getElementById('food-servings-input'), foodGramsInput: document.getElementById('food-grams-input'), logMealForm: document.getElementById('log-meal-form'), addFoodBtn: document.getElementById('add-food-btn'), addFoodError: document.getElementById('add-food-error'), dailyLogContentDiv: document.getElementById('daily-log-content'), aiSuggestionBtn: document.getElementById('ai-suggestion-btn'), aiSuggestionsOutput: document.getElementById('ai-suggestions-output'), scanFoodBtn: document.getElementById('scan-food-btn'), foodScannerModal: document.getElementById('food-scanner-modal'), closeFoodScannerModalBtn: document.getElementById('close-food-scanner-modal-btn'), uploadPhotoInput: document.getElementById('upload-photo-input'), takePictureInput: document.getElementById('take-picture-input'), scannerResultsContainer: document.getElementById('scanner-results-container'), foodScannerStatus: document.getElementById('food-scanner-status'), confirmModal: document.getElementById('confirm-modal'), confirmModalTitle: document.getElementById('confirm-modal-title'), confirmModalText: document.getElementById('confirm-modal-text'), confirmModalCancelBtn: document.getElementById('confirm-modal-cancel-btn'), confirmModalConfirmBtn: document.getElementById('confirm-modal-confirm-btn'), alertModal: document.getElementById('alert-modal'), alertModalTitle: document.getElementById('alert-modal-title'), alertModalText: document.getElementById('alert-modal-text'), alertModalOkBtn: document.getElementById('alert-modal-ok-btn'), createRecipeBtn: document.getElementById('create-recipe-btn'), compoundFoodModal: document.getElementById('compound-food-modal'), closeCompoundFoodModalBtn: document.getElementById('close-compound-food-modal-btn'), compoundFoodForm: document.getElementById('compound-food-form'), recipeNameInput: document.getElementById('recipe-name-input'), ingredientListContainer: document.getElementById('ingredient-list-container'), addIngredientBtn: document.getElementById('add-ingredient-btn'), saveRecipeBtn: document.getElementById('save-recipe-btn'), savedItemsListDiv: document.getElementById('saved-items-list'), promptModal: document.getElementById('prompt-modal'), promptModalTitle: document.getElementById('prompt-modal-title'), promptModalText: document.getElementById('prompt-modal-text'), promptModalInput: document.getElementById('prompt-modal-input'), promptModalCancelBtn: document.getElementById('prompt-modal-cancel-btn'), promptModalOkBtn: document.getElementById('prompt-modal-ok-btn'), editFavoriteModal: document.getElementById('edit-favorite-modal'), closeEditFavoriteModalBtn: document.getElementById('close-edit-favorite-modal-btn'), editFavoriteForm: document.getElementById('edit-favorite-form'), dailySummaryCard: document.getElementById('daily-summary-card'), dayViewTitleSpan: document.getElementById('day-view-title-span'), dayViewDateSpan: document.getElementById('day-view-date-span'), aiDailyReportBtn: document.getElementById('ai-daily-report-btn'), 
+                aiReportModal: document.getElementById('ai-report-modal'), aiReportModalText: document.getElementById('ai-report-modal-text'), closeAiReportModalBtn: document.getElementById('close-ai-report-modal-btn'), aiReportModalOkBtn: document.getElementById('ai-report-modal-ok-btn'),
                 addWaterBtn: document.getElementById('add-water-btn'),
+                scanBarcodeBtn: document.getElementById('scan-barcode-btn'), barcodeScannerModal: document.getElementById('barcode-scanner-modal'), closeBarcodeScannerModalBtn: document.getElementById('close-barcode-scanner-modal-btn'), barcodeReader: document.getElementById('barcode-reader'), barcodeScannerStatus: document.getElementById('barcode-scanner-status'), barcodeResults: document.getElementById('barcode-results'),
                 openNutritionistChatBtn: document.getElementById('open-nutritionist-chat-btn'), aiNutritionistModal: document.getElementById('ai-nutritionist-modal'), closeAiNutritionistModalBtn: document.getElementById('close-ai-nutritionist-modal-btn'), aiChatHistory: document.getElementById('ai-chat-history'), aiChatInput: document.getElementById('ai-chat-input'), aiChatSendBtn: document.getElementById('ai-chat-send-btn'),
             };
 
@@ -821,12 +793,12 @@
                 const loader = btn.querySelector('.loader');
 
                 const foodName = ui.foodNameInput.value.trim();
-                const servings = parseFloat(ui.foodServingsInput.value) || 1;
+                const servings = parseFloat(ui.foodServingsInput.value);
                 const grams = ui.foodGramsInput.value ? parseFloat(ui.foodGramsInput.value) : null;
 
 
-                if (!foodName) {
-                    ui.addFoodError.textContent = "Please enter a valid food name.";
+                if (!foodName || isNaN(servings) || servings <= 0) {
+                    ui.addFoodError.textContent = "Please enter a valid food name and serving amount.";
                     return;
                 }
 
@@ -898,6 +870,7 @@
                 }
 
                 ui.logMealForm.reset();
+                ui.foodServingsInput.value = 1;
                 saveData();
                 updateDayView(viewDate);
             });
@@ -976,6 +949,101 @@
             
             function fileToGenerativePart(file) { return new Promise((resolve, reject) => { const reader = new FileReader(); reader.onloadend = () => { const base64Data = reader.result.split(',')[1]; resolve({ inlineData: { mimeType: file.type, data: base64Data } }); }; reader.onerror = (err) => reject(err); reader.readAsDataURL(file); }); }
             
+            ui.scanFoodBtn.addEventListener('click', () => { 
+                scanningIngredientRow = null; 
+                ui.scannerResultsContainer.innerHTML = '';
+                ui.foodScannerStatus.textContent = '';
+                showModal(ui.foodScannerModal); 
+            });
+            ui.closeFoodScannerModalBtn.addEventListener('click', () => hideModal(ui.foodScannerModal));
+
+            async function processImageWithAI(file, resultElement) {
+                try {
+                    const imagePart = await fileToGenerativePart(file);
+                    let prompt = `Identify the food in this image. Respond ONLY with a valid JSON object with these fields: "name", "brand" (if identifiable, else null), "grams" (estimated), "calories", "protein", "carbs", "fat", "sugar", "sodium", "potassium". Estimate for a typical single serving.`;
+                    const apiUrl = getApiUrl('gemini-2.5-flash-preview-05-20');
+                    const payload = { contents: [{ parts: [{ text: prompt }, imagePart] }], generationConfig: { responseMimeType: "application/json" } };
+                    const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                    if (!response.ok) throw new Error(`API Error: ${response.status}`);
+                    const result = await response.json();
+                    if (!result.candidates?.[0].content.parts[0].text) throw new Error("Invalid API response.");
+                    
+                    const data = JSON.parse(result.candidates[0].content.parts[0].text);
+                    resultElement.querySelector('.loader').remove();
+
+                    const detailsDiv = document.createElement('div');
+                    detailsDiv.className = 'text-xs text-gray-400';
+                    detailsDiv.innerHTML = `
+                        <p class="font-bold text-sm text-white mb-1">${data.name || 'Unknown Food'}</p>
+                        <p>${data.grams?.toFixed(0) || '?'}g | ${data.calories?.toFixed(0) || '?'} kcal</p>
+                        <p>${data.protein?.toFixed(1) || '?'}p | ${data.carbs?.toFixed(1) || '?'}c | ${data.fat?.toFixed(1) || '?'}f</p>
+                    `;
+                    
+                    const logButton = document.createElement('button');
+                    logButton.className = 'btn btn-primary !p-2 mt-2 w-full';
+                    logButton.innerHTML = 'Log this';
+                    logButton.onclick = () => {
+                         const targetRow = scanningIngredientRow;
+                         if(targetRow){
+                            targetRow.querySelector('.ingredient-name').value = data.name || '';
+                            targetRow.querySelector('.ingredient-grams').value = data.grams?.toFixed(0) || '';
+                            targetRow.querySelector('.ingredient-calories').value = data.calories?.toFixed(2) || 0;
+                            targetRow.querySelector('.ingredient-protein').value = data.protein?.toFixed(2) || 0;
+                            targetRow.querySelector('.ingredient-carbs').value = data.carbs?.toFixed(2) || 0;
+                            targetRow.querySelector('.ingredient-fat').value = data.fat?.toFixed(2) || 0;
+                            targetRow.querySelector('.ingredient-sugar').value = data.sugar?.toFixed(2) || 0;
+                            targetRow.querySelector('.ingredient-sodium').value = data.sodium?.toFixed(2) || 0;
+                            targetRow.querySelector('.ingredient-potassium').value = data.potassium?.toFixed(2) || 0;
+                            updateRecipeTotals();
+                        } else {
+                            ui.foodNameInput.value = data.name || '';
+                            ui.foodBrandInput.value = data.brand || '';
+                            ui.foodGramsInput.value = data.grams?.toFixed(0) || '';
+                            document.getElementById('food-calories-input').value = data.calories?.toFixed(2) || 0;
+                            document.getElementById('food-protein-input').value = data.protein?.toFixed(2) || 0;
+                            document.getElementById('food-carbs-input').value = data.carbs?.toFixed(2) || 0;
+                            document.getElementById('food-fat-input').value = data.fat?.toFixed(2) || 0;
+                            document.getElementById('food-sugar-input').value = data.sugar?.toFixed(2) || 0;
+                            document.getElementById('food-sodium-input').value = data.sodium?.toFixed(2) || 0;
+                            document.getElementById('food-potassium-input').value = data.potassium?.toFixed(2) || 0;
+                        }
+                        logButton.textContent = 'Logged!';
+                        logButton.disabled = true;
+                        setTimeout(() => hideModal(ui.foodScannerModal), 500);
+                    };
+
+                    resultElement.appendChild(detailsDiv);
+                    resultElement.appendChild(logButton);
+
+                } catch (error) {
+                    console.error("AI Image Scan Error:", error);
+                    resultElement.querySelector('.loader').remove();
+                    resultElement.innerHTML += `<p class="text-red-400 text-xs">Error analyzing.</p>`;
+                }
+            }
+
+            function handleImageFiles(files) {
+                if (!files || files.length === 0) return;
+                ui.scannerResultsContainer.innerHTML = ''; 
+
+                for(const file of files) {
+                    const resultElement = document.createElement('div');
+                    resultElement.className = 'p-3 bg-input-bg rounded-lg text-center';
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        resultElement.innerHTML = `
+                            <img src="${e.target.result}" class="w-full h-24 object-cover rounded-md mb-2">
+                            <div class="loader mx-auto"></div>
+                        `;
+                    };
+                    reader.readAsDataURL(file);
+                    ui.scannerResultsContainer.appendChild(resultElement);
+                    processImageWithAI(file, resultElement);
+                }
+            }
+
+            ui.uploadPhotoInput.addEventListener('change', (e) => handleImageFiles(e.target.files));
+            ui.takePictureInput.addEventListener('change', (e) => handleImageFiles(e.target.files));
             
             ui.createRecipeBtn.addEventListener('click', () => {
                 editingRecipeIndex = null; ui.compoundFoodModal.querySelector('h2').textContent = "Create a Recipe";
@@ -991,17 +1059,12 @@
                  const aiBtn = e.target.closest('.recipe-ai-btn'); const removeBtn = e.target.closest('.remove-ingredient-btn'); const barcodeBtn = e.target.closest('.recipe-barcode-btn');
                 const row = e.target.closest('.ingredient-row');
                 if (removeBtn) { removeBtn.closest('.ingredient-row').remove(); updateRecipeTotals(); }
-                
-                if (aiBtn || barcodeBtn) { 
+                if (barcodeBtn) { scanningIngredientRow = row; startBarcodeScanner(); }
+                if (aiBtn) { 
                     scanningIngredientRow = row; 
-                    ui.scanResultsContainer.innerHTML = '';
-                    ui.scanStatus.textContent = '';
-                    ui.liveScannerView.classList.add('hidden');
-                    ui.scanInitialOptions.classList.remove('hidden');
-                    if (html5QrCode && html5QrCode.isScanning) {
-                        html5QrCode.stop().catch(err => {});
-                    }
-                    showModal(ui.scanModal); 
+                    ui.scannerResultsContainer.innerHTML = '';
+                    ui.foodScannerStatus.textContent = '';
+                    showModal(ui.foodScannerModal); 
                 }
             });
             
@@ -1088,198 +1151,123 @@
             ui.promptModalCancelBtn.addEventListener('click', () => hideModal(ui.promptModal));
             ui.promptModalOkBtn.addEventListener('click', () => { if(promptCallback) promptCallback(ui.promptModalInput.value); hideModal(ui.promptModal); });
 
-            // --- UNIFIED SCANNER LOGIC ---
-
-            function openScanner() {
-                scanningIngredientRow = null;
-                ui.scanResultsContainer.innerHTML = '';
-                ui.scanStatus.textContent = '';
-                ui.liveScannerView.classList.add('hidden');
-                ui.scanInitialOptions.classList.remove('hidden');
+            // BARCODE LISTENERS
+            const startBarcodeScanner = () => {
+                showModal(ui.barcodeScannerModal);
+                document.getElementById('barcode-initial-options')?.classList.remove('hidden');
+                ui.barcodeReader.classList.add('hidden');
+                ui.barcodeResults.innerHTML = '';
+                ui.barcodeScannerStatus.textContent = 'Choose an option to scan a barcode.';
+            };
+            
+            const stopBarcodeScanner = () => {
                 if (html5QrCode && html5QrCode.isScanning) {
-                    html5QrCode.stop().catch(err => {});
+                    html5QrCode.stop().then(() => {}).catch(err => {});
                 }
-                showModal(ui.scanModal);
-            }
+                 hideModal(ui.barcodeScannerModal);
+            };
 
-            ui.scanFoodBtn.addEventListener('click', openScanner);
-            ui.scanBarcodeBtn.addEventListener('click', openScanner);
-            ui.closeScanModalBtn.addEventListener('click', () => {
-                if (html5QrCode && html5QrCode.isScanning) {
-                    html5QrCode.stop().catch(err => {});
-                }
-                hideModal(ui.scanModal);
-            });
+            const initiateLiveScanner = () => {
+                const initialOptions = document.getElementById('barcode-initial-options');
+                if(initialOptions) initialOptions.classList.add('hidden');
+                ui.barcodeReader.classList.remove('hidden');
+                ui.barcodeScannerStatus.textContent = "Starting camera...";
 
-            ui.scanUploadInput.addEventListener('change', (e) => handleScanFiles(e.target.files));
-            ui.scanTakePictureInput.addEventListener('change', (e) => handleScanFiles(e.target.files));
+                if (html5QrCode && html5QrCode.isScanning) { html5QrCode.stop(); }
+                html5QrCode = new Html5Qrcode("barcode-reader");
+                const config = { fps: 10, qrbox: { width: 250, height: 250 } };
 
-            async function handleScanFiles(files) {
-                if (!files || files.length === 0) return;
-                ui.scanResultsContainer.innerHTML = '';
-                ui.scanStatus.textContent = `Processing ${files.length} image(s)...`;
-                ui.scanInitialOptions.classList.add('hidden');
-
-                const filePromises = Array.from(files).map(file => {
-                    const resultElement = document.createElement('div');
-                    resultElement.className = 'p-3 bg-input-bg rounded-lg flex items-start gap-3';
-                    const reader = new FileReader();
-
-                    const promise = new Promise(resolve => {
-                         reader.onload = (e) => {
-                            resultElement.innerHTML = `
-                                <img src="${e.target.result}" class="w-20 h-20 object-cover rounded-md">
-                                <div class="flex-grow text-center">
-                                    <div class="loader mx-auto"></div>
-                                </div>
-                            `;
-                            ui.scanResultsContainer.appendChild(resultElement);
-                            
-                            // Try barcode scan first, fallback to AI
-                            const qrCodeInstance = new Html5Qrcode("live-scanner-view", { verbose: false });
-                            qrCodeInstance.scanFile(file, false)
-                                .then(decodedText => processBarcodeData(decodedText, resultElement.querySelector('.flex-grow')))
-                                .catch(err => processImageWithAI(file, resultElement.querySelector('.flex-grow')))
-                                .finally(() => {
-                                    qrCodeInstance.clear();
-                                    resolve();
-                                });
-                        };
+                html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess, onScanFailure)
+                    .catch(err => {
+                        ui.barcodeScannerStatus.innerHTML = `Camera permission denied. <br>Please allow camera access or use the upload option.`;
+                        setTimeout(() => {
+                             if(initialOptions) initialOptions.classList.remove('hidden');
+                             ui.barcodeReader.classList.add('hidden');
+                             ui.barcodeScannerStatus.textContent = 'Choose an option to scan a barcode.';
+                        }, 3000);
                     });
-                    reader.readAsDataURL(file);
-                    return promise;
-                });
-                
-                await Promise.all(filePromises);
-                ui.scanStatus.textContent = `Processing complete.`;
-            }
+            };
+            
+            async function onScanSuccess(decodedText, decodedResult) {
+                ui.barcodeScannerStatus.textContent = `Found barcode: ${decodedText}. Fetching data...`;
+                if(html5QrCode && html5QrCode.isScanning) html5QrCode.pause();
 
-            async function processImageWithAI(file, resultElement) {
                 try {
-                    const imagePart = await fileToGenerativePart(file);
-                    let prompt = `Identify the food in this image. Respond ONLY with a valid JSON object with these fields: "name", "brand" (if identifiable, else null), "grams" (estimated), "calories", "protein", "carbs", "fat", "sugar", "sodium", "potassium". Estimate for a typical single serving.`;
-                    const apiUrl = getApiUrl('gemini-2.5-flash-preview-05-20');
-                    const payload = { contents: [{ parts: [{ text: prompt }, imagePart] }], generationConfig: { responseMimeType: "application/json" } };
-                    const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                    if (!response.ok) throw new Error(`API Error: ${response.status}`);
-                    const result = await response.json();
-                    if (!result.candidates?.[0].content.parts[0].text) throw new Error("Invalid API response.");
-                    
-                    const data = JSON.parse(result.candidates[0].content.parts[0].text);
-                    resultElement.innerHTML = `
-                        <div class="text-left w-full">
-                            <p class="font-bold text-sm text-white mb-1">${data.name || 'Unknown Food'}</p>
-                            <p class="text-xs">${data.grams?.toFixed(0) || '?'}g | ${data.calories?.toFixed(0) || '?'} kcal | ${data.protein?.toFixed(1) || '?'}p | ${data.carbs?.toFixed(1) || '?'}c | ${data.fat?.toFixed(1) || '?'}f</p>
-                            <button class="btn btn-primary !p-2 mt-2 w-full data-log-button">Log this</button>
-                        </div>
-                    `;
-                    const logButton = resultElement.querySelector('.data-log-button');
-                    logButton.onclick = () => {
-                        const targetRow = scanningIngredientRow;
-                        if(targetRow){
-                            targetRow.querySelector('.ingredient-name').value = data.name || '';
-                            targetRow.querySelector('.ingredient-grams').value = data.grams?.toFixed(0) || '';
-                            targetRow.querySelector('.ingredient-calories').value = data.calories?.toFixed(2) || 0;
-                            targetRow.querySelector('.ingredient-protein').value = data.protein?.toFixed(2) || 0;
-                            targetRow.querySelector('.ingredient-carbs').value = data.carbs?.toFixed(2) || 0;
-                            targetRow.querySelector('.ingredient-fat').value = data.fat?.toFixed(2) || 0;
-                            targetRow.querySelector('.ingredient-sugar').value = data.sugar?.toFixed(2) || 0;
-                            targetRow.querySelector('.ingredient-sodium').value = data.sodium?.toFixed(2) || 0;
-                            targetRow.querySelector('.ingredient-potassium').value = data.potassium?.toFixed(2) || 0;
-                            updateRecipeTotals();
-                        } else {
-                            ui.foodNameInput.value = data.name || '';
-                            ui.foodBrandInput.value = data.brand || '';
-                            ui.foodGramsInput.value = data.grams?.toFixed(0) || '';
-                            document.getElementById('food-calories-input').value = data.calories?.toFixed(2) || 0;
-                            document.getElementById('food-protein-input').value = data.protein?.toFixed(2) || 0;
-                            document.getElementById('food-carbs-input').value = data.carbs?.toFixed(2) || 0;
-                            document.getElementById('food-fat-input').value = data.fat?.toFixed(2) || 0;
-                            document.getElementById('food-sugar-input').value = data.sugar?.toFixed(2) || 0;
-                            document.getElementById('food-sodium-input').value = data.sodium?.toFixed(2) || 0;
-                            document.getElementById('food-potassium-input').value = data.potassium?.toFixed(2) || 0;
-                        }
-                        logButton.textContent = 'Logged!';
-                        logButton.disabled = true;
-                        setTimeout(() => hideModal(ui.scanModal), 500);
-                    };
-
-                } catch (error) {
-                    console.error("AI Image Scan Error:", error);
-                    resultElement.innerHTML = `<p class="text-red-400 text-xs my-auto">Error analyzing food.</p>`;
-                }
-            }
-
-            async function processBarcodeData(decodedText, resultElement) {
-                resultElement.innerHTML = `<div class="loader mx-auto"></div><p class="text-xs">Barcode found. Fetching...</p>`;
-                try {
+                    await new Promise(res => setTimeout(res, 1000));
                     const response = await fetch(`https://world.openfoodfacts.org/api/v2/product/${decodedText}?fields=product_name,brands,nutriments,serving_size,quantity`);
-                    if(!response.ok) throw new Error('Product not found.');
+                    if(!response.ok) throw new Error('Product not found in Open Food Facts database.');
                     const data = await response.json();
                     if(data.status === 0) throw new Error(data.status_verbose);
                     const product = data.product, nutriments = product.nutriments;
                     
-                    const macrosPer100g = { calories: nutriments['energy-kcal_100g'] || 0, protein: nutriments.proteins_100g || 0, carbs: nutriments.carbohydrates_100g || 0, fat: nutriments.fat_100g || 0, sugar: nutriments.sugars_100g || 0, sodium: (nutriments.sodium_100g || 0) * 1000, potassium: (nutriments.potassium_100g || 0) * 1000, };
+                    aiBaseMacros = {
+                        baseGrams: 100,
+                        calories: nutriments['energy-kcal_100g'] || 0, protein: nutriments.proteins_100g || 0, carbs: nutriments.carbohydrates_100g || 0, fat: nutriments.fat_100g || 0, sugar: nutriments.sugars_100g || 0, sodium: (nutriments.sodium_100g || 0) * 1000, potassium: (nutriments.potassium_100g || 0) * 1000,
+                    };
+
                     let displayGrams = 100;
-                    if (product.quantity) { const m = String(product.quantity).match(/(\d+(\.\d+)?)/); if (m) displayGrams = parseFloat(m[0]);
-                    } else if (product.serving_size) { const m = String(product.serving_size).match(/(\d+(\.\d+)?)/); if (m) displayGrams = parseFloat(m[0]); }
+                    if (product.quantity) { const quantityMatch = String(product.quantity).match(/(\d+(\.\d+)?)/); if (quantityMatch) { displayGrams = parseFloat(quantityMatch[0]); }
+                    } else if (product.serving_size) { const servingMatch = String(product.serving_size).match(/(\d+(\.\d+)?)/); if (servingMatch) { displayGrams = parseFloat(servingMatch[0]); } }
                     
-                    resultElement.innerHTML = `
-                         <div class="text-left w-full">
+                    const targetRow = scanningIngredientRow;
+                    const resultHtml = `
+                        <div class="p-3 bg-input-bg rounded-lg mb-2">
                             <p class="font-bold">${product.product_name || 'Scanned Item'}</p>
                             <p class="text-xs text-gray-400">Barcode: ${decodedText}</p>
                             <button class="btn btn-primary !p-2 mt-2 w-full data-log-button">Log this</button>
                         </div>`;
-                    const logButton = resultElement.querySelector('.data-log-button');
+                    ui.barcodeResults.innerHTML += resultHtml;
+                    
+                    const logButton = ui.barcodeResults.querySelector('.data-log-button:last-child');
                     logButton.onclick = () => {
-                         if (scanningIngredientRow) {
-                            scanningIngredientRow.querySelector('.ingredient-name').value = product.product_name || 'Scanned Item';
-                            scanningIngredientRow.querySelector('.ingredient-grams').value = displayGrams.toFixed(0);
+                         if (targetRow) {
+                            targetRow.querySelector('.ingredient-name').value = product.product_name || 'Scanned Item';
+                            targetRow.querySelector('.ingredient-grams').value = displayGrams.toFixed(0);
                             const ratio = displayGrams / 100;
-                            ['calories', 'protein', 'carbs', 'fat', 'sugar', 'sodium', 'potassium'].forEach(macro => {
-                                const input = scanningIngredientRow.querySelector(`.ingredient-${macro}`);
-                                if(input) input.value = (macrosPer100g[macro] * ratio).toFixed(2);
-                            });
+                            targetRow.querySelector('.ingredient-calories').value = (aiBaseMacros.calories * ratio).toFixed(2);
+                            targetRow.querySelector('.ingredient-protein').value = (aiBaseMacros.protein * ratio).toFixed(2);
+                            targetRow.querySelector('.ingredient-carbs').value = (aiBaseMacros.carbs * ratio).toFixed(2);
+                            targetRow.querySelector('.ingredient-fat').value = (aiBaseMacros.fat * ratio).toFixed(2);
+                            targetRow.querySelector('.ingredient-sugar').value = (aiBaseMacros.sugar * ratio).toFixed(2);
+                            targetRow.querySelector('.ingredient-sodium').value = (aiBaseMacros.sodium * ratio).toFixed(2);
+                            targetRow.querySelector('.ingredient-potassium').value = (aiBaseMacros.potassium * ratio).toFixed(2);
                             updateRecipeTotals();
                         } else {
                             ui.foodNameInput.value = product.product_name || 'Scanned Item';
                             ui.foodBrandInput.value = product.brands || '';
-                            ui.foodServingsInput.value = 1;
                             ui.foodGramsInput.value = displayGrams.toFixed(0);
-                             ['calories', 'protein', 'carbs', 'fat', 'sugar', 'sodium', 'potassium'].forEach(macro => {
-                                const input = document.getElementById(`food-${macro}-input`);
-                                if(input) input.value = (macrosPer100g[macro] * (displayGrams/100)).toFixed(2);
-                            });
                         }
                         logButton.textContent = 'Logged!';
                         logButton.disabled = true;
-                        setTimeout(() => hideModal(ui.scanModal), 500);
+                        setTimeout(stopBarcodeScanner, 500);
                     }
-                } catch(error) {
-                     resultElement.innerHTML = `<p class="text-red-400 text-xs my-auto">Could not get data for barcode.</p>`;
+
+                } catch (error) {
+                    ui.barcodeResults.innerHTML += `<div class="p-3 bg-input-bg rounded-lg mb-2 text-yellow-400 text-center">Could not retrieve data for barcode. ${error.message}</div>`;
+                } finally {
+                    if(html5QrCode && !html5QrCode.isScanning) { html5QrCode.resume(); }
                 }
             }
-
-            ui.startLiveScanBtn.addEventListener('click', () => {
-                ui.scanInitialOptions.classList.add('hidden');
-                ui.liveScannerView.classList.remove('hidden');
-                ui.scanStatus.textContent = "Starting camera...";
-                if (html5QrCode && html5QrCode.isScanning) { html5QrCode.stop(); }
-                html5QrCode = new Html5Qrcode("live-scanner-view", { verbose: false });
-                const config = { fps: 10, qrbox: { width: 250, height: 250 } };
-                html5QrCode.start({ facingMode: "environment" }, config, 
-                    (decodedText, decodedResult) => {
-                        if (html5QrCode.isScanning) html5QrCode.pause();
-                        const resultElement = document.createElement('div');
-                        resultElement.className = 'p-3 bg-input-bg rounded-lg flex items-start gap-3';
-                        ui.scanResultsContainer.prepend(resultElement);
-                        processBarcodeData(decodedText, resultElement);
-                        setTimeout(() => { if (html5QrCode && !html5QrCode.isScanning) html5QrCode.resume() }, 2000);
-                    }, 
-                    (errorMessage) => { ui.scanStatus.textContent = "Looking for barcode..."; }
-                ).catch(err => { ui.scanStatus.innerHTML = `Camera permission denied.`; });
+            function onScanFailure(error) { ui.barcodeScannerStatus.textContent = 'Looking for barcode...'; }
+            
+            ui.scanBarcodeBtn.addEventListener('click', () => { scanningIngredientRow = null; startBarcodeScanner(); });
+            ui.closeBarcodeScannerModalBtn.addEventListener('click', stopBarcodeScanner);
+            document.getElementById('start-camera-scan-btn')?.addEventListener('click', initiateLiveScanner);
+            document.getElementById('barcode-upload-input')?.addEventListener('change', (e) => {
+                const files = e.target.files; if (!files || files.length === 0) return;
+                ui.barcodeResults.innerHTML = '';
+                ui.barcodeScannerStatus.textContent = 'Scanning image(s)...';
+                document.getElementById('barcode-initial-options').classList.add('hidden');
+                
+                Array.from(files).forEach(file => {
+                     const qrCodeInstance = new Html5Qrcode("barcode-reader");
+                     qrCodeInstance.scanFile(file, false)
+                        .then(decodedText => onScanSuccess(decodedText, {}))
+                        .catch(err => ui.barcodeResults.innerHTML += `<div class="p-3 bg-input-bg rounded-lg mb-2 text-yellow-400 text-center">No barcode found in image: ${file.name}.</div>` )
+                        .finally(() => qrCodeInstance.clear());
+                });
             });
-
+            
             // --- AI Nutritionist Chat ---
             ui.openNutritionistChatBtn.addEventListener('click', () => {
                 renderChatHistory();
