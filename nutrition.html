@@ -309,128 +309,128 @@
         </header>
         <!-- Main Content -->
         <main class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Right Column -->
-                    <div class="space-y-8">
-                        <div id="daily-summary-card" class="content-card">
-                            <!-- Date Navigation & Chart -->
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="text-left">
-                                    <h3 class="text-xl font-bold">
-                                        <span id="day-view-title-span" class="block text-2xl font-semibold">Today</span>
-                                        <span id="day-view-date-span" class="text-base text-secondary-text"></span>
-                                    </h3>
-                                </div>
-                                <div class="w-24 h-24">
-                                    <canvas id="macro-chart"></canvas>
-                                </div>
-                            </div>
-                        <h3 class="text-2xl font-bold mb-4 border-t border-border-color pt-4">Daily Summary</h3>
-                        <div class="w-full grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
-                            <div class="flex justify-between items-baseline"><span class="text-gray-400">Calories:</span> <span class="font-semibold"><span id="current-calories">0</span> / <span id="goal-calories">2000</span></span></div>
-                            <div class="flex justify-between items-baseline"><span class="text-gray-400">Protein:</span> <span class="font-semibold"><span id="current-protein">0</span> / <span id="goal-protein">150</span> g</span></div>
-                            <div class="flex justify-between items-baseline"><span class="text-gray-400">Carbs:</span> <span class="font-semibold"><span id="current-carbs">0</span> / <span id="goal-carbs">225</span> g</span></div>
-                            <div class="flex justify-between items-baseline"><span class="text-gray-400">Fat:</span> <span class="font-semibold"><span id="current-fat">0</span> / <span id="goal-fat">60</span> g</span></div>
-                            <div class="flex justify-between items-baseline"><span class="text-gray-400">Sugar:</span> <span class="font-semibold"><span id="current-sugar">0</span> / <span id="goal-sugar">50</span> g</span></div>
-                            <div class="flex justify-between items-baseline"><span class="text-gray-400">Sodium:</span> <span class="font-semibold"><span id="current-sodium">0</span> / <span id="goal-sodium">2300</span> mg</span></div>
-                            <div class="flex justify-between items-baseline"><span class="text-gray-400">Potassium:</span> <span class="font-semibold"><span id="current-potassium">0</span> / <span id="goal-potassium">3500</span> mg</span></div>
-                            <div class="flex justify-between items-baseline"><span class="text-gray-400">Water:</span> <span class="font-semibold"><span id="current-water">0</span> / <span id="goal-water">2500</span> ml</span></div>
+             <!-- Left Column: Logging & Food Log -->
+            <div class="space-y-8">
+                <div class="content-card">
+                    <h3 class="text-2xl font-bold mb-6">Log Your Meal</h3>
+                    <form id="log-meal-form" class="space-y-4">
+                        <div>
+                            <label for="food-name-input" class="form-label">Food Name *</label>
+                            <input type="text" id="food-name-input" list="favorite-foods-datalist" placeholder="e.g., Chicken Breast" class="form-input mt-1">
+                            <datalist id="favorite-foods-datalist"></datalist>
                         </div>
-                    </div>
-                <!-- Left Column -->
-                <div class="space-y-8">
-                    <div class="content-card">
-                        <h3 class="text-2xl font-bold mb-6">Log Your Meal</h3>
-                        <form id="log-meal-form" class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <label for="food-name-input" class="form-label">Food Name *</label>
-                                <input type="text" id="food-name-input" list="favorite-foods-datalist" placeholder="e.g., Chicken Breast" class="form-input mt-1">
-                                <datalist id="favorite-foods-datalist"></datalist>
+                                <label for="food-servings-input" class="form-label">Servings *</label>
+                                <input type="number" id="food-servings-input" placeholder="1" value="1" min="0" step="0.1" class="form-input mt-1">
                             </div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label for="food-servings-input" class="form-label">Servings *</label>
-                                    <input type="number" id="food-servings-input" placeholder="1" value="1" min="0" step="0.1" class="form-input mt-1">
-                                </div>
-                                <div>
-                                    <label for="food-brand-input" class="form-label">Brand (Optional)</label>
-                                    <input type="text" id="food-brand-input" placeholder="e.g., Tesco" class="form-input mt-1">
-                                </div>
-                            </div>
-                            <details class="pt-2">
-                                <summary class="cursor-pointer text-sm text-gray-400 hover:text-white flex items-center justify-between">
-                                    <span>Enter Macros for 1 Serving</span>
-                                    <i data-lucide="chevron-down" class="w-4 h-4"></i>
-                                </summary>
-                                <div class="space-y-3 pt-4 mt-4 border-t border-gray-800">
-                                    <div class="grid grid-cols-4 gap-2">
-                                        <div>
-                                            <label class="form-label text-xs">Calories</label>
-                                            <input type="number" step="0.01" id="food-calories-input" min="0" placeholder="kcal" class="form-input mt-1 !py-1.5 text-sm macro-input">
-                                        </div>
-                                        <div>
-                                            <label class="form-label text-xs">Protein</label>
-                                            <input type="number" step="0.01" id="food-protein-input" min="0" placeholder="g" class="form-input mt-1 !py-1.5 text-sm macro-input">
-                                        </div>
-                                        <div>
-                                            <label class="form-label text-xs">Fat</label>
-                                            <input type="number" step="0.01" id="food-fat-input" min="0" placeholder="g" class="form-input mt-1 !py-1.5 text-sm macro-input">
-                                        </div>
-                                        <div>
-                                            <label class="form-label text-xs">Carbs</label>
-                                            <input type="number" step="0.01" id="food-carbs-input" min="0" placeholder="g" class="form-input mt-1 !py-1.5 text-sm macro-input">
-                                        </div>
-                                    </div>
-                                    <div class="grid grid-cols-4 gap-2">
-                                        <div>
-                                            <label class="form-label text-xs">Sugar</label>
-                                            <input type="number" step="0.01" id="food-sugar-input" min="0" placeholder="g" class="form-input mt-1 !py-1.5 text-sm macro-input">
-                                        </div>
-                                        <div>
-                                            <label class="form-label text-xs">Potassium</label>
-                                            <input type="number" step="0.01" id="food-potassium-input" min="0" placeholder="mg" class="form-input mt-1 !py-1.5 text-sm macro-input">
-                                        </div>
-                                        <div>
-                                            <label class="form-label text-xs">Sodium</label>
-                                            <input type="number" step="0.01" id="food-sodium-input" min="0" placeholder="mg" class="form-input mt-1 !py-1.5 text-sm macro-input">
-                                        </div>
-                                        <div>
-                                            <label for="food-grams-input" class="form-label text-xs">Grams</label>
-                                            <input type="number" id="food-grams-input" placeholder="g" min="0" class="form-input mt-1 !py-1.5 text-sm">
-                                        </div>
-                                    </div>
-                                </div>
-                            </details>
-                            <div class="grid grid-cols-5 gap-2 sm:gap-4 pt-6">
-                                <button id="scan-barcode-btn" type="button" class="btn btn-secondary !p-2 sm:!p-3" title="Scan Barcode"><i data-lucide="barcode" class="w-4 h-4 sm:w-5 sm:h-5"></i></button>
-                                <button id="create-recipe-btn" type="button" class="btn btn-secondary !p-2 sm:!p-3" title="Create Recipe"><i data-lucide="notebook-tabs" class="w-4 h-4 sm:w-5 sm:h-5"></i></button>
-                                <button id="add-food-btn" type="button" class="btn btn-primary !p-2 sm:!p-3" title="Add Food">
-                                    <i data-lucide="sparkles" class="w-4 h-4 sm:w-5 sm:h-5 btn-text"></i>
-                                    <div class="loader hidden"></div>
-                                </button>
-                                <button id="scan-food-btn" type="button" class="btn btn-secondary !p-2 sm:!p-3" title="Scan Food with AI Camera"><i data-lucide="camera" class="w-4 h-4 sm:w-5 sm:h-5"></i></button>
-                                <button id="add-water-btn" type="button" class="btn btn-secondary !p-2 sm:!p-3" title="Log Water"><i data-lucide="glass-water" class="w-4 h-4 sm:w-5 sm:h-5"></i></button>
-                            </div>
-                            <div id="add-food-error" class="text-red-400 text-sm mt-2 h-4"></div>
-                        </form>
-                    </div>
-                    <!-- Daily Log Content & AI Report Output -->
-                    <div class="content-card">
-                         <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-2xl font-bold">Food Log</h3>
-                            <div class="flex items-center gap-2">
-                                <button id="ai-daily-report-btn" class="btn btn-secondary !p-2" title="Get Daily AI Report"><i data-lucide="clipboard-list" class="w-5 h-5"></i></button>
-                                <button id="ai-meal-suggester-btn" class="btn btn-secondary !p-2" title="AI Meal Suggester"><i data-lucide="lightbulb" class="w-5 h-5"></i></button>
-                                <button id="open-nutritionist-chat-btn" class="btn btn-secondary !p-2" title="Chat with AI Nutritionist"><i data-lucide="message-circle" class="w-5 h-5"></i></button>
+                            <div>
+                                <label for="food-brand-input" class="form-label">Brand (Optional)</label>
+                                <input type="text" id="food-brand-input" placeholder="e.g., Tesco" class="form-input mt-1">
                             </div>
                         </div>
-                        <div id="daily-log-content" class="space-y-2 max-h-60 overflow-y-auto custom-scrollbar pr-2"><p class="text-gray-500">No food logged yet.</p></div>
+                        <details class="pt-2">
+                            <summary class="cursor-pointer text-sm text-gray-400 hover:text-white flex items-center justify-between">
+                                <span>Enter Macros for 1 Serving</span>
+                                <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                            </summary>
+                            <div class="space-y-3 pt-4 mt-4 border-t border-gray-800">
+                                <div class="grid grid-cols-4 gap-2">
+                                    <div>
+                                        <label class="form-label text-xs">Calories</label>
+                                        <input type="number" step="0.01" id="food-calories-input" min="0" placeholder="kcal" class="form-input mt-1 !py-1.5 text-sm macro-input">
+                                    </div>
+                                    <div>
+                                        <label class="form-label text-xs">Protein</label>
+                                        <input type="number" step="0.01" id="food-protein-input" min="0" placeholder="g" class="form-input mt-1 !py-1.5 text-sm macro-input">
+                                    </div>
+                                    <div>
+                                        <label class="form-label text-xs">Fat</label>
+                                        <input type="number" step="0.01" id="food-fat-input" min="0" placeholder="g" class="form-input mt-1 !py-1.5 text-sm macro-input">
+                                    </div>
+                                    <div>
+                                        <label class="form-label text-xs">Carbs</label>
+                                        <input type="number" step="0.01" id="food-carbs-input" min="0" placeholder="g" class="form-input mt-1 !py-1.5 text-sm macro-input">
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-4 gap-2">
+                                    <div>
+                                        <label class="form-label text-xs">Sugar</label>
+                                        <input type="number" step="0.01" id="food-sugar-input" min="0" placeholder="g" class="form-input mt-1 !py-1.5 text-sm macro-input">
+                                    </div>
+                                    <div>
+                                        <label class="form-label text-xs">Potassium</label>
+                                        <input type="number" step="0.01" id="food-potassium-input" min="0" placeholder="mg" class="form-input mt-1 !py-1.5 text-sm macro-input">
+                                    </div>
+                                    <div>
+                                        <label class="form-label text-xs">Sodium</label>
+                                        <input type="number" step="0.01" id="food-sodium-input" min="0" placeholder="mg" class="form-input mt-1 !py-1.5 text-sm macro-input">
+                                    </div>
+                                    <div>
+                                        <label for="food-grams-input" class="form-label text-xs">Grams</label>
+                                        <input type="number" id="food-grams-input" placeholder="g" min="0" class="form-input mt-1 !py-1.5 text-sm">
+                                    </div>
+                                </div>
+                            </div>
+                        </details>
+                        <div class="grid grid-cols-5 gap-2 sm:gap-4 pt-6">
+                            <button id="scan-barcode-btn" type="button" class="btn btn-secondary !p-2 sm:!p-3" title="Scan Barcode"><i data-lucide="barcode" class="w-4 h-4 sm:w-5 sm:h-5"></i></button>
+                            <button id="create-recipe-btn" type="button" class="btn btn-secondary !p-2 sm:!p-3" title="Create Recipe"><i data-lucide="notebook-tabs" class="w-4 h-4 sm:w-5 sm:h-5"></i></button>
+                            <button id="add-food-btn" type="button" class="btn btn-primary !p-2 sm:!p-3" title="Add Food">
+                                <i data-lucide="sparkles" class="w-4 h-4 sm:w-5 sm:h-5 btn-text"></i>
+                                <div class="loader hidden"></div>
+                            </button>
+                            <button id="scan-food-btn" type="button" class="btn btn-secondary !p-2 sm:!p-3" title="Scan Food with AI Camera"><i data-lucide="camera" class="w-4 h-4 sm:w-5 sm:h-5"></i></button>
+                            <button id="add-water-btn" type="button" class="btn btn-secondary !p-2 sm:!p-3" title="Log Water"><i data-lucide="glass-water" class="w-4 h-4 sm:w-5 sm:h-5"></i></button>
+                        </div>
+                        <div id="add-food-error" class="text-red-400 text-sm mt-2 h-4"></div>
+                    </form>
+                </div>
+                <!-- Daily Log Content & AI Report Output -->
+                <div class="content-card">
+                     <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-2xl font-bold">Food Log</h3>
+                        <div class="flex items-center gap-2">
+                            <button id="ai-daily-report-btn" class="btn btn-secondary !p-2" title="Get Daily AI Report"><i data-lucide="clipboard-list" class="w-5 h-5"></i></button>
+                            <button id="ai-meal-suggester-btn" class="btn btn-secondary !p-2" title="AI Meal Suggester"><i data-lucide="lightbulb" class="w-5 h-5"></i></button>
+                            <button id="open-nutritionist-chat-btn" class="btn btn-secondary !p-2" title="Chat with AI Nutritionist"><i data-lucide="message-circle" class="w-5 h-5"></i></button>
+                        </div>
                     </div>
-                     <div class="content-card">
-                        <h3 class="text-2xl font-bold mb-4">Favorites & Recipes</h3>
-                        <div id="saved-items-list" class="space-y-2 max-h-60 overflow-y-auto custom-scrollbar pr-2"></div>
+                    <div id="daily-log-content" class="space-y-2 max-h-60 overflow-y-auto custom-scrollbar pr-2"><p class="text-gray-500">No food logged yet.</p></div>
+                </div>
+            </div>
+             <!-- Right Column: Summary & Favorites -->
+            <div class="space-y-8">
+                <div id="daily-summary-card" class="content-card">
+                    <!-- Date Navigation & Chart -->
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="text-left">
+                            <h3 class="text-xl font-bold">
+                                <span id="day-view-title-span" class="block text-2xl font-semibold cursor-pointer">Today</span>
+                                <span id="day-view-date-span" class="text-base text-secondary-text cursor-pointer"></span>
+                            </h3>
+                        </div>
+                        <div class="w-16 h-16">
+                            <canvas id="macro-chart"></canvas>
+                        </div>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 border-t border-border-color pt-4">Daily Summary</h3>
+                    <div class="w-full grid grid-cols-2 gap-x-6 gap-y-2 text-xs sm:text-sm">
+                        <div class="flex justify-between items-baseline"><span class="text-gray-400">Calories:</span> <span class="font-semibold"><span id="current-calories">0</span> / <span id="goal-calories">2000</span></span></div>
+                        <div class="flex justify-between items-baseline"><span class="text-gray-400">Protein:</span> <span class="font-semibold"><span id="current-protein">0</span> / <span id="goal-protein">150</span> g</span></div>
+                        <div class="flex justify-between items-baseline"><span class="text-gray-400">Carbs:</span> <span class="font-semibold"><span id="current-carbs">0</span> / <span id="goal-carbs">225</span> g</span></div>
+                        <div class="flex justify-between items-baseline"><span class="text-gray-400">Fat:</span> <span class="font-semibold"><span id="current-fat">0</span> / <span id="goal-fat">60</span> g</span></div>
+                        <div class="flex justify-between items-baseline"><span class="text-gray-400">Na:</span> <span class="font-semibold"><span id="current-sodium">0</span> / <span id="goal-sodium">2300</span> mg</span></div>
+                        <div class="flex justify-between items-baseline"><span class="text-gray-400">K:</span> <span class="font-semibold"><span id="current-potassium">0</span> / <span id="goal-potassium">3500</span> mg</span></div>
+                        <div class="flex justify-between items-baseline"><span class="text-gray-400">Sugar:</span> <span class="font-semibold"><span id="current-sugar">0</span> / <span id="goal-sugar">50</span> g</span></div>
+                        <div class="flex justify-between items-baseline"><span class="text-gray-400">Water:</span> <span class="font-semibold"><span id="current-water">0</span> / <span id="goal-water">2500</span> ml</span></div>
                     </div>
                 </div>
+                <div class="content-card">
+                    <h3 class="text-2xl font-bold mb-4">Favorites & Recipes</h3>
+                    <div id="saved-items-list" class="space-y-2 max-h-60 overflow-y-auto custom-scrollbar pr-2"></div>
                 </div>
+            </div>
         </main>
     </div>
 
@@ -462,13 +462,20 @@
     <div id="confirm-modal" class="modal-backdrop"><div class="modal-content"><h2 id="confirm-modal-title" class="text-xl font-bold mb-4">Are you sure?</h2><p id="confirm-modal-text" class="text-gray-300 mb-6">This action cannot be undone.</p><div class="flex justify-end gap-4"><button id="confirm-modal-cancel-btn" class="btn btn-secondary">Cancel</button><button id="confirm-modal-confirm-btn" class="btn btn-danger">Confirm</button></div></div></div>
     <div id="alert-modal" class="modal-backdrop"><div class="modal-content"><h2 id="alert-modal-title" class="text-xl font-bold mb-4">Alert</h2><p id="alert-modal-text" class="text-gray-300 mb-6"></p><div class="flex justify-end"><button id="alert-modal-ok-btn" class="btn btn-primary">OK</button></div></div></div>
     <div id="ai-report-modal" class="modal-backdrop"><div class="modal-content"><div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold flex items-center gap-2"><i data-lucide="sparkles" class="w-5 h-5 text-yellow-400"></i>AI Nutrition Report</h2><button id="close-ai-report-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button></div><p id="ai-report-modal-text" class="text-gray-300 mb-6"></p><div class="flex justify-end"><button id="ai-report-modal-ok-btn" class="btn btn-primary">OK</button></div></div></div>
-    <div id="compound-food-modal" class="modal-backdrop"><div class="modal-content !max-w-3xl"><div class="flex justify-between items-center mb-6"><h2 id="compound-food-modal-title" class="text-2xl font-bold">Create a Recipe</h2><button id="close-compound-food-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button></div><form id="compound-food-form" class="space-y-6"><div><label for="recipe-name-input" class="form-label">Recipe Name</label><input type="text" id="recipe-name-input" class="form-input mt-1" required placeholder="e.g., Turkey Sandwich"></div><div class="border-t border-b border-gray-800 py-4"><h3 class="text-lg font-semibold mb-3">Ingredients</h3><div id="ingredient-list-container" class="horizontal-scroll-container pr-2 min-h-[280px] items-start"></div><button type="button" id="add-ingredient-btn" class="btn btn-secondary w-full mt-4"><i data-lucide="plus"></i>Add Ingredient</button></div><div><h3 class="text-lg font-semibold mb-3">Total Macros</h3><div id="recipe-totals" class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center"><div><p class="text-sm text-gray-400">Calories</p><p id="recipe-total-calories" class="font-bold text-xl">0</p></div><div><p class="text-sm text-gray-400">Protein</p><p class="font-bold text-xl"><span id="recipe-total-protein">0</span>g</p></div><div><p class="text-sm text-gray-400">Carbs</p><p class="font-bold text-xl"><span id="recipe-total-carbs">0</span>g</p></div><div><p class="text-sm text-gray-400">Fat</p><p class="font-bold text-xl"><span id="recipe-total-fat">0</span>g</p></div><div><p class="text-sm text-gray-400">Sugar</p><p class="font-bold text-xl"><span id="recipe-total-sugar">0</span>g</p></div><div><p class="text-sm text-gray-400">Sodium</p><p class="font-bold text-xl"><span id="recipe-total-sodium">0</span>mg</p></div><div><p class="text-sm text-gray-400">Potassium</p><p class="font-bold text-xl"><span id="recipe-total-potassium">0</span>mg</p></div></div><p class="text-center text-sm text-gray-400 mt-2">Total Weight: <span id="recipe-total-grams" class="font-bold">0</span>g</p></div><button type="submit" id="save-recipe-btn" class="btn btn-primary w-full">Save & Log Recipe</button></form></div></div>
+    <div id="compound-food-modal" class="modal-backdrop"><div class="modal-content w-[95vw] !max-w-3xl max-h-[90vh]"><div class="flex justify-between items-center mb-6"><h2 id="compound-food-modal-title" class="text-2xl font-bold">Create a Recipe</h2><button id="close-compound-food-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button></div><form id="compound-food-form" class="space-y-6"><div><label for="recipe-name-input" class="form-label">Recipe Name</label><input type="text" id="recipe-name-input" class="form-input mt-1" required placeholder="e.g., Turkey Sandwich"></div><div class="border-t border-b border-gray-800 py-4"><h3 class="text-lg font-semibold mb-3">Ingredients</h3><div id="ingredient-list-container" class="horizontal-scroll-container pr-2 min-h-[280px] items-start"></div><button type="button" id="add-ingredient-btn" class="btn btn-secondary w-full mt-4"><i data-lucide="plus"></i>Add Ingredient</button></div><div><h3 class="text-lg font-semibold mb-3">Total Macros</h3><div id="recipe-totals" class="grid grid-cols-4 gap-x-2 gap-y-4 text-center"><div><p class="text-xs sm:text-sm text-gray-400">Calories</p><p id="recipe-total-calories" class="font-bold text-base sm:text-xl">0</p></div><div><p class="text-xs sm:text-sm text-gray-400">Protein</p><p class="font-bold text-base sm:text-xl"><span id="recipe-total-protein">0</span>g</p></div><div><p class="text-xs sm:text-sm text-gray-400">Carbs</p><p class="font-bold text-base sm:text-xl"><span id="recipe-total-carbs">0</span>g</p></div><div><p class="text-xs sm:text-sm text-gray-400">Fat</p><p class="font-bold text-base sm:text-xl"><span id="recipe-total-fat">0</span>g</p></div><div><p class="text-xs sm:text-sm text-gray-400">Sugar</p><p class="font-bold text-base sm:text-xl"><span id="recipe-total-sugar">0</span>g</p></div><div><p class="text-xs sm:text-sm text-gray-400">Sodium</p><p class="font-bold text-base sm:text-xl"><span id="recipe-total-sodium">0</span>mg</p></div><div><p class="text-xs sm:text-sm text-gray-400">Potassium</p><p class="font-bold text-base sm:text-xl"><span id="recipe-total-potassium">0</span>mg</p></div><div><p class="text-xs sm:text-sm text-gray-400">Grams</p><p id="recipe-total-grams" class="font-bold text-base sm:text-xl">0</p></div></div></div><button type="submit" id="save-recipe-btn" class="btn btn-primary w-full">Save & Log Recipe</button></form></div></div>
     <div id="prompt-modal" class="modal-backdrop"><div class="modal-content"><h2 id="prompt-modal-title" class="text-xl font-bold mb-4">Input Required</h2><p id="prompt-modal-text" class="text-gray-300 mb-4"></p><input type="number" id="prompt-modal-input" min="0" class="form-input mb-6"><div class="flex justify-end gap-4"><button id="prompt-modal-cancel-btn" class="btn btn-secondary">Cancel</button><button id="prompt-modal-ok-btn" class="btn btn-primary">OK</button></div></div></div>
     <div id="edit-favorite-modal" class="modal-backdrop"><div class="modal-content"><div class="flex justify-between items-center mb-6"><h2 class="text-2xl font-bold">Edit Favorite Food</h2><button id="close-edit-favorite-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button></div><form id="edit-favorite-form" class="space-y-4"><p class="text-sm text-gray-400">All values should be per 100g.</p><div><label for="edit-fav-food-name" class="form-label">Food Name</label><input type="text" id="edit-fav-food-name" class="form-input mt-1" required></div><div class="grid grid-cols-2 gap-4"><div><label for="edit-fav-food-calories" class="form-label">Calories (kcal)</label><input type="number" step="0.01" min="0" id="edit-fav-food-calories" class="form-input mt-1" required></div><div><label for="edit-fav-food-protein" class="form-label">Protein (g)</label><input type="number" step="0.01" min="0" id="edit-fav-food-protein" class="form-input mt-1" required></div></div><div class="grid grid-cols-2 gap-4"><div><label for="edit-fav-food-carbs" class="form-label">Carbs (g)</label><input type="number" step="0.01" min="0" id="edit-fav-food-carbs" class="form-input mt-1" required></div><div><label for="edit-fav-food-fat" class="form-label">Fat (g)</label><input type="number" step="0.01" min="0" id="edit-fav-food-fat" class="form-input mt-1" required></div></div><button type="submit" class="btn btn-primary w-full">Update Favorite</button></form></div></div>
     <!-- AI Nutritionist Chat Modal -->
     <div id="ai-nutritionist-modal" class="modal-backdrop"><div class="modal-content !max-w-2xl flex flex-col"><div class="flex justify-between items-center mb-4"><h2 class="text-2xl font-bold">AI Nutritionist Chat</h2><button id="close-ai-nutritionist-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button></div><div id="ai-chat-history" class="flex-grow space-y-4 overflow-y-auto custom-scrollbar pr-2 mb-4 min-h-[300px]"></div><div class="flex gap-2"><input type="text" id="ai-chat-input" class="form-input" placeholder="Ask a nutrition question..."><button id="ai-chat-send-btn" class="btn btn-primary"><i data-lucide="send"></i></button></div></div></div>
     <!-- AI Meal Suggester Modal -->
     <div id="ai-suggester-modal" class="modal-backdrop"><div class="modal-content"><div class="flex justify-between items-center mb-4"><h2 class="text-2xl font-bold">AI Meal Suggester</h2><button id="close-ai-suggester-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button></div><p class="text-gray-400 mb-4 text-sm">Enter ingredients you have, and the AI will suggest a quick, healthy meal.</p><div><label for="ai-ingredients" class="form-label">Your Ingredients</label><textarea id="ai-ingredients-input" rows="3" class="form-input mt-1" placeholder="e.g., chicken breast, rice, broccoli, olive oil"></textarea></div><button id="ai-suggestion-btn" class="btn btn-secondary w-full mt-4"><span class="btn-text">Generate Ideas</span><div class="loader hidden"></div></button><div id="ai-suggestions-output" class="mt-4 space-y-3"></div></div></div>
+
+     <!-- Undo Toast -->
+    <div id="undo-toast" class="fixed bottom-20 left-1/2 -translate-x-1/2 bg-gray-800 text-white py-2 px-4 rounded-lg shadow-lg flex items-center gap-4 transform translate-y-24 opacity-0 transition-all duration-300 z-[100]">
+        <span id="undo-toast-text"></span>
+        <button id="undo-toast-btn" class="font-bold text-blue-400 hover:text-blue-300">Undo</button>
+    </div>
+
 
     <!-- FIXED MOBILE FOOTER NAV BAR -->
     <nav id="mobile-footer-nav" class="fixed bottom-0 left-0 right-0 h-16 bg-card-bg border-t border-border-color z-50 flex justify-around items-center">
@@ -516,10 +523,12 @@
             let aiBaseMacros = null;
             let chatHistory = [];
             let lastScannedBarcode = { code: null, time: 0 };
-
+            let undoTimeout = null;
+            let lastAction = null;
 
             // --- CORE & HELPER FUNCTIONS ---
             function dateToKey(date) { return date.toISOString().split('T')[0]; }
+            function capitalizeWords(str) { if (!str) return ''; return str.replace(/\b\w/g, char => char.toUpperCase()); }
             
             function getDayLog(date) {
                 const key = dateToKey(date);
@@ -531,12 +540,12 @@
             
             function getCurrentDayLogEntries() { return getDayLog(viewDate).entries; }
 
-            function getApiUrl(model, action = 'generateContent') { const apiKey = "AIzaSyDY48xF1byvU05kS9qKvN8iyrIR3hheP8w"; return `https://generativelanguage.googleapis.com/v1beta/models/${model}:${action}?key=${apiKey}`; };
+            function getApiUrl(model, action = 'generateContent') { const apiKey = ""; return `https://generativelanguage.googleapis.com/v1beta/models/${model}:${action}?key=${apiKey}`; };
             function showModal(modalElement) { modalElement.style.display = 'flex'; }
             function hideModal(modalElement) { modalElement.style.display = 'none'; }
-            function showCustomAlert(title, text) { ui.alertModalTitle.textContent = title; ui.alertModalText.textContent = text; showModal(ui.alertModal); }
-            function showConfirmModal(title, text, onConfirm) { ui.confirmModalTitle.textContent = title; ui.confirmModalText.textContent = text; confirmCallback = onConfirm; showModal(ui.confirmModal); }
-            function showPromptModal(title, text, defaultValue, onConfirm) { ui.promptModalTitle.textContent = title; ui.promptModalText.textContent = text; ui.promptModalInput.value = defaultValue; promptCallback = onConfirm; showModal(ui.promptModal); ui.promptModalInput.focus(); ui.promptModalInput.select(); }
+            function showCustomAlert(title, text) { if (ui.alertModal.style.display === 'flex') return; ui.alertModalTitle.textContent = title; ui.alertModalText.textContent = text; showModal(ui.alertModal); }
+            function showConfirmModal(title, text, onConfirm) { if (ui.confirmModal.style.display === 'flex') return; ui.confirmModalTitle.textContent = title; ui.confirmModalText.textContent = text; confirmCallback = onConfirm; showModal(ui.confirmModal); }
+            function showPromptModal(title, text, defaultValue, onConfirm) { if (ui.promptModal.style.display === 'flex') return; ui.promptModalTitle.textContent = title; ui.promptModalText.textContent = text; ui.promptModalInput.value = defaultValue; promptCallback = onConfirm; showModal(ui.promptModal); ui.promptModalInput.focus(); ui.promptModalInput.select(); }
 
             function saveData() {
                 localStorage.setItem('fitTrackAI_allDailyLogs', JSON.stringify(allDailyLogs));
@@ -589,6 +598,9 @@
                 aiIngredientsInput: document.getElementById('ai-ingredients-input'),
                 aiSuggestionBtn: document.getElementById('ai-suggestion-btn'),
                 aiSuggestionsOutput: document.getElementById('ai-suggestions-output'),
+                undoToast: document.getElementById('undo-toast'),
+                undoToastBtn: document.getElementById('undo-toast-btn'),
+                undoToastText: document.getElementById('undo-toast-text'),
             };
 
             // --- CHART.JS SETUP ---
@@ -715,45 +727,63 @@
                         totalProtein += parseFloat(row.querySelector('.ingredient-protein').value) || 0;
                         totalCarbs += parseFloat(row.querySelector('.ingredient-carbs').value) || 0;
                         totalFat += parseFloat(row.querySelector('.ingredient-fat').value) || 0;
-                        // Note: sugar, sodium, potassium inputs are not in the new layout, so they won't be calculated.
                     }
                 });
                 document.getElementById('recipe-total-calories').textContent = totalCalories.toFixed(0);
                 document.getElementById('recipe-total-protein').textContent = totalProtein.toFixed(1);
                 document.getElementById('recipe-total-carbs').textContent = totalCarbs.toFixed(1);
                 document.getElementById('recipe-total-fat').textContent = totalFat.toFixed(1);
-                // document.getElementById('recipe-total-sugar').textContent = totalSugar.toFixed(1);
-                // document.getElementById('recipe-total-sodium').textContent = totalSodium.toFixed(0);
-                // document.getElementById('recipe-total-potassium').textContent = totalPotassium.toFixed(0);
-                document.getElementById('recipe-total-grams').textContent = totalGrams.toFixed(1);
+                document.getElementById('recipe-total-sugar').textContent = totalSugar.toFixed(1);
+                document.getElementById('recipe-total-sodium').textContent = totalSodium.toFixed(0);
+                document.getElementById('recipe-total-potassium').textContent = totalPotassium.toFixed(0);
+                document.getElementById('recipe-total-grams').textContent = totalGrams.toFixed(0);
             }
             
             async function getDailyLogAIReport() {
                 const btn = ui.aiDailyReportBtn;
+                if (btn.disabled) return;
+                
                 btn.querySelector('i').classList.add('hidden');
                 const loader = document.createElement('div');
                 loader.className = 'loader !w-5 !h-5';
                 btn.appendChild(loader);
+                btn.disabled = true;
 
                 const dateKey = dateToKey(viewDate), currentLog = getCurrentDayLogEntries();
-                if (currentLog.length === 0) { showCustomAlert('No Data', `There is no food logged for ${dateKey}.`); return; }
+                if (currentLog.length === 0) { 
+                    showCustomAlert('No Data', `There is no food logged for ${dateKey}.`); 
+                    loader.remove();
+                    btn.querySelector('i').classList.remove('hidden');
+                    btn.disabled = false;
+                    return;
+                }
+                
                 const totals = currentLog.reduce((acc, item) => { acc.calories += item.calories || 0; acc.protein += item.protein || 0; acc.carbs += item.carbs || 0; acc.fat += item.fat || 0; acc.sugar += item.sugar || 0; acc.sodium += item.sodium || 0; acc.potassium += item.potassium || 0; return acc; }, { calories: 0, protein: 0, carbs: 0, fat: 0, sugar: 0, sodium: 0, potassium: 0 });
                 const goalData = goals;
-                btn.disabled = true;
                 
                 ui.aiReportModalText.textContent = 'Generating personalized report...';
+                ui.aiReportModalText.classList.remove('text-red-400');
                 showModal(ui.aiReportModal);
 
                 const systemPrompt = `You are a friendly but expert nutrition coach. Provide a brief, actionable analysis of the user's daily food log. 1. Analyze the logged data against the goals. 2. Evaluate macro distribution (Protein, Carbs, Fat) and key micronutrients (Sodium/Potassium/Sugar). 3. Provide a concise summary (1-2 sentences). 4. Offer one specific, actionable tip for improvement/maintenance based on the biggest deviation or goal. Keep the report readable, using markdown bold for key stats, and keep the total response under 100 words.`;
                 const userQuery = `Analyze the following log data for ${dateKey}: --- Logged Data --- Total Calories: ${totals.calories.toFixed(0)} kcal, Protein: ${totals.protein.toFixed(1)} g, Carbs: ${totals.carbs.toFixed(1)} g, Fat: ${totals.fat.toFixed(1)} g, Sugar: ${totals.sugar.toFixed(1)} g, Sodium: ${totals.sodium.toFixed(0)} mg, Potassium: ${totals.potassium.toFixed(0)} mg. --- Daily Goals --- Calorie Goal: ${goalData.calories} kcal, Protein Goal: ${goalData.protein} g, Carb Goal: ${goalData.carbs} g, Fat Goal: ${goalData.fat} g, Sugar Limit: ${goalData.sugar} g, Sodium Limit: ${goalData.sodium} mg, Potassium Target: ${goalData.potassium} mg`;
-                const apiUrl = getApiUrl('gemini-2.5-flash-preview-05-20');
+                const apiUrl = getApiUrl('gemini-2.5-flash-preview-09-2025');
                 try {
                     const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: userQuery }] }], systemInstruction: { parts: [{ text: systemPrompt }] } }) });
                     if (!response.ok) throw new Error(`API Error: ${response.status}`);
-                    const result = await response.json(); let text = result.candidates[0].content.parts[0].text;
+                    const result = await response.json(); 
+                    if (!result.candidates || !result.candidates[0].content) throw new Error("Invalid API response format.");
+                    let text = result.candidates[0].content.parts[0].text;
                     ui.aiReportModalText.innerHTML = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
-                } catch (error) { console.error("AI Report Error:", error); ui.aiReportModalText.textContent = 'Sorry, the AI coach is unavailable right now.'; ui.aiReportModalText.classList.add('text-red-400');
-                } finally { btn.disabled = false; loader.remove(); btn.querySelector('i').classList.remove('hidden'); }
+                } catch (error) { 
+                    console.error("AI Report Error:", error); 
+                    hideModal(ui.aiReportModal);
+                    showCustomAlert("AI Error", "Sorry, the AI coach is unavailable right now. Please try again later.");
+                } finally { 
+                    btn.disabled = false; 
+                    loader.remove(); 
+                    btn.querySelector('i').classList.remove('hidden'); 
+                }
             }
 
             function updateDayView(date) {
@@ -769,7 +799,7 @@
                 if (brand) prompt += ` from the brand "${brand}"`;
                 prompt += `. Respond with only a valid JSON object containing all fields for ONE standard serving: "servingGrams", "calories", "protein", "carbs", "fat", "sugar", "sodium", "potassium". If it's a food that is hard to quantify, like "salad", provide a reasonable estimate for a typical side-salad portion.`;
 
-                const apiUrl = getApiUrl('gemini-2.5-flash-preview-05-20');
+                const apiUrl = getApiUrl('gemini-2.5-flash-preview-09-2025');
                 const payload = { contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "application/json" } };
                 for (let i = 0; i < 3; i++) {
                     try {
@@ -778,6 +808,36 @@
                         if (response.status === 429) await new Promise(r => setTimeout(r, Math.pow(2, i) * 1000));
                         else throw new Error(`API Error: ${response.status}`);
                     } catch (error) { if (i === 2) throw error; await new Promise(r => setTimeout(r, Math.pow(2, i) * 1000)); }
+                }
+                throw new Error("API call failed after retries.");
+            }
+
+            async function getPartialMacrosFromAI(foodName, brand, knownMacros) {
+                let knownMacrosString = Object.entries(knownMacros).map(([key, value]) => `${key}: ${value}`).join(', ');
+                let prompt = `For a standard single serving of "${foodName}"`;
+                if (brand) prompt += ` from the brand "${brand}"`;
+                prompt += `, we know it has the following values: ${knownMacrosString}. Based on this, estimate the *missing* nutritional values. Respond with only a valid JSON object containing a *complete* set of fields for ONE standard serving: "servingGrams", "calories", "protein", "carbs", "fat", "sugar", "sodium", "potassium". Use the provided values as facts and fill in the rest with reasonable estimates.`;
+                
+                const apiUrl = getApiUrl('gemini-2.5-flash-preview-09-2025');
+                const payload = { contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "application/json" } };
+
+                for (let i = 0; i < 3; i++) { // Retry logic
+                    try {
+                        const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                        if (response.ok) {
+                            const result = await response.json();
+                            if (!result.candidates) throw new Error("Invalid API response.");
+                            return JSON.parse(result.candidates[0].content.parts[0].text);
+                        }
+                        if (response.status === 429) {
+                            await new Promise(r => setTimeout(r, Math.pow(2, i) * 1000));
+                        } else {
+                            throw new Error(`API Error: ${response.status}`);
+                        }
+                    } catch (error) {
+                        if (i === 2) throw error;
+                        await new Promise(r => setTimeout(r, Math.pow(2, i) * 1000));
+                    }
                 }
                 throw new Error("API call failed after retries.");
             }
@@ -807,6 +867,24 @@
                 saveData(); 
                 fullRender();
             }
+            
+            function showUndo(type, data) {
+                clearTimeout(undoTimeout);
+                lastAction = { type, data };
+                const text = type === 'delete' ? `Deleted "${data.item.name}"` : `Edited "${data.originalItem.name}"`;
+                ui.undoToastText.textContent = text;
+                ui.undoToast.classList.remove('translate-y-24', 'opacity-0');
+
+                undoTimeout = setTimeout(() => {
+                    hideUndo();
+                }, 5000);
+            }
+
+            function hideUndo() {
+                lastAction = null;
+                ui.undoToast.classList.add('translate-y-24', 'opacity-0');
+            }
+
 
             // --- EVENT LISTENERS ---
             ui.addFoodBtn.addEventListener('click', async () => {
@@ -815,7 +893,7 @@
                 const btnText = btn.querySelector('.btn-text');
                 const loader = btn.querySelector('.loader');
 
-                const foodName = ui.foodNameInput.value.trim();
+                const foodName = capitalizeWords(ui.foodNameInput.value.trim());
                 const servings = parseFloat(ui.foodServingsInput.value);
                 
                 if (!foodName || isNaN(servings) || servings <= 0) {
@@ -824,70 +902,83 @@
                 }
 
                 let singleServingMacros = {};
-                let hasManualMacros = false;
+                let manualMacros = {};
+                let manualMacroCount = 0;
                 let hasError = false;
+                const macroKeys = ['calories', 'protein', 'carbs', 'fat', 'sugar', 'sodium', 'potassium'];
 
-                ['calories', 'protein', 'carbs', 'fat', 'sugar', 'sodium', 'potassium'].forEach(m => {
+                macroKeys.forEach(m => {
                     const input = document.getElementById(`food-${m}-input`);
-                    const val = parseFloat(input.value);
-                    if (!isNaN(val) && val < 0) {
-                        ui.addFoodError.textContent = "Macro values cannot be negative.";
-                        input.classList.add('!border-red-500');
-                        hasError = true;
+                    const valStr = input.value.trim();
+                    if (valStr !== '') {
+                        const val = parseFloat(valStr);
+                        if (!isNaN(val) && val < 0) {
+                            ui.addFoodError.textContent = "Macro values cannot be negative.";
+                            input.classList.add('!border-red-500');
+                            hasError = true;
+                        } else if (!isNaN(val)) {
+                            input.classList.remove('!border-red-500');
+                            singleServingMacros[m] = val;
+                            manualMacros[m] = val;
+                            manualMacroCount++;
+                        }
                     } else {
-                        input.classList.remove('!border-red-500');
-                        singleServingMacros[m] = val || 0;
+                        singleServingMacros[m] = 0;
                     }
                 });
 
-                if (singleServingMacros.calories > 0) hasManualMacros = true;
                 if (hasError) return;
                 
                 let servingGrams = parseFloat(ui.foodGramsInput.value) || 0;
 
-                if (!hasManualMacros && editingFoodLogIndex === null) {
-                    btn.disabled = true;
-                    btnText.style.display = 'none';
-                    loader.classList.remove('hidden');
-                    try {
-                        const brand = ui.foodBrandInput.value.trim();
-                        const data = await getMacrosFromAI(foodName, brand);
-                        servingGrams = data.servingGrams || 0;
-                        singleServingMacros = { calories: data.calories, protein: data.protein, carbs: data.carbs, fat: data.fat, sugar: data.sugar, sodium: data.sodium, potassium: data.potassium };
-                    } catch (error) {
-                        console.error("AI Get Macros Error:", error);
-                        ui.addFoodError.textContent = "Could not fetch nutrition data.";
-                        btn.disabled = false;
-                        btnText.style.display = 'inline-block';
-                        loader.classList.add('hidden');
-                        return;
-                    } finally {
-                        btn.disabled = false;
-                        btnText.style.display = 'inline-block';
-                        loader.classList.add('hidden');
+                // AI LOGIC
+                if (editingFoodLogIndex === null) {
+                     if (manualMacroCount > 0 && manualMacroCount < macroKeys.length) { // SOME macros entered
+                        btn.disabled = true; btnText.style.display = 'none'; loader.classList.remove('hidden');
+                        try {
+                            const brand = ui.foodBrandInput.value.trim();
+                            const data = await getPartialMacrosFromAI(foodName, brand, manualMacros);
+                            servingGrams = data.servingGrams || servingGrams || 0;
+                            singleServingMacros = { ...data, ...manualMacros };
+                        } catch (error) {
+                            console.error("AI Partial Macros Error:", error);
+                            ui.addFoodError.textContent = "Could not estimate missing macros.";
+                        } finally {
+                            btn.disabled = false; btnText.style.display = 'inline-block'; loader.classList.add('hidden');
+                        }
+                    } else if (manualMacroCount === 0) { // NO macros entered
+                        btn.disabled = true; btnText.style.display = 'none'; loader.classList.remove('hidden');
+                        try {
+                            const brand = ui.foodBrandInput.value.trim();
+                            const data = await getMacrosFromAI(foodName, brand);
+                            servingGrams = data.servingGrams || 0;
+                            singleServingMacros = { calories: data.calories, protein: data.protein, carbs: data.carbs, fat: data.fat, sugar: data.sugar, sodium: data.sodium, potassium: data.potassium };
+                        } catch (error) {
+                            console.error("AI Get Macros Error:", error);
+                            ui.addFoodError.textContent = "Could not fetch nutrition data.";
+                        } finally {
+                            btn.disabled = false; btnText.style.display = 'inline-block'; loader.classList.add('hidden');
+                        }
                     }
                 }
                 
+                if (ui.addFoodError.textContent) return;
+
                 const dayLog = getDayLog(viewDate);
-                
-                const totalMacros = {
-                    calories: (singleServingMacros.calories || 0) * servings,
-                    protein: (singleServingMacros.protein || 0) * servings,
-                    carbs: (singleServingMacros.carbs || 0) * servings,
-                    fat: (singleServingMacros.fat || 0) * servings,
-                    sugar: (singleServingMacros.sugar || 0) * servings,
-                    sodium: (singleServingMacros.sodium || 0) * servings,
-                    potassium: (singleServingMacros.potassium || 0) * servings,
-                };
+                const totalMacros = {};
+                macroKeys.forEach(m => {
+                    totalMacros[m] = (singleServingMacros[m] || 0) * servings;
+                });
 
                 const foodItem = { name: foodName, brand: ui.foodBrandInput.value.trim(), servings, grams: servingGrams * servings, ...totalMacros };
 
                 if (editingFoodLogIndex !== null) {
+                    const originalItem = { ...dayLog.entries[editingFoodLogIndex] };
                     dayLog.entries[editingFoodLogIndex] = foodItem;
+                    showUndo('edit', { index: editingFoodLogIndex, originalItem: originalItem });
                     editingFoodLogIndex = null;
-                    // ui.addFoodBtn.querySelector('.btn-text').textContent = 'Add Food';
                 } else {
-                    dayLog.entries.push(foodItem);
+                    dayLog.entries.unshift(foodItem);
                 }
 
                 ui.logMealForm.reset();
@@ -912,33 +1003,30 @@
                 ui.foodNameInput.value = item.name;
                 ui.foodServingsInput.value = item.servings;
                 
-                const singleServingGrams = item.grams / item.servings;
-                const singleServingCalories = item.calories / item.servings;
+                const singleServingGrams = item.servings > 0 ? item.grams / item.servings : 0;
+                const singleServingCalories = item.servings > 0 ? item.calories / item.servings : 0;
 
-                if (singleServingGrams) ui.foodGramsInput.value = singleServingGrams.toFixed(1);
+                ui.foodGramsInput.value = singleServingGrams.toFixed(1);
                 
-                if(singleServingCalories) {
-                    document.getElementById('food-calories-input').value = (item.calories / item.servings).toFixed(2);
-                    document.getElementById('food-protein-input').value = (item.protein / item.servings).toFixed(2);
-                    document.getElementById('food-carbs-input').value = (item.carbs / item.servings).toFixed(2);
-                    document.getElementById('food-fat-input').value = (item.fat / item.servings).toFixed(2);
-                    document.getElementById('food-sugar-input').value = (item.sugar / item.servings).toFixed(2);
-                    document.getElementById('food-sodium-input').value = (item.sodium / item.servings).toFixed(2);
-                    document.getElementById('food-potassium-input').value = (item.potassium / item.servings).toFixed(2);
-                }
+                document.getElementById('food-calories-input').value = (item.calories / item.servings).toFixed(2);
+                document.getElementById('food-protein-input').value = (item.protein / item.servings).toFixed(2);
+                document.getElementById('food-carbs-input').value = (item.carbs / item.servings).toFixed(2);
+                document.getElementById('food-fat-input').value = (item.fat / item.servings).toFixed(2);
+                document.getElementById('food-sugar-input').value = (item.sugar / item.servings).toFixed(2);
+                document.getElementById('food-sodium-input').value = (item.sodium / item.servings).toFixed(2);
+                document.getElementById('food-potassium-input').value = (item.potassium / item.servings).toFixed(2);
 
-                // We don't have the text anymore
-                // ui.addFoodBtn.querySelector('.btn-text').textContent = 'Update Food';
                 ui.logMealForm.scrollIntoView({ behavior: 'smooth' });
             };
             
             const handleDeleteLogItem = (index) => {
                 showConfirmModal('Delete Log Entry?', 'Are you sure?', () => {
                     let dayLog = getDayLog(viewDate);
-                    if (dayLog && dayLog.entries) {
-                        dayLog.entries.splice(index, 1);
+                    if (dayLog && dayLog.entries && dayLog.entries[index]) {
+                        const itemToDelete = dayLog.entries.splice(index, 1)[0];
                         saveData();
-                        updateDayView(viewDate);
+                        fullRender();
+                        showUndo('delete', { index, item: itemToDelete });
                     }
                 });
             };
@@ -964,7 +1052,7 @@
                 const currentDayLogEntries = getCurrentDayLogEntries();
                 const remainingCalories = Math.max(0, goals.calories - currentDayLogEntries.reduce((sum, item) => sum + item.calories, 0));
                 const prompt = `I have: ${ingredients}. I have about ${remainingCalories} calories left. My goal is ${userProfile.goal}. Suggest one simple, healthy meal. Provide the name, prep/cook time, and simple step-by-step instructions. Format with Markdown.`;
-                const apiUrl = getApiUrl('gemini-2.5-flash-preview-05-20');
+                const apiUrl = getApiUrl('gemini-2.5-flash-preview-09-2025');
                 try {
                     const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }) });
                     if (!response.ok) throw new Error(`API Error: ${response.status}`);
@@ -1044,7 +1132,7 @@
                 try {
                     const imagePart = await fileToGenerativePart(file);
                     let prompt = `Identify the food in this image. Respond ONLY with a valid JSON object with these fields: "name", "brand", "servings" (estimated number of standard servings shown), "totalGrams" (estimated total grams for all servings shown), "calories", "protein", "carbs", "fat", "sugar", "sodium", "potassium". The nutritional values (calories, protein, etc.) should be for the TOTAL amount of food pictured.`;
-                    const apiUrl = getApiUrl('gemini-2.5-flash-preview-05-20');
+                    const apiUrl = getApiUrl('gemini-2.5-flash-preview-09-2025');
                     const payload = { contents: [{ parts: [{ text: prompt }, imagePart] }], generationConfig: { responseMimeType: "application/json" } };
                     const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
                     if (!response.ok) throw new Error(`API Error: ${response.status}`);
@@ -1057,7 +1145,7 @@
                     const detailsDiv = document.createElement('div');
                     detailsDiv.className = 'text-xs text-gray-400 whitespace-normal';
                     detailsDiv.innerHTML = `
-                        <p class="font-bold text-sm text-white mb-1">${data.name || 'Unknown Food'} (${(data.servings || 1).toFixed(1)} serv.)</p>
+                        <p class="font-bold text-sm text-white mb-1">${capitalizeWords(data.name) || 'Unknown Food'} (${(data.servings || 1).toFixed(1)} serv.)</p>
                         <p>${data.totalGrams?.toFixed(0) || '?'}g | ${data.calories?.toFixed(0) || '?'} kcal</p>
                         <p>${data.protein?.toFixed(1) || '?'}p | ${data.carbs?.toFixed(1) || '?'}c | ${data.fat?.toFixed(1) || '?'}f</p>
                     `;
@@ -1088,7 +1176,7 @@
                             const logId = Date.now();
                             const foodItem = {
                                 logId: logId,
-                                name: data.name || 'Scanned Food',
+                                name: capitalizeWords(data.name) || 'Scanned Food',
                                 brand: data.brand || '',
                                 servings: data.servings || 1,
                                 grams: data.totalGrams || 0,
@@ -1170,11 +1258,11 @@
             });
             
             ui.compoundFoodForm.addEventListener('submit', (e) => {
-                e.preventDefault(); const name = ui.recipeNameInput.value.trim();
+                e.preventDefault(); const name = capitalizeWords(ui.recipeNameInput.value.trim());
                 if(!name) { showCustomAlert('Missing Name', 'Please give your recipe a name.'); return; }
                 const ingredients = []; let totalGrams = 0, totalCalories = 0, totalProtein = 0, totalCarbs = 0, totalFat = 0, totalSugar = 0, totalSodium = 0, totalPotassium = 0;
                 document.querySelectorAll('.ingredient-row').forEach(row => {
-                    const ingName = row.querySelector('.ingredient-name').value.trim(); const ingGrams = parseFloat(row.querySelector('.ingredient-grams').value) || 0;
+                    const ingName = capitalizeWords(row.querySelector('.ingredient-name').value.trim()); const ingGrams = parseFloat(row.querySelector('.ingredient-grams').value) || 0;
                     if(ingName && ingGrams > 0) {
                         const ing = { name: ingName, grams: ingGrams, calories: parseFloat(row.querySelector('.ingredient-calories').value) || 0, protein: parseFloat(row.querySelector('.ingredient-protein').value) || 0, carbs: parseFloat(row.querySelector('.ingredient-carbs').value) || 0, fat: parseFloat(row.querySelector('.ingredient-fat').value) || 0 };
                         ingredients.push(ing); totalGrams += ing.grams; totalCalories += ing.calories; totalProtein += ing.protein; totalCarbs += ing.carbs; totalFat += ing.fat;
@@ -1219,7 +1307,7 @@
                         if (weightStr === null) return; const grams = parseFloat(weightStr); if (isNaN(grams) || grams <= 0) { showCustomAlert('Invalid Input', 'Please enter a valid number for grams.'); return; }
                         const ratio = grams / 100; const foodItem = { name: food.name, servings: 1, grams, calories: food.calories * ratio, protein: food.protein * ratio, carbs: food.carbs * ratio, fat: food.fat * ratio, };
                         const dayLog = getDayLog(viewDate); 
-                        dayLog.entries.push(foodItem);
+                        dayLog.entries.unshift(foodItem);
                         saveData(); updateDayView(viewDate); showCustomAlert('Success', `${grams}g of ${food.name} added to the log.`);
                     });
                 } else if (type === 'recipe') {
@@ -1228,7 +1316,7 @@
                         if (weightStr === null) return; const grams = parseFloat(weightStr); if (isNaN(grams) || grams <= 0) { showCustomAlert('Invalid Input', 'Please enter a valid number for grams.'); return; }
                         const ratio = recipe.totalGrams > 0 ? grams / recipe.totalGrams : 0; const foodItem = { name: recipe.name, servings: 1, grams, calories: recipe.calories * ratio, protein: recipe.protein * ratio, carbs: recipe.carbs * ratio, fat: recipe.fat * ratio, sugar: recipe.sugar * ratio, sodium: recipe.sodium * ratio, potassium: recipe.potassium * ratio, };
                         const dayLog = getDayLog(viewDate);
-                        dayLog.entries.push(foodItem); 
+                        dayLog.entries.unshift(foodItem); 
                         saveData(); updateDayView(viewDate); showCustomAlert('Success', `${grams}g of ${recipe.name} added to the log.`);
                     });
                 }
@@ -1236,7 +1324,7 @@
 
             ui.editFavoriteForm.addEventListener('submit', (e) => {
                 e.preventDefault(); const favIndex = favoriteFoods.findIndex(f => f.name === editingFavoriteFoodName); if (favIndex === -1) return;
-                const newName = document.getElementById('edit-fav-food-name').value.trim();
+                const newName = capitalizeWords(document.getElementById('edit-fav-food-name').value.trim());
                 if (newName.toLowerCase() !== editingFavoriteFoodName.toLowerCase() && (favoriteFoods.some(f => f.name.toLowerCase() === newName.toLowerCase()) || savedRecipes.some(r => r.name.toLowerCase() === newName.toLowerCase()))) { showCustomAlert('Name Exists', 'A favorite food or recipe with this name already exists.'); return; }
                 favoriteFoods[favIndex].name = newName; favoriteFoods[favIndex].calories = parseFloat(document.getElementById('edit-fav-food-calories').value); favoriteFoods[favIndex].protein = parseFloat(document.getElementById('edit-fav-food-protein').value); favoriteFoods[favIndex].carbs = parseFloat(document.getElementById('edit-fav-food-carbs').value); favoriteFoods[favIndex].fat = parseFloat(document.getElementById('edit-fav-food-fat').value);
                 saveData(); fullRender(); hideModal(ui.editFavoriteModal);
@@ -1316,9 +1404,10 @@
                     }
                     
                     const resultId = `barcode-result-${decodedText}-${now}`;
+                    const productName = capitalizeWords(product.product_name) || 'Scanned Item';
                     const resultHtml = `
                         <div id="${resultId}" class="scroll-item p-4 bg-input-bg rounded-lg text-center">
-                            <p class="font-bold whitespace-normal">${product.product_name || 'Scanned Item'}</p>
+                            <p class="font-bold whitespace-normal">${productName}</p>
                             <p class="text-xs text-gray-400 mb-3">Barcode: ${decodedText}</p>
                             <div class="flex items-center gap-2">
                                 <input type="number" value="${defaultGrams.toFixed(0)}" class="form-input !py-1.5 text-center barcode-grams-input" min="0">
@@ -1362,7 +1451,7 @@
                             const ratio = grams / 100.0;
                             const foodItem = {
                                 logId: logId,
-                                name: product.product_name || 'Scanned Item',
+                                name: productName,
                                 brand: product.brands || '',
                                 servings: 1,
                                 grams: grams,
@@ -1460,7 +1549,7 @@
                     `;
                     const systemPrompt = `You are FitTrack AI, a helpful and knowledgeable nutritionist. Analyze the user's provided data to give specific, actionable advice based on their question. Be encouraging and provide clear, concise answers. Here is the user's data context: ${context}`;
                     
-                    const response = await fetch(getApiUrl('gemini-2.5-flash-preview-05-20'), {
+                    const response = await fetch(getApiUrl('gemini-2.5-flash-preview-09-2025'), {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -1766,6 +1855,26 @@
             
             ui.dailySummaryCard.addEventListener('mousedown', handleDaySwipePointerDown);
             ui.dailySummaryCard.addEventListener('touchstart', handleDaySwipePointerDown, { passive: true });
+
+            // --- ADDITIONAL LISTENERS ---
+            const resetToToday = () => updateDayView(new Date());
+            ui.dayViewTitleSpan.addEventListener('click', resetToToday);
+            ui.dayViewDateSpan.addEventListener('click', resetToToday);
+
+            ui.undoToastBtn.addEventListener('click', () => {
+                if(!lastAction) return;
+                const dayLog = getDayLog(viewDate);
+
+                if(lastAction.type === 'delete') {
+                    dayLog.entries.splice(lastAction.data.index, 0, lastAction.data.item);
+                } else if (lastAction.type === 'edit') {
+                    dayLog.entries[lastAction.data.index] = lastAction.data.originalItem;
+                }
+
+                saveData();
+                fullRender();
+                hideUndo();
+            });
 
             // --- INITIALIZATION ---
             loadData();
