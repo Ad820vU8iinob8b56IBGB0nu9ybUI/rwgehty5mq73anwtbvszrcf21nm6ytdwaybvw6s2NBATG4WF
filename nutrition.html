@@ -298,9 +298,8 @@
         .carousel-btn:hover {
             background-color: var(--input-bg);
         }
-        /* Adjusted positioning for better tap targets */
-        .carousel-prev { left: -0.75rem; }
-        .carousel-next { right: -0.75rem; }
+        .carousel-prev { left: -1.25rem; }
+        .carousel-next { right: -1.25rem; }
 
         .horizontal-scroll-container {
             display: flex;
@@ -318,12 +317,11 @@
             display: none;
         }
         .scroll-item {
-            flex: 0 0 85%; /* Default item width */
+            flex: 0 0 85%;
             width: 85%;
             scroll-snap-align: center;
             white-space: normal;
         }
-        /* Centering padding */
         .horizontal-scroll-container::before,
         .horizontal-scroll-container::after {
             content: '';
@@ -333,24 +331,13 @@
 
         /* Wider items for scanner carousels */
         .scanner-carousel .scroll-item {
-            flex: 0 0 95%; /* Make scanner items wider */
+            flex: 0 0 95%;
             width: 95%;
         }
         .scanner-carousel::before,
         .scanner-carousel::after {
             width: calc((100% - 95%) / 2 - 0.5rem);
         }
-
-        /* Recipe ingredients carousel item width */
-        .recipe-carousel .scroll-item {
-            flex: 0 0 90%; /* Adjust width for recipe ingredients */
-            width: 90%;
-        }
-        .recipe-carousel::before,
-        .recipe-carousel::after {
-            width: calc((100% - 90%) / 2 - 0.5rem);
-        }
-
     </style>
 </head>
 <body class="antialiased">
@@ -390,11 +377,6 @@
                         <div class="flex justify-between items-baseline"><span class="text-gray-400">Sugar:</span> <span class="font-semibold"><span id="current-sugar">0</span> / <span id="goal-sugar">50</span> g</span></div>
                         <div class="flex justify-between items-baseline"><span class="text-gray-400">Water:</span> <span class="font-semibold"><span id="current-water">0</span> / <span id="goal-water">2500</span> ml</span></div>
                     </div>
-                </div>
-                <!-- Favorites & Recipes -->
-                <div class="content-card">
-                    <h3 class="text-2xl font-bold mb-4">Favorites & Recipes</h3>
-                    <div id="saved-items-list" class="space-y-2 max-h-60 overflow-y-auto custom-scrollbar pr-2"><p class="text-gray-500 text-center">No saved items yet.</p></div>
                 </div>
             </div>
             <!-- Right Column: Logging & Food Log -->
@@ -492,7 +474,11 @@
             </div>
         </main>
     </div>
-
+    <!-- Favorites & Recipes -->
+                <div class="content-card">
+                    <h3 class="text-2xl font-bold mb-4">Favorites & Recipes</h3>
+                    <div id="saved-items-list" class="space-y-2 max-h-60 overflow-y-auto custom-scrollbar pr-2"><p class="text-gray-500 text-center">No saved items yet.</p></div>
+                </div>
     <!-- Modals -->
     <div id="food-scanner-modal" class="modal-backdrop" style="z-index: 60;">
         <div class="modal-content">
@@ -504,8 +490,7 @@
                 <div id="food-scanner-initial-options" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <label for="upload-photo-input" class="btn btn-secondary cursor-pointer"><i data-lucide="upload"></i>Upload Photo(s)</label>
                     <input type="file" id="upload-photo-input" class="hidden" accept="image/*" multiple>
-                    <!-- Updated button style -->
-                    <button id="start-food-camera-btn" class="btn bg-white text-black hover:bg-gray-200"><i data-lucide="camera"></i>Start Live Camera</button>
+                    <button id="start-food-camera-btn" class="btn btn-secondary"><i data-lucide="camera"></i>Start Live Camera</button>
                 </div>
                 <div id="live-camera-container" class="hidden space-y-2">
                     <video id="food-camera-video" class="w-full rounded-lg border border-border-color" autoplay playsinline></video>
@@ -513,48 +498,22 @@
                     <button id="capture-food-photo-btn" class="btn btn-primary w-full">Capture Photo</button>
                     <button id="stop-food-camera-btn" class="btn btn-danger w-full">Close Camera</button>
                 </div>
-                <!-- Carousel structure for food scanner -->
-                <div id="food-scanner-carousel-wrapper" class="carousel-wrapper hidden">
-                    <button id="food-scanner-prev" type="button" class="carousel-btn carousel-prev"><i data-lucide="chevron-left"></i></button>
-                    <div id="scanner-results-container" class="horizontal-scroll-container scanner-carousel mt-4 min-h-[220px]">
-                        <!-- Results injected here -->
-                    </div>
-                    <button id="food-scanner-next" type="button" class="carousel-btn carousel-next"><i data-lucide="chevron-right"></i></button>
+                <div id="food-scanner-carousel" class="carousel-wrapper hidden">
+                    <button id="food-scanner-prev" class="carousel-btn carousel-prev"><i data-lucide="chevron-left"></i></button>
+                    <div id="scanner-results-container" class="horizontal-scroll-container scanner-carousel mt-4 min-h-[220px]"></div>
+                    <button id="food-scanner-next" class="carousel-btn carousel-next"><i data-lucide="chevron-right"></i></button>
                 </div>
                 <p id="food-scanner-status" class="text-center text-sm text-gray-400 mt-2 h-5"></p>
             </div>
         </div>
     </div>
-    <div id="barcode-scanner-modal" class="modal-backdrop" style="z-index: 60;">
-        <div class="modal-content">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold">Scan Barcode</h2>
-                <button id="close-barcode-scanner-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button>
-            </div>
-            <div class="space-y-4">
-                <div id="barcode-reader" class="w-full aspect-square bg-black rounded-lg border border-border-color hidden"></div>
-                <div id="barcode-initial-options" class="flex flex-col gap-4">
-                    <button id="start-camera-scan-btn" class="btn btn-primary w-full"><i data-lucide="camera"></i>Start Live Scan</button>
-                    <label for="barcode-upload-input" class="btn btn-secondary cursor-pointer w-full"><i data-lucide="upload"></i>Upload Barcode Image(s)</label>
-                    <input type="file" id="barcode-upload-input" class="hidden" accept="image/*" multiple>
-                    <div class="relative"><span class="absolute inset-0 flex items-center"><span class="w-full border-t border-border-color"></span></span><span class="relative flex justify-center text-xs uppercase"><span class="bg-card-bg px-2 text-secondary-text">Or</span></span></div>
-                </div>
-                <div class="flex gap-2">
-                    <input type="number" id="manual-barcode-input" class="form-input" placeholder="Enter barcode manually...">
-                    <button id="manual-barcode-submit" class="btn btn-secondary"><i data-lucide="search"></i></button>
-                </div>
-            </div>
-            <p id="barcode-scanner-status" class="text-center text-sm text-secondary-text h-5"></p>
-            <!-- Carousel structure for barcode scanner -->
-            <div id="barcode-scanner-carousel-wrapper" class="carousel-wrapper hidden">
-                <button id="barcode-scanner-prev" type="button" class="carousel-btn carousel-prev"><i data-lucide="chevron-left"></i></button>
-                <div id="barcode-results" class="horizontal-scroll-container scanner-carousel mt-4 min-h-[220px]">
-                    <!-- Results injected here -->
-                </div>
-                <button id="barcode-scanner-next" type="button" class="carousel-btn carousel-next"><i data-lucide="chevron-right"></i></button>
-            </div>
+    <div id="barcode-scanner-modal" class="modal-backdrop" style="z-index: 60;"><div class="modal-content"><div class="flex justify-between items-center mb-6"><h2 class="text-2xl font-bold">Scan Barcode</h2><button id="close-barcode-scanner-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button></div><div class="space-y-4"><div id="barcode-reader" class="w-full aspect-square bg-black rounded-lg border border-border-color hidden"></div><div id="barcode-initial-options" class="flex flex-col gap-4"><button id="start-camera-scan-btn" class="btn btn-primary w-full"><i data-lucide="camera"></i>Start Live Scan</button><label for="barcode-upload-input" class="btn btn-secondary cursor-pointer w-full"><i data-lucide="upload"></i>Upload Barcode Image(s)</label><input type="file" id="barcode-upload-input" class="hidden" accept="image/*" multiple><div class="relative"><div class="absolute inset-0 flex items-center"><span class="w-full border-t border-border-color"></span></div><div class="relative flex justify-center text-xs uppercase"><span class="bg-card-bg px-2 text-secondary-text">Or</span></div></div><div class="flex gap-2"><input type="number" id="manual-barcode-input" class="form-input" placeholder="Enter barcode manually..."><button id="manual-barcode-submit" class="btn btn-secondary"><i data-lucide="search"></i></button></div></div><p id="barcode-scanner-status" class="text-center text-sm text-secondary-text h-5"></p>
+        <div id="barcode-scanner-carousel" class="carousel-wrapper hidden">
+            <button id="barcode-scanner-prev" class="carousel-btn carousel-prev"><i data-lucide="chevron-left"></i></button>
+            <div id="barcode-results" class="horizontal-scroll-container scanner-carousel mt-4 min-h-[220px]"></div>
+            <button id="barcode-scanner-next" class="carousel-btn carousel-next"><i data-lucide="chevron-right"></i></button>
         </div>
-    </div>
+    </div></div></div>
     <div id="confirm-modal" class="modal-backdrop"><div class="modal-content"><h2 id="confirm-modal-title" class="text-xl font-bold mb-4">Are you sure?</h2><p id="confirm-modal-text" class="text-gray-300 mb-6">This action cannot be undone.</p><div class="flex justify-end gap-4"><button id="confirm-modal-cancel-btn" class="btn btn-secondary">Cancel</button><button id="confirm-modal-confirm-btn" class="btn btn-danger">Confirm</button></div></div></div>
     <div id="alert-modal" class="modal-backdrop"><div class="modal-content"><h2 id="alert-modal-title" class="text-xl font-bold mb-4">Alert</h2><p id="alert-modal-text" class="text-gray-300 mb-6"></p><div class="flex justify-end"><button id="alert-modal-ok-btn" class="btn btn-primary">OK</button></div></div></div>
     <div id="ai-report-modal" class="modal-backdrop"><div class="modal-content"><div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold flex items-center gap-2"><i data-lucide="sparkles" class="w-5 h-5 text-yellow-400"></i>AI Nutrition Report</h2><button id="close-ai-report-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button></div><p id="ai-report-modal-text" class="text-gray-300 mb-6"></p><div class="flex justify-end"><button id="ai-report-modal-ok-btn" class="btn btn-primary">OK</button></div></div></div>
@@ -573,9 +532,9 @@
                 <div class="border-t border-b border-gray-800 py-4">
                     <h3 class="text-lg font-semibold mb-3">Ingredients</h3>
                     <!-- Carousel for ingredients -->
-                    <div id="recipe-carousel-wrapper" class="carousel-wrapper">
+                    <div class="carousel-wrapper">
                         <button id="recipe-prev-ingredient" type="button" class="carousel-btn carousel-prev"><i data-lucide="chevron-left"></i></button>
-                        <div id="ingredient-list-container" class="horizontal-scroll-container recipe-carousel pr-2 min-h-[300px] items-start">
+                        <div id="ingredient-list-container" class="horizontal-scroll-container pr-2 min-h-[300px] items-start">
                             <!-- Ingredient rows will be added here -->
                         </div>
                         <button id="recipe-next-ingredient" type="button" class="carousel-btn carousel-next"><i data-lucide="chevron-right"></i></button>
@@ -678,7 +637,7 @@
 
             // --- GEMINI API ---
             const getApiUrl = (model, action = 'generateContent') => {
-                 const apiKey = ""; // Leave empty for Canvas environment
+                 const apiKey = "AIzaSyDY48xF1byvU05kS9qKvN8iyrIR3hheP8w"; // Leave empty for Canvas environment
                  return `https://generativelanguage.googleapis.com/v1beta/models/${model}:${action}?key=${apiKey}`;
             };
 
@@ -785,16 +744,6 @@
                 undoToast: document.getElementById('undo-toast'),
                 undoToastBtn: document.getElementById('undo-toast-btn'),
                 undoToastText: document.getElementById('undo-toast-text'),
-                // Carousel Buttons
-                foodScannerCarouselWrapper: document.getElementById('food-scanner-carousel-wrapper'),
-                foodScannerPrev: document.getElementById('food-scanner-prev'),
-                foodScannerNext: document.getElementById('food-scanner-next'),
-                barcodeScannerCarouselWrapper: document.getElementById('barcode-scanner-carousel-wrapper'),
-                barcodeScannerPrev: document.getElementById('barcode-scanner-prev'),
-                barcodeScannerNext: document.getElementById('barcode-scanner-next'),
-                recipeCarouselWrapper: document.getElementById('recipe-carousel-wrapper'),
-                recipePrevIngredient: document.getElementById('recipe-prev-ingredient'),
-                recipeNextIngredient: document.getElementById('recipe-next-ingredient'),
             };
 
             // --- CHART.JS SETUP ---
@@ -945,8 +894,6 @@
                 `;
                 ui.ingredientListContainer.appendChild(div);
                 lucide.createIcons();
-                // Update carousel after adding
-                setupCarousel('ingredient-list-container', 'recipe-prev-ingredient', 'recipe-next-ingredient');
             }
             // --- END MODIFIED addIngredientRow ---
 
@@ -1125,61 +1072,45 @@
                 const container = document.getElementById(containerId);
                 const prevBtn = document.getElementById(prevBtnId);
                 const nextBtn = document.getElementById(nextBtnId);
-                const wrapper = container ? container.closest('.carousel-wrapper') : null;
-
-                if (!container || !prevBtn || !nextBtn || !wrapper) {
-                     //console.warn(`Carousel setup failed for ${containerId}. Elements missing.`);
-                     return; // Exit if elements are not found
-                }
+                if (!container || !prevBtn || !nextBtn) return;
 
                 const scrollAmount = () => {
                     const firstItem = container.querySelector('.scroll-item');
-                    // Calculate scroll based on item width + gap (1rem = 16px)
                     return firstItem ? firstItem.offsetWidth + 16 : container.offsetWidth * 0.9;
                 };
 
-                prevBtn.onclick = () => { // Use onclick for direct assignment
+                prevBtn.addEventListener('click', () => {
                     container.scrollBy({ left: -scrollAmount(), behavior: 'smooth' });
-                };
+                });
 
-                nextBtn.onclick = () => { // Use onclick for direct assignment
+                nextBtn.addEventListener('click', () => {
                     container.scrollBy({ left: scrollAmount(), behavior: 'smooth' });
-                };
+                });
 
                 const updateButtons = () => {
-                    // Use a small timeout to allow DOM/scroll properties to update reliably
+                    // Use a small timeout to allow DOM to update scrollWidth
                     setTimeout(() => {
-                         if (!container) return; // Check if container still exists
-
-                        const hasMultipleItems = container.childElementCount > 1;
-                        const canScroll = container.scrollWidth > container.clientWidth + 2; // +2 for tolerance
-
-                        if (!hasMultipleItems || !canScroll) {
+                        const hasOverflow = container.scrollWidth > container.clientWidth + 2; // +2 for tolerance
+                        if (!hasOverflow) {
                             prevBtn.style.display = 'none';
                             nextBtn.style.display = 'none';
-                            wrapper.classList.remove('has-buttons'); // Optional: class to adjust padding if needed
                             return;
                         }
 
                         const atStart = container.scrollLeft < 10;
                         const atEnd = container.scrollWidth - container.scrollLeft - container.clientWidth < 10;
 
-                        prevBtn.style.display = atStart ? 'none' : 'flex'; // Use flex for button display
-                        nextBtn.style.display = atEnd ? 'none' : 'flex'; // Use flex for button display
-                        wrapper.classList.add('has-buttons'); // Optional
-
-                    }, 50); // Small delay
+                        prevBtn.style.display = atStart ? 'none' : 'block';
+                        nextBtn.style.display = atEnd ? 'none' : 'block';
+                    }, 50);
                 };
 
-                // Use scroll and resize events for robustness
-                container.onscroll = updateButtons; // Use onscroll
-                window.addEventListener('resize', updateButtons); // Update on resize
+                container.addEventListener('scroll', updateButtons);
 
-                // Use MutationObserver to detect when items are added/removed
                 const observer = new MutationObserver(updateButtons);
-                observer.observe(container, { childList: true, subtree: false }); // Observe direct children only
+                observer.observe(container, { childList: true, subtree: true });
 
-                updateButtons(); // Initial check
+                updateButtons();
             }
 
 
@@ -1418,7 +1349,7 @@
                 // Reset to initial state
                 ui.liveCameraContainer.classList.add('hidden');
                 ui.foodScannerInitialOptions.classList.remove('hidden');
-                ui.foodScannerCarouselWrapper.classList.add('hidden'); // Use wrapper ID
+                document.getElementById('food-scanner-carousel').classList.add('hidden');
                 showModal(ui.foodScannerModal);
             });
 
@@ -1517,7 +1448,7 @@
 
             function handleImageFiles(files) {
                 if (!files || files.length === 0) return;
-                 ui.foodScannerCarouselWrapper.classList.remove('hidden'); // Use wrapper ID
+                document.getElementById('food-scanner-carousel').classList.remove('hidden');
 
                 for(const file of files) {
                     const resultElement = document.createElement('div');
@@ -1533,8 +1464,6 @@
                     ui.scannerResultsContainer.appendChild(resultElement);
                     processImageWithAI(file, resultElement);
                 }
-                // Update carousel after adding items
-                setupCarousel('scanner-results-container', 'food-scanner-prev', 'food-scanner-next');
             }
 
             ui.uploadPhotoInput.addEventListener('change', (e) => handleImageFiles(e.target.files));
@@ -1544,7 +1473,7 @@
                 ui.saveRecipeBtn.textContent = "Save & Log Recipe"; ui.compoundFoodForm.reset();
                 ui.ingredientListContainer.innerHTML = ''; addIngredientRow(); addIngredientRow();
                 updateRecipeTotals(); showModal(ui.compoundFoodModal);
-                // Setup carousel after adding initial rows
+                // Ensure carousel buttons are updated after adding rows
                 setupCarousel('ingredient-list-container', 'recipe-prev-ingredient', 'recipe-next-ingredient');
             });
 
@@ -1560,7 +1489,7 @@
                 const row = e.target.closest('.ingredient-row');
                 if (removeBtn) {
                     removeBtn.closest('.ingredient-row').remove(); updateRecipeTotals();
-                    // Update carousel after removing rows
+                    // Ensure carousel buttons are updated after removing rows
                     setupCarousel('ingredient-list-container', 'recipe-prev-ingredient', 'recipe-next-ingredient');
                 }
                 if (barcodeBtn) { scanningIngredientRow = row; startBarcodeScanner(); }
@@ -1570,7 +1499,7 @@
                     ui.foodScannerStatus.textContent = '';
                     ui.liveCameraContainer.classList.add('hidden');
                     ui.foodScannerInitialOptions.classList.remove('hidden');
-                    ui.foodScannerCarouselWrapper.classList.add('hidden'); // Use wrapper ID
+                    document.getElementById('food-scanner-carousel').classList.add('hidden');
                     showModal(ui.foodScannerModal);
                 }
             });
@@ -1682,7 +1611,7 @@
                 document.getElementById('barcode-initial-options')?.classList.remove('hidden');
                 ui.barcodeReader.classList.add('hidden');
                 ui.barcodeResults.innerHTML = '';
-                ui.barcodeScannerCarouselWrapper.classList.add('hidden'); // Use wrapper ID
+                document.getElementById('barcode-scanner-carousel').classList.add('hidden');
                 ui.barcodeScannerStatus.textContent = 'Choose an option to scan a barcode.';
             };
 
@@ -1722,7 +1651,7 @@
                 lastScannedBarcode = { code: decodedText, time: now };
 
                 ui.barcodeScannerStatus.textContent = `Found: ${decodedText}. Fetching...`;
-                ui.barcodeScannerCarouselWrapper.classList.remove('hidden'); // Use wrapper ID
+                document.getElementById('barcode-scanner-carousel').classList.remove('hidden');
 
                 let finalImageUrl = imageUrl;
                 if (!finalImageUrl) {
@@ -1856,7 +1785,7 @@
                 ui.barcodeResults.innerHTML = '';
                 ui.barcodeScannerStatus.textContent = 'Scanning image(s)...';
                 document.getElementById('barcode-initial-options').classList.add('hidden');
-                ui.barcodeScannerCarouselWrapper.classList.remove('hidden'); // Use wrapper ID
+                document.getElementById('barcode-scanner-carousel').classList.remove('hidden');
 
                 for (const file of Array.from(files)) {
                      const imageUrl = await new Promise((resolve) => {
@@ -1873,8 +1802,6 @@
                         ui.barcodeResults.innerHTML += `<div class="scroll-item p-3 bg-input-bg rounded-lg text-yellow-400 text-center">No barcode found in image: ${file.name}.</div>`;
                     }
                 }
-                // Update carousel after adding items
-                 setupCarousel('barcode-results', 'barcode-scanner-prev', 'barcode-scanner-next');
             });
 
              ui.manualBarcodeSubmit.addEventListener('click', () => {
@@ -2257,11 +2184,11 @@
             // --- INITIALIZATION ---
             loadData();
             updateDayView(viewDate);
-            // Setup carousels on initial load
             setupCarousel('scanner-results-container', 'food-scanner-prev', 'food-scanner-next');
             setupCarousel('barcode-results', 'barcode-scanner-prev', 'barcode-scanner-next');
-            setupCarousel('ingredient-list-container', 'recipe-prev-ingredient', 'recipe-next-ingredient');
+            setupCarousel('ingredient-list-container', 'recipe-prev-ingredient', 'recipe-next-ingredient'); // Setup for recipe ingredients
         });
     </script>
 </body>
 </html>
+
