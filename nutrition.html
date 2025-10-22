@@ -343,6 +343,34 @@
         <!-- Main Content -->
         <main class="grid grid-cols-1 md:grid-cols-2 gap-8">
              <!-- Left Column: Logging & Food Log -->
+             <!-- Right Column: Summary & Favorites -->
+            <div class="space-y-8">
+                <div id="daily-summary-card" class="content-card">
+                    <!-- Date Navigation & Chart -->
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="text-left">
+                            <h3 class="text-xl font-bold">
+                                <span id="day-view-title-span" class="block text-2xl font-semibold cursor-pointer">Today</span>
+                                <span id="day-view-date-span" class="text-base text-secondary-text cursor-pointer"></span>
+                            </h3>
+                        </div>
+                        <div class="w-16 h-16">
+                            <canvas id="macro-chart"></canvas>
+                        </div>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 border-t border-border-color pt-4">Daily Summary</h3>
+                    <div class="w-full grid grid-cols-2 gap-x-6 gap-y-2 text-xs sm:text-sm">
+                        <div class="flex justify-between items-baseline"><span class="text-gray-400">Calories:</span> <span class="font-semibold"><span id="current-calories">0</span> / <span id="goal-calories">2000</span></span></div>
+                        <div class="flex justify-between items-baseline"><span class="text-gray-400">Protein:</span> <span class="font-semibold"><span id="current-protein">0</span> / <span id="goal-protein">150</span> g</span></div>
+                        <div class="flex justify-between items-baseline"><span class="text-gray-400">Carbs:</span> <span class="font-semibold"><span id="current-carbs">0</span> / <span id="goal-carbs">225</span> g</span></div>
+                        <div class="flex justify-between items-baseline"><span class="text-gray-400">Fat:</span> <span class="font-semibold"><span id="current-fat">0</span> / <span id="goal-fat">60</span> g</span></div>
+                        <div class="flex justify-between items-baseline"><span class="text-gray-400">Na:</span> <span class="font-semibold"><span id="current-sodium">0</span> / <span id="goal-sodium">2300</span> mg</span></div>
+                        <div class="flex justify-between items-baseline"><span class="text-gray-400">K:</span> <span class="font-semibold"><span id="current-potassium">0</span> / <span id="goal-potassium">3500</span> mg</span></div>
+                        <div class="flex justify-between items-baseline"><span class="text-gray-400">Sugar:</span> <span class="font-semibold"><span id="current-sugar">0</span> / <span id="goal-sugar">50</span> g</span></div>
+                        <div class="flex justify-between items-baseline"><span class="text-gray-400">Water:</span> <span class="font-semibold"><span id="current-water">0</span> / <span id="goal-water">2500</span> ml</span></div>
+                    </div>
+                </div>
+            </div>
             <div class="space-y-8">
                 <div class="content-card">
                     <h3 class="text-2xl font-bold mb-6">Log Your Meal</h3>
@@ -434,30 +462,6 @@
             </div>
              <!-- Right Column: Summary & Favorites -->
             <div class="space-y-8">
-                <div id="daily-summary-card" class="content-card">
-                    <!-- Date Navigation & Chart -->
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="text-left">
-                            <h3 class="text-xl font-bold">
-                                <span id="day-view-title-span" class="block text-2xl font-semibold cursor-pointer">Today</span>
-                                <span id="day-view-date-span" class="text-base text-secondary-text cursor-pointer"></span>
-                            </h3>
-                        </div>
-                        <div class="w-16 h-16">
-                            <canvas id="macro-chart"></canvas>
-                        </div>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-4 border-t border-border-color pt-4">Daily Summary</h3>
-                    <div class="w-full grid grid-cols-2 gap-x-6 gap-y-2 text-xs sm:text-sm">
-                        <div class="flex justify-between items-baseline"><span class="text-gray-400">Calories:</span> <span class="font-semibold"><span id="current-calories">0</span> / <span id="goal-calories">2000</span></span></div>
-                        <div class="flex justify-between items-baseline"><span class="text-gray-400">Protein:</span> <span class="font-semibold"><span id="current-protein">0</span> / <span id="goal-protein">150</span> g</span></div>
-                        <div class="flex justify-between items-baseline"><span class="text-gray-400">Carbs:</span> <span class="font-semibold"><span id="current-carbs">0</span> / <span id="goal-carbs">225</span> g</span></div>
-                        <div class="flex justify-between items-baseline"><span class="text-gray-400">Fat:</span> <span class="font-semibold"><span id="current-fat">0</span> / <span id="goal-fat">60</span> g</span></div>
-                        <div class="flex justify-between items-baseline"><span class="text-gray-400">Na:</span> <span class="font-semibold"><span id="current-sodium">0</span> / <span id="goal-sodium">2300</span> mg</span></div>
-                        <div class="flex justify-between items-baseline"><span class="text-gray-400">K:</span> <span class="font-semibold"><span id="current-potassium">0</span> / <span id="goal-potassium">3500</span> mg</span></div>
-                        <div class="flex justify-between items-baseline"><span class="text-gray-400">Sugar:</span> <span class="font-semibold"><span id="current-sugar">0</span> / <span id="goal-sugar">50</span> g</span></div>
-                        <div class="flex justify-between items-baseline"><span class="text-gray-400">Water:</span> <span class="font-semibold"><span id="current-water">0</span> / <span id="goal-water">2500</span> ml</span></div>
-                    </div>
                 </div>
                 <div class="content-card">
                     <h3 class="text-2xl font-bold mb-4">Favorites & Recipes</h3>
