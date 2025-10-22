@@ -1857,7 +1857,11 @@
             ui.dailySummaryCard.addEventListener('touchstart', handleDaySwipePointerDown, { passive: true });
 
             // --- ADDITIONAL LISTENERS ---
-            const resetToToday = () => updateDayView(new Date());
+            const resetToToday = () => {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                updateDayView(today);
+            };
             ui.dayViewTitleSpan.addEventListener('click', resetToToday);
             ui.dayViewDateSpan.addEventListener('click', resetToToday);
 
@@ -1883,4 +1887,3 @@
     </script>
 </body>
 </html>
-
