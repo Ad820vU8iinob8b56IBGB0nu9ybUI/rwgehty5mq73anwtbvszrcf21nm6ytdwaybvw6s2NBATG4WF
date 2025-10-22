@@ -299,8 +299,8 @@
             background-color: var(--input-bg);
         }
         /* Adjusted positioning for better tap targets */
-        .carousel-prev { left: 0.5rem; }
-        .carousel-next { right: 0.5rem; }
+        .carousel-prev { left: -0.75rem; }
+        .carousel-next { right: -0.75rem; }
 
         .horizontal-scroll-container {
             display: flex;
@@ -331,26 +331,24 @@
             flex-shrink: 0;
         }
 
-        /* Wider items for scanner carousels (full width) */
+        /* Wider items for scanner carousels */
         .scanner-carousel .scroll-item {
-            flex: 0 0 100%; /* Make scanner items full width */
-            width: 100%;
-            scroll-snap-align: start; /* Snap to start */
+            flex: 0 0 95%; /* Make scanner items wider */
+            width: 95%;
         }
         .scanner-carousel::before,
         .scanner-carousel::after {
-            content: none; /* Remove centering padding */
+            width: calc((100% - 95%) / 2 - 0.5rem);
         }
 
-        /* Recipe ingredients carousel item width (full width) */
+        /* Recipe ingredients carousel item width */
         .recipe-carousel .scroll-item {
-            flex: 0 0 100%; /* Make recipe items full width */
-            width: 100%;
-            scroll-snap-align: start; /* Snap to start */
+            flex: 0 0 90%; /* Adjust width for recipe ingredients */
+            width: 90%;
         }
         .recipe-carousel::before,
         .recipe-carousel::after {
-            content: none; /* Remove centering padding */
+            width: calc((100% - 90%) / 2 - 0.5rem);
         }
 
     </style>
@@ -497,12 +495,12 @@
 
     <!-- Modals -->
     <div id="food-scanner-modal" class="modal-backdrop" style="z-index: 60;">
-        <div class="modal-content !w-full !max-w-full !h-full !max-h-full !rounded-none !p-4 !pt-8 flex flex-col relative">
-            <div class="flex justify-between items-center mb-4">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-bold">Scan Food with AI</h2>
-                <button id="close-food-scanner-modal-btn" class="text-gray-400 hover:text-white text-3xl absolute top-2 right-4">&times;</button>
+                <button id="close-food-scanner-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button>
             </div>
-            <div class="space-y-4 flex-grow overflow-y-auto custom-scrollbar pr-2">
+            <div class="space-y-4">
                 <div id="food-scanner-initial-options" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <label for="upload-photo-input" class="btn btn-secondary cursor-pointer"><i data-lucide="upload"></i>Upload Photo(s)</label>
                     <input type="file" id="upload-photo-input" class="hidden" accept="image/*" multiple>
@@ -528,12 +526,12 @@
         </div>
     </div>
     <div id="barcode-scanner-modal" class="modal-backdrop" style="z-index: 60;">
-        <div class="modal-content !w-full !max-w-full !h-full !max-h-full !rounded-none !p-4 !pt-8 flex flex-col relative">
+        <div class="modal-content">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-bold">Scan Barcode</h2>
-                <button id="close-barcode-scanner-modal-btn" class="text-gray-400 hover:text-white text-3xl absolute top-2 right-4">&times;</button>
+                <button id="close-barcode-scanner-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button>
             </div>
-            <div class="space-y-4 flex-grow overflow-y-auto custom-scrollbar pr-2">
+            <div class="space-y-4">
                 <div id="barcode-reader" class="w-full aspect-square bg-black rounded-lg border border-border-color hidden"></div>
                 <div id="barcode-initial-options" class="flex flex-col gap-4">
                     <button id="start-camera-scan-btn" class="btn btn-primary w-full"><i data-lucide="camera"></i>Start Live Scan</button>
@@ -562,12 +560,12 @@
     <div id="ai-report-modal" class="modal-backdrop"><div class="modal-content"><div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold flex items-center gap-2"><i data-lucide="sparkles" class="w-5 h-5 text-yellow-400"></i>AI Nutrition Report</h2><button id="close-ai-report-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button></div><p id="ai-report-modal-text" class="text-gray-300 mb-6"></p><div class="flex justify-end"><button id="ai-report-modal-ok-btn" class="btn btn-primary">OK</button></div></div></div>
     <!-- Recipe Modal (Compound Food Modal) -->
     <div id="compound-food-modal" class="modal-backdrop">
-        <div class="modal-content !w-full !max-w-full !h-full !max-h-full !rounded-none !p-4 !pt-8 flex flex-col relative">
+        <div class="modal-content w-[95vw] !max-w-3xl max-h-[90vh]">
             <div class="flex justify-between items-center mb-6">
                 <h2 id="compound-food-modal-title" class="text-2xl font-bold">Create a Recipe</h2>
-                <button id="close-compound-food-modal-btn" class="text-gray-400 hover:text-white text-3xl absolute top-2 right-4">&times;</button>
+                <button id="close-compound-food-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button>
             </div>
-            <form id="compound-food-form" class="space-y-6 flex-grow overflow-y-auto custom-scrollbar pr-2">
+            <form id="compound-food-form" class="space-y-6">
                 <div>
                     <label for="recipe-name-input" class="form-label">Recipe Name</label>
                     <input type="text" id="recipe-name-input" class="form-input mt-1" required placeholder="e.g., Turkey Sandwich">
@@ -680,7 +678,7 @@
 
             // --- GEMINI API ---
             const getApiUrl = (model, action = 'generateContent') => {
-                 const apiKey = "AIzaSyDY48xF1byvU05kS9qKvN8iyrIR3hheP8w"; // Leave empty for Canvas environment
+                 const apiKey = ""; // Leave empty for Canvas environment
                  return `https://generativelanguage.googleapis.com/v1beta/models/${model}:${action}?key=${apiKey}`;
             };
 
