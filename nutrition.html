@@ -391,11 +391,6 @@
                         <div class="flex justify-between items-baseline"><span class="text-gray-400">Water:</span> <span class="font-semibold"><span id="current-water">0</span> / <span id="goal-water">2500</span> ml</span></div>
                     </div>
                 </div>
-                <!-- Favorites & Recipes -->
-                <div class="content-card">
-                    <h3 class="text-2xl font-bold mb-4">Favorites & Recipes</h3>
-                    <div id="saved-items-list" class="space-y-2 max-h-60 overflow-y-auto custom-scrollbar pr-2"><p class="text-gray-500 text-center">No saved items yet.</p></div>
-                </div>
             </div>
             <!-- Right Column: Logging & Food Log -->
             <div class="space-y-8">
@@ -488,6 +483,11 @@
                         </div>
                     </div>
                     <div id="daily-log-content" class="space-y-2 max-h-60 overflow-y-auto custom-scrollbar pr-2"><p class="text-gray-500">No food logged yet.</p></div>
+                </div>
+                <!-- Favorites & Recipes -->
+                <div class="content-card">
+                    <h3 class="text-2xl font-bold mb-4">Favorites & Recipes</h3>
+                    <div id="saved-items-list" class="space-y-2 max-h-60 overflow-y-auto custom-scrollbar pr-2"><p class="text-gray-500 text-center">No saved items yet.</p></div>
                 </div>
             </div>
         </main>
@@ -678,7 +678,7 @@
 
             // --- GEMINI API ---
             const getApiUrl = (model, action = 'generateContent') => {
-                 const apiKey = ""; // Leave empty for Canvas environment
+                 const apiKey = "AIzaSyDY48xF1byvU05kS9qKvN8iyrIR3hheP8w"; // Leave empty for Canvas environment
                  return `https://generativelanguage.googleapis.com/v1beta/models/${model}:${action}?key=${apiKey}`;
             };
 
