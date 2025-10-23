@@ -289,7 +289,7 @@
             border-radius: 9999px;
             width: 2.5rem;
             height: 2.5rem;
-            display: none; /* Initially hidden */
+            display: none; /* Initially hidden, controlled by JS */
             align-items: center;
             justify-content: center;
             transition: background-color 0.2s;
@@ -327,6 +327,7 @@
         .horizontal-scroll-container::before,
         .horizontal-scroll-container::after {
             content: '';
+            /* Adjust width calculation based on the default item width (85%) */
             width: calc((100% - 85%) / 2 - 0.5rem);
             flex-shrink: 0;
         }
@@ -338,17 +339,19 @@
         }
         .scanner-carousel::before,
         .scanner-carousel::after {
+             /* Adjust width calculation based on the scanner item width (95%) */
             width: calc((100% - 95%) / 2 - 0.5rem);
         }
 
-        /* Recipe ingredients carousel item width */
+        /* Recipe ingredients carousel item width - CHANGED for mobile */
         .recipe-carousel .scroll-item {
-            flex: 0 0 90%; /* Adjust width for recipe ingredients */
-            width: 90%;
+            flex: 0 0 100%; /* Make recipe items fill width */
+            width: 100%;
         }
+        /* Remove centering padding for recipe carousel - CHANGED for mobile */
         .recipe-carousel::before,
         .recipe-carousel::after {
-            width: calc((100% - 90%) / 2 - 0.5rem);
+            content: none; /* Remove side padding */
         }
 
     </style>
@@ -360,7 +363,7 @@
         <header class="flex items-center justify-between mb-8 pb-4 border-b border-gray-900">
             <a href="index.html" class="flex items-center gap-3">
                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white"><path d="m6.5 6.5 11 11"/><path d="m21 21-1-1"/><path d="m3 3 1 1"/><path d="m18 22 4-4"/><path d="m6 2 4 4"/><path d="m3 10.5 4.5-4.5"/><path d="m13.5 21 4.5-4.5"/></svg>
-                <h1 class="text-2xl font-bold">FitTrack AI</h1>
+                 <h1 class="text-2xl font-bold">FitTrack AI</h1>
             </a>
         </header>
         <!-- Main Content -->
@@ -558,41 +561,44 @@
     <div id="confirm-modal" class="modal-backdrop"><div class="modal-content"><h2 id="confirm-modal-title" class="text-xl font-bold mb-4">Are you sure?</h2><p id="confirm-modal-text" class="text-gray-300 mb-6">This action cannot be undone.</p><div class="flex justify-end gap-4"><button id="confirm-modal-cancel-btn" class="btn btn-secondary">Cancel</button><button id="confirm-modal-confirm-btn" class="btn btn-danger">Confirm</button></div></div></div>
     <div id="alert-modal" class="modal-backdrop"><div class="modal-content"><h2 id="alert-modal-title" class="text-xl font-bold mb-4">Alert</h2><p id="alert-modal-text" class="text-gray-300 mb-6"></p><div class="flex justify-end"><button id="alert-modal-ok-btn" class="btn btn-primary">OK</button></div></div></div>
     <div id="ai-report-modal" class="modal-backdrop"><div class="modal-content"><div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold flex items-center gap-2"><i data-lucide="sparkles" class="w-5 h-5 text-yellow-400"></i>AI Nutrition Report</h2><button id="close-ai-report-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button></div><p id="ai-report-modal-text" class="text-gray-300 mb-6"></p><div class="flex justify-end"><button id="ai-report-modal-ok-btn" class="btn btn-primary">OK</button></div></div></div>
-    <!-- Recipe Modal (Compound Food Modal) -->
+    <!-- Recipe Modal (Compound Food Modal) - MODIFIED -->
     <div id="compound-food-modal" class="modal-backdrop">
-        <div class="modal-content w-[95vw] !max-w-3xl max-h-[90vh]">
+        <div class="modal-content w-[100vw] !max-w-3xl max-h-[100vh]"> <!-- Keep modal size constraints -->
             <div class="flex justify-between items-center mb-6">
                 <h2 id="compound-food-modal-title" class="text-2xl font-bold">Create a Recipe</h2>
                 <button id="close-compound-food-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button>
             </div>
-            <form id="compound-food-form" class="space-y-6">
+            <form id="compound-food-form" class="space-y-2">
                 <div>
-                    <label for="recipe-name-input" class="form-label">Recipe Name</label>
-                    <input type="text" id="recipe-name-input" class="form-input mt-1" required placeholder="e.g., Turkey Sandwich">
+                    <input type="text" id="recipe-name-input" class="form-input" required placeholder="Name Your Creation">
                 </div>
-                <div class="border-t border-b border-gray-800 py-4">
-                    <h3 class="text-lg font-semibold mb-3">Ingredients</h3>
+                <div class="border-b border-gray-800">
+                    <h3 class="text-lg font-semibold text-center">Ingredients</h3>
                     <!-- Carousel for ingredients -->
                     <div id="recipe-carousel-wrapper" class="carousel-wrapper">
+                        <!-- Buttons are hidden via JS for mobile -->
                         <button id="recipe-prev-ingredient" type="button" class="carousel-btn carousel-prev"><i data-lucide="chevron-left"></i></button>
-                        <div id="ingredient-list-container" class="horizontal-scroll-container recipe-carousel pr-2 min-h-[300px] items-start">
+                        <!-- CHANGED: Reduced min-height for mobile -->
+                        <div id="ingredient-list-container" class="horizontal-scroll-container recipe-carousel min-h-[150px] items-start">
                             <!-- Ingredient rows will be added here -->
                         </div>
                         <button id="recipe-next-ingredient" type="button" class="carousel-btn carousel-next"><i data-lucide="chevron-right"></i></button>
                     </div>
-                    <button type="button" id="add-ingredient-btn" class="btn btn-secondary w-full mt-4"><i data-lucide="plus"></i>Add Ingredient</button>
+                     <!-- CHANGED: Reduced margin-top -->
+                    <button type="button" id="add-ingredient-btn" class="btn btn-secondary w-full"><i data-lucide="plus"></i>Add Ingredient</button>
                 </div>
                 <div>
                     <h3 class="text-lg font-semibold mb-3">Total Macros</h3>
-                    <div id="recipe-totals" class="grid grid-cols-4 gap-x-2 gap-y-4 text-center">
-                        <div><p class="text-xs sm:text-sm text-gray-400">Calories</p><p id="recipe-total-calories" class="font-bold text-base sm:text-xl">0</p></div>
-                        <div><p class="text-xs sm:text-sm text-gray-400">Protein</p><p class="font-bold text-base sm:text-xl"><span id="recipe-total-protein">0</span>g</p></div>
-                        <div><p class="text-xs sm:text-sm text-gray-400">Carbs</p><p class="font-bold text-base sm:text-xl"><span id="recipe-total-carbs">0</span>g</p></div>
-                        <div><p class="text-xs sm:text-sm text-gray-400">Fat</p><p class="font-bold text-base sm:text-xl"><span id="recipe-total-fat">0</span>g</p></div>
-                        <div><p class="text-xs sm:text-sm text-gray-400">Sugar</p><p class="font-bold text-base sm:text-xl"><span id="recipe-total-sugar">0</span>g</p></div>
-                        <div><p class="text-xs sm:text-sm text-gray-400">Sodium</p><p class="font-bold text-base sm:text-xl"><span id="recipe-total-sodium">0</span>mg</p></div>
-                        <div><p class="text-xs sm:text-sm text-gray-400">Potassium</p><p class="font-bold text-base sm:text-xl"><span id="recipe-total-potassium">0</span>mg</p></div>
-                        <div><p class="text-xs sm:text-sm text-gray-400">Grams</p><p id="recipe-total-grams" class="font-bold text-base sm:text-xl">0</p></div>
+                    <!-- CHANGED: Adjusted text sizes for mobile -->
+                    <div id="recipe-totals" class="grid grid-cols-4 gap-x-2 gap-y-1 text-center">
+                        <div><p class="text-xs text-gray-400">Calories</p><p id="recipe-total-calories" class="font-bold text-base">0</p></div>
+                        <div><p class="text-xs text-gray-400">Protein</p><p class="font-bold text-base"><span id="recipe-total-protein">0</span>g</p></div>
+                        <div><p class="text-xs text-gray-400">Carbs</p><p class="font-bold text-base"><span id="recipe-total-carbs">0</span>g</p></div>
+                        <div><p class="text-xs text-gray-400">Fat</p><p class="font-bold text-base"><span id="recipe-total-fat">0</span>g</p></div>
+                        <div><p class="text-xs text-gray-400">Sugar</p><p class="font-bold text-base"><span id="recipe-total-sugar">0</span>g</p></div>
+                        <div><p class="text-xs text-gray-400">Sodium</p><p class="font-bold text-base"><span id="recipe-total-sodium">0</span>mg</p></div>
+                        <div><p class="text-xs text-gray-400">Potassium</p><p class="font-bold text-base"><span id="recipe-total-potassium">0</span>mg</p></div>
+                        <div><p class="text-xs text-gray-400">Grams</p><p id="recipe-total-grams" class="font-bold text-base">0</p></div>
                     </div>
                 </div>
                 <button type="submit" id="save-recipe-btn" class="btn btn-primary w-full">Save & Log Recipe</button>
@@ -600,7 +606,7 @@
         </div>
     </div>
     <div id="prompt-modal" class="modal-backdrop"><div class="modal-content"><h2 id="prompt-modal-title" class="text-xl font-bold mb-4">Input Required</h2><p id="prompt-modal-text" class="text-gray-300 mb-4"></p><input type="number" id="prompt-modal-input" min="0" class="form-input mb-6"><div class="flex justify-end gap-4"><button id="prompt-modal-cancel-btn" class="btn btn-secondary">Cancel</button><button id="prompt-modal-ok-btn" class="btn btn-primary">OK</button></div></div></div>
-    <div id="edit-favorite-modal" class="modal-backdrop"><div class="modal-content"><div class="flex justify-between items-center mb-6"><h2 class="text-2xl font-bold">Edit Favorite Food</h2><button id="close-edit-favorite-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button></div><form id="edit-favorite-form" class="space-y-4"><p class="text-sm text-gray-400">All values should be per 100g.</p><div><label for="edit-fav-food-name" class="form-label">Food Name</label><input type="text" id="edit-fav-food-name" class="form-input mt-1" required></div><div class="grid grid-cols-2 gap-4"><div><label for="edit-fav-food-calories" class="form-label">Calories (kcal)</label><input type="number" step="0.01" min="0" id="edit-fav-food-calories" class="form-input mt-1" required></div><div><label for="edit-fav-food-protein" class="form-label">Protein (g)</label><input type="number" step="0.01" min="0" id="edit-fav-food-protein" class="form-input mt-1" required></div></div><div class="grid grid-cols-2 gap-4"><div><label for="edit-fav-food-carbs" class="form-label">Carbs (g)</label><input type="number" step="0.01" min="0" id="edit-fav-food-carbs" class="form-input mt-1" required></div><div><label for="edit-fav-food-fat" class="form-label">Fat (g)</label><input type="number" step="0.01" min="0" id="edit-fav-food-fat" class="form-input mt-1" required></div></div><button type="submit" class="btn btn-primary w-full">Update Favorite</button></form></div></div>
+    <div id="edit-favorite-modal" class="modal-backdrop"><div class="modal-content"><div class="flex justify-between items-center mb-4"><h2 class="text-2xl font-bold">Edit Favorite Food</h2><button id="close-edit-favorite-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button></div><form id="edit-favorite-form" class="space-y-4"><p class="text-sm text-gray-400">All values should be per 100g.</p><div><label for="edit-fav-food-name" class="form-label">Food Name</label><input type="text" id="edit-fav-food-name" class="form-input mt-1" required></div><div class="grid grid-cols-2 gap-4"><div><label for="edit-fav-food-calories" class="form-label">Calories (kcal)</label><input type="number" step="0.01" min="0" id="edit-fav-food-calories" class="form-input mt-1" required></div><div><label for="edit-fav-food-protein" class="form-label">Protein (g)</label><input type="number" step="0.01" min="0" id="edit-fav-food-protein" class="form-input mt-1" required></div></div><div class="grid grid-cols-2 gap-4"><div><label for="edit-fav-food-carbs" class="form-label">Carbs (g)</label><input type="number" step="0.01" min="0" id="edit-fav-food-carbs" class="form-input mt-1" required></div><div><label for="edit-fav-food-fat" class="form-label">Fat (g)</label><input type="number" step="0.01" min="0" id="edit-fav-food-fat" class="form-input mt-1" required></div></div><button type="submit" class="btn btn-primary w-full">Update Favorite</button></form></div></div>
     <!-- AI Nutritionist Chat Modal -->
     <div id="ai-nutritionist-modal" class="modal-backdrop"><div class="modal-content !max-w-2xl flex flex-col"><div class="flex justify-between items-center mb-4"><h2 class="text-2xl font-bold">AI Nutritionist Chat</h2><button id="close-ai-nutritionist-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button></div><div id="ai-chat-history" class="flex-grow space-y-4 overflow-y-auto custom-scrollbar pr-2 mb-4 min-h-[300px]"></div><div class="flex gap-2"><input type="text" id="ai-chat-input" class="form-input" placeholder="Ask a nutrition question..."><button id="ai-chat-send-btn" class="btn btn-primary"><i data-lucide="send"></i></button></div></div></div>
     <!-- AI Meal Suggester Modal -->
@@ -891,9 +897,9 @@
             // --- MODIFIED addIngredientRow Function ---
             function addIngredientRow(ingredient = null) {
                 const div = document.createElement('div');
-                div.className = 'scroll-item ingredient-row p-4 bg-input-bg rounded-lg space-y-3';
+                div.className = 'scroll-item ingredient-row bg-input-bg rounded-lg space-y-2';
                 div.innerHTML = `
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-1">
                         <!-- Top Row: Name + AI Buttons -->
                         <div class="flex-grow">
                              <input type="text" list="favorite-foods-datalist" placeholder="Ingredient Name" class="form-input ingredient-name text-sm !py-2" value="${ingredient ? ingredient.name : ''}">
@@ -1120,7 +1126,7 @@
                 ui.undoToast.classList.add('translate-y-24', 'opacity-0');
             }
 
-            // --- CAROUSEL SETUP ---
+            // --- CAROUSEL SETUP - MODIFIED TO HIDE BUTTONS ---
             function setupCarousel(containerId, prevBtnId, nextBtnId) {
                 const container = document.getElementById(containerId);
                 const prevBtn = document.getElementById(prevBtnId);
@@ -1132,54 +1138,26 @@
                      return; // Exit if elements are not found
                 }
 
+                 // --- CHANGED: Always hide buttons for mobile optimization ---
+                 prevBtn.style.display = 'none';
+                 nextBtn.style.display = 'none';
+                 // --- END CHANGE ---
+
+                // Keep scroll logic if needed for potential future desktop use or manual triggers
                 const scrollAmount = () => {
                     const firstItem = container.querySelector('.scroll-item');
-                    // Calculate scroll based on item width + gap (1rem = 16px)
                     return firstItem ? firstItem.offsetWidth + 16 : container.offsetWidth * 0.9;
                 };
 
-                prevBtn.onclick = () => { // Use onclick for direct assignment
+                prevBtn.onclick = () => {
                     container.scrollBy({ left: -scrollAmount(), behavior: 'smooth' });
                 };
 
-                nextBtn.onclick = () => { // Use onclick for direct assignment
+                nextBtn.onclick = () => {
                     container.scrollBy({ left: scrollAmount(), behavior: 'smooth' });
                 };
 
-                const updateButtons = () => {
-                    // Use a small timeout to allow DOM/scroll properties to update reliably
-                    setTimeout(() => {
-                         if (!container) return; // Check if container still exists
-
-                        const hasMultipleItems = container.childElementCount > 1;
-                        const canScroll = container.scrollWidth > container.clientWidth + 2; // +2 for tolerance
-
-                        if (!hasMultipleItems || !canScroll) {
-                            prevBtn.style.display = 'none';
-                            nextBtn.style.display = 'none';
-                            wrapper.classList.remove('has-buttons'); // Optional: class to adjust padding if needed
-                            return;
-                        }
-
-                        const atStart = container.scrollLeft < 10;
-                        const atEnd = container.scrollWidth - container.scrollLeft - container.clientWidth < 10;
-
-                        prevBtn.style.display = atStart ? 'none' : 'flex'; // Use flex for button display
-                        nextBtn.style.display = atEnd ? 'none' : 'flex'; // Use flex for button display
-                        wrapper.classList.add('has-buttons'); // Optional
-
-                    }, 50); // Small delay
-                };
-
-                // Use scroll and resize events for robustness
-                container.onscroll = updateButtons; // Use onscroll
-                window.addEventListener('resize', updateButtons); // Update on resize
-
-                // Use MutationObserver to detect when items are added/removed
-                const observer = new MutationObserver(updateButtons);
-                observer.observe(container, { childList: true, subtree: false }); // Observe direct children only
-
-                updateButtons(); // Initial check
+                // No need for updateButtons logic if they are always hidden
             }
 
 
@@ -1632,7 +1610,7 @@
 
             ui.savedItemsListDiv.addEventListener('click', (e) => {
                  const logBtn = e.target.closest('.log-item-btn');
-                if(!logBtn) return;
+                 if(!logBtn) return;
                 const container = logBtn.closest('.swipe-item');
                 const type = container.dataset.type;
                 const index = parseInt(container.dataset.index);
@@ -1860,9 +1838,9 @@
 
                 for (const file of Array.from(files)) {
                      const imageUrl = await new Promise((resolve) => {
-                        const reader = new FileReader();
-                        reader.onload = (event) => resolve(event.target.result);
-                        reader.readAsDataURL(file);
+                         const reader = new FileReader();
+                         reader.onload = (event) => resolve(event.target.result);
+                         reader.readAsDataURL(file);
                     });
                      try {
                         const qrCodeInstance = new Html5Qrcode("barcode-reader", { verbose: false });
@@ -2117,6 +2095,7 @@
                         content.style.transform = 'translateX(0)';
                     } else if (currentX > swipeThreshold) { // Swiped right for Delete
                         handleItemDelete(elementToClean);
+                        // Element might be removed, so don't reset transform
                     } else {
                         content.style.transform = 'translateX(0)';
                     }
@@ -2134,13 +2113,17 @@
                 currentX = 0;
                 pointerDelta = { x: 0, y: 0 };
 
-                setTimeout(() => {
-                    if(content) {
-                        content.classList.remove('swiping', 'returning');
-                        content.style.transform = '';
-                    }
-                    elementToClean.querySelectorAll('.swipe-action-container').forEach(el => el.style.opacity = '0');
-                }, 300);
+                // Only reset style if the element wasn't deleted
+                if (elementToClean && document.body.contains(elementToClean)) {
+                    setTimeout(() => {
+                        if(content) {
+                            content.classList.remove('swiping', 'returning');
+                            content.style.transform = '';
+                        }
+                         const actions = elementToClean.querySelectorAll('.swipe-action-container');
+                         if(actions) actions.forEach(el => el.style.opacity = '0');
+                    }, 300);
+                }
             }
 
             ui.dailyLogContentDiv.addEventListener('mousedown', handlePointerDown);
