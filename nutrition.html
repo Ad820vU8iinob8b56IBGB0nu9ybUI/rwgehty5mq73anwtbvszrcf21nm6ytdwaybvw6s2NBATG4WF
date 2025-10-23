@@ -181,7 +181,11 @@
             justify-content: center;
             align-items: center;
             animation: fadeIn 0.3s ease;
+            /* Added for mobile full-screen modals */
+            padding: 0; 
         }
+
+        /* Standard modal content */
         .modal-content {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -196,6 +200,34 @@
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        /* --- MODIFICATION 1 & 8 & 9: Recipe Modal Styling --- */
+        /* Target only the recipe modal content */
+        #compound-food-modal .modal-content {
+            width: 100%;
+            height: 100%;
+            max-height: 100vh;
+            max-width: 100vw;
+            border-radius: 0;
+            padding: 1rem; /* Reduced padding for mobile */
+            display: flex; /* Enable flex-col layout */
+            flex-direction: column;
+            overflow: hidden; /* Prevent modal itself from scrolling */
+        }
+
+        /* Re-apply desktop/tablet constraints */
+        @media (min-width: 768px) {
+            #compound-food-modal .modal-content {
+                width: 90vw;
+                height: auto;
+                max-height: 90vh;
+                max-width: 48rem; /* 768px, same as max-w-3xl */
+                border-radius: 0.75rem;
+                padding: 2rem;
+            }
+        }
+        /* --- END MODIFICATION 1 & 8 & 9 --- */
+
 
         .loader {
             border: 2px solid #333;
@@ -216,6 +248,23 @@
 
         details > summary { list-style: none; }
         details > summary::-webkit-details-marker { display: none; }
+        
+        /* --- MODIFICATION 4: Style for details summary --- */
+        details summary {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding-bottom: 0.5rem;
+        }
+        details summary .chevron {
+            transition: transform 0.2s ease;
+        }
+        details[open] summary .chevron {
+            transform: rotate(180deg);
+        }
+        /* --- END MODIFICATION 4 --- */
+
 
         /* Prevents number input arrows */
         input[type=number]::-webkit-inner-spin-button,
@@ -359,15 +408,28 @@
         .recipe-carousel::after {
             content: none; /* Remove side padding */
         }
-        /* Ingredient Number Styling */
+        
+        /* --- MODIFICATION 7: Ingredient Number Styling --- */
+        /* --- MODIFIED: REMOVED absolute positioning --- */
         .ingredient-number {
-            position: absolute;
-            bottom: -0.25rem; /* Adjust as needed */
-            left: 0.5rem; /* Adjust as needed */
-            font-size: 0.75rem;
-            color: var(--secondary-text);
-            font-weight: 500;
+            /* position: absolute; ... removed */
+            /* top: 0; ... removed */
+            /* left: 0; ... removed */
+            /* transform: translate(-25%, -25%); ... removed */
+            width: 1.5rem; /* 24px */
+            height: 1.5rem; /* 24px */
+            background-color: var(--accent);
+            color: var(--background);
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem; /* 14px */
+            font-weight: 700;
+            /* z-index: 10; ... removed */
+            /* border: 2px solid var(--card-bg); ... removed */
         }
+        /* --- END MODIFICATION 7 --- */
 
     </style>
 </head>
@@ -377,8 +439,8 @@
         <!-- Header -->
         <header class="flex items-center justify-between mb-8 pb-4 border-b border-gray-900">
             <a href="index.html" class="flex items-center gap-3">
-                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white"><path d="m6.5 6.5 11 11"/><path d="m21 21-1-1"/><path d="m3 3 1 1"/><path d="m18 22 4-4"/><path d="m6 2 4 4"/><path d="m3 10.5 4.5-4.5"/><path d="m13.5 21 4.5-4.5"/></svg>
-                 <h1 class="text-2xl font-bold">FitTrack AI</h1>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white"><path d="m6.5 6.5 11 11"/><path d="m21 21-1-1"/><path d="m3 3 1 1"/><path d="m18 22 4-4"/><path d="m6 2 4 4"/><path d="m3 10.5 4.5-4.5"/><path d="m13.5 21 4.5-4.5"/></svg>
+                <h1 class="text-2xl font-bold">FitTrack AI</h1>
             </a>
         </header>
         <!-- Main Content -->
@@ -433,7 +495,7 @@
                         <details class="pt-2">
                             <summary class="cursor-pointer text-sm text-gray-400 hover:text-white flex items-center justify-between">
                                 <span>Enter Macros for 1 Serving</span>
-                                <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                                <i data-lucide="chevron-down" class="w-4 h-4 chevron"></i>
                             </summary>
                             <div class="space-y-3 pt-4 mt-4 border-t border-gray-800">
                                 <div class="grid grid-cols-4 gap-2">
@@ -577,53 +639,107 @@
     <div id="alert-modal" class="modal-backdrop"><div class="modal-content"><h2 id="alert-modal-title" class="text-xl font-bold mb-4">Alert</h2><p id="alert-modal-text" class="text-gray-300 mb-6"></p><div class="flex justify-end"><button id="alert-modal-ok-btn" class="btn btn-primary">OK</button></div></div></div>
     <div id="ai-report-modal" class="modal-backdrop"><div class="modal-content"><div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold flex items-center gap-2"><i data-lucide="sparkles" class="w-5 h-5 text-yellow-400"></i>AI Nutrition Report</h2><button id="close-ai-report-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button></div><p id="ai-report-modal-text" class="text-gray-300 mb-6"></p><div class="flex justify-end"><button id="ai-report-modal-ok-btn" class="btn btn-primary">OK</button></div></div></div>
 
-    <!-- Recipe Modal (Compound Food Modal) - MODIFIED -->
+    <!-- --- MODIFICATION 1, 4, 8: Recipe Modal (Compound Food Modal) - RESTRUCTURED --- -->
     <div id="compound-food-modal" class="modal-backdrop">
-        <div class="modal-content w-[100vw] !max-w-3xl max-h-[100vh]"> <!-- Keep modal size constraints -->
-            <div class="flex justify-between items-center mb-6">
+        <!-- The modal-content class is now heavily modified by CSS -->
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="flex-shrink-0 flex justify-between items-center mb-4">
                 <h2 id="compound-food-modal-title" class="text-2xl font-bold">Create a Recipe</h2>
                 <button id="close-compound-food-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button>
             </div>
-            <form id="compound-food-form" class="space-y-2">
-                <div>
-                    <input type="text" id="recipe-name-input" class="form-input" required placeholder="Name Your Creation">
-                </div>
-                <div class="border-b border-gray-800 pb-2"> <!-- Added pb-2 -->
-                    <h3 class="text-lg font-semibold text-center">Ingredients</h3>
-                    <!-- Carousel for ingredients -->
-                    <div id="recipe-carousel-wrapper" class="carousel-wrapper">
-                        <!-- Buttons are hidden via JS for mobile -->
-                        <button id="recipe-prev-ingredient" type="button" class="carousel-btn carousel-prev"><i data-lucide="chevron-left"></i></button>
-                        <!-- FIXED: Added border, padding, and margin-bottom -->
-                        <div id="ingredient-list-container" class="horizontal-scroll-container recipe-carousel min-h-[150px] items-start border border-gray-700 rounded-lg p-2 mb-2">
-                            <!-- Ingredient rows will be added here -->
+
+            <!-- Form now wraps content and footer -->
+            <form id="compound-food-form" class="flex flex-col flex-grow overflow-hidden">
+                
+                <!-- Scrollable Content Area -->
+                <!-- *** MODIFICATION: Moved recipe-totals-container out of this div *** -->
+                <div class="flex-grow space-y-4 overflow-y-auto custom-scrollbar pr-2">
+                    <div>
+                        <input type="text" id="recipe-name-input" class="form-input" required placeholder="Name Your Creation">
+                    </div>
+                    
+                    <div class="border-b border-gray-800 pb-2">
+                        <h3 class="text-lg font-semibold text-center">Ingredients</h3>
+                        <div id="recipe-carousel-wrapper" class="carousel-wrapper">
+                            <button id="recipe-prev-ingredient" type="button" class="carousel-btn carousel-prev"><i data-lucide="chevron-left"></i></button>
+                            <!-- Container now has more vertical room -->
+                            <div id="ingredient-list-container" class="horizontal-scroll-container recipe-carousel min-h-[250px] items-start border border-gray-700 rounded-lg p-2">
+                                <!-- Ingredient rows will be added here -->
+                            </div>
+                            <button id="recipe-next-ingredient" type="button" class="carousel-btn carousel-next"><i data-lucide="chevron-right"></i></button>
                         </div>
-                        <button id="recipe-next-ingredient" type="button" class="carousel-btn carousel-next"><i data-lucide="chevron-right"></i></button>
                     </div>
                 </div>
-                <div>
-                    <!-- **** MODIFIED: Added ingredient count display **** -->
-                    <h3 class="text-lg font-semibold mb-3">Total Macros <span id="recipe-ingredient-count" class="text-sm font-normal text-gray-400">(0 ingredients)</span></h3>
-                    <!-- CHANGED: Adjusted text sizes for mobile -->
-                    <div id="recipe-totals" class="grid grid-cols-4 gap-x-2 gap-y-1 text-center">
-                        <div><p class="text-xs text-gray-400">Calories</p><p id="recipe-total-calories" class="font-bold text-base">0</p></div>
-                        <div><p class="text-xs text-gray-400">Protein</p><p class="font-bold text-base"><span id="recipe-total-protein">0</span>g</p></div>
-                        <div><p class="text-xs text-gray-400">Carbs</p><p class="font-bold text-base"><span id="recipe-total-carbs">0</span>g</p></div>
-                        <div><p class="text-xs text-gray-400">Fat</p><p class="font-bold text-base"><span id="recipe-total-fat">0</span>g</p></div>
-                        <div><p class="text-xs text-gray-400">Sugar</p><p class="font-bold text-base"><span id="recipe-total-sugar">0</span>g</p></div>
-                        <div><p class="text-xs text-gray-400">Sodium</p><p class="font-bold text-base"><span id="recipe-total-sodium">0</span>mg</p></div>
-                        <div><p class="text-xs text-gray-400">Potassium</p><p class="font-bold text-base"><span id="recipe-total-potassium">0</span>mg</p></div>
-                        <div><p class="text-xs text-gray-400">Grams</p><p id="recipe-total-grams" class="font-bold text-base">0</p></div>
+                
+                <!-- --- MODIFICATION: Moved totals outside of scroll area --- -->
+                <div id="recipe-totals-container" class="flex-shrink-0 border-t border-b border-gray-800 py-3 px-2">
+                    <h3 class="text-lg font-semibold text-center mb-2">Total Macros</h3>
+                    <div id="recipe-totals" class="grid grid-cols-4 gap-x-2 gap-y-3 text-center">
+                        <!-- Calories -->
+                        <div>
+                            <p class="text-sm text-gray-400">Calories</p>
+                            <p id="recipe-total-calories" class="font-bold text-base">0</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-400">Protein</p>
+                            <p class="font-bold text-base"><span id="recipe-total-protein">0</span>g</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-400">Carbs</p>
+                            <p class="font-bold text-base"><span id="recipe-total-carbs">0</span>g</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-400">Fat</p>
+                            <p class="font-bold text-base"><span id="recipe-total-fat">0</span>g</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-400">Grams</p>
+                            <p id="recipe-total-grams" class="font-bold text-base">0</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-400">Sugar</p>
+                            <p class="font-bold text-base"><span id="recipe-total-sugar">0</span>g</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-400">Sodium</p>
+                            <p class="font-bold text-base"><span id="recipe-total-sodium">0</span>mg</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-400">Potassium</p>
+                            <p class="font-bold text-base"><span id="recipe-total-potassium">0</span>mg</p>
+                        </div>
                     </div>
                 </div>
-                <!-- FIXED: Button layout -->
-                <div class="flex flex-col sm:flex-row gap-2 pt-2">
-                    <button type="button" id="add-ingredient-btn" class="btn btn-secondary w-full"><i data-lucide="plus"></i>Add Ingredient</button>
-                    <button type="submit" id="save-recipe-btn" class="btn btn-primary w-full">Save & Log Recipe</button>
+                <!-- --- END MODIFICATION --- -->
+                
+                <!-- --- MODIFICATION 1 & 4: Sticky Footer / Action Bar --- -->
+                <div class="flex-shrink-0 pt-3 mt-auto border-t border-gray-800">
+                    <div class="grid grid-cols-2 gap-2">
+                        <button type="button" id="add-ingredient-btn" class="btn btn-secondary w-full"><i data-lucide="plus"></i>Add Ingredient</button>
+                        <button type="submit" id="save-recipe-btn" class="btn btn-primary w-full">Save & Log Recipe</button>
+                    </div>
                 </div>
+                <!-- --- END MODIFICATION 1 & 4 --- -->
+
             </form>
         </div>
     </div>
+    <!-- --- END MODIFICATION 1, 4, 8 --- -->
+
+    <!-- --- MODIFICATION 3: New Scan Chooser Modal --- -->
+    <div id="ingredient-scan-chooser-modal" class="modal-backdrop" style="z-index: 70;">
+        <div class="modal-content">
+            <h2 class="text-xl font-bold mb-6 text-center">Scan Ingredient</h2>
+            <div class="grid grid-cols-1 gap-4">
+                <button id="chooser-scan-barcode" class="btn btn-primary !py-4"><i data-lucide="barcode"></i>Scan Barcode</button>
+                <button id="chooser-scan-food" class="btn btn-secondary !py-4"><i data-lucide="camera"></i>Scan Food Image</button>
+            </div>
+            <button id="chooser-scan-cancel" class="btn btn-secondary w-full mt-6">Cancel</button>
+        </div>
+    </div>
+    <!-- --- END MODIFICATION 3 --- -->
+
 
     <div id="prompt-modal" class="modal-backdrop"><div class="modal-content"><h2 id="prompt-modal-title" class="text-xl font-bold mb-4">Input Required</h2><p id="prompt-modal-text" class="text-gray-300 mb-4"></p><input type="number" id="prompt-modal-input" min="0" class="form-input mb-6"><div class="flex justify-end gap-4"><button id="prompt-modal-cancel-btn" class="btn btn-secondary">Cancel</button><button id="prompt-modal-ok-btn" class="btn btn-primary">OK</button></div></div></div>
     <div id="edit-favorite-modal" class="modal-backdrop"><div class="modal-content"><div class="flex justify-between items-center mb-4"><h2 class="text-2xl font-bold">Edit Favorite Food</h2><button id="close-edit-favorite-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button></div><form id="edit-favorite-form" class="space-y-4"><p class="text-sm text-gray-400">All values should be per 100g.</p><div><label for="edit-fav-food-name" class="form-label">Food Name</label><input type="text" id="edit-fav-food-name" class="form-input mt-1" required></div><div class="grid grid-cols-2 gap-4"><div><label for="edit-fav-food-calories" class="form-label">Calories (kcal)</label><input type="number" step="0.01" min="0" id="edit-fav-food-calories" class="form-input mt-1" required></div><div><label for="edit-fav-food-protein" class="form-label">Protein (g)</label><input type="number" step="0.01" min="0" id="edit-fav-food-protein" class="form-input mt-1" required></div></div><div class="grid grid-cols-2 gap-4"><div><label for="edit-fav-food-carbs" class="form-label">Carbs (g)</label><input type="number" step="0.01" min="0" id="edit-fav-food-carbs" class="form-input mt-1" required></div><div><label for="edit-fav-food-fat" class="form-label">Fat (g)</label><input type="number" step="0.01" min="0" id="edit-fav-food-fat" class="form-input mt-1" required></div></div><button type="submit" class="btn btn-primary w-full">Update Favorite</button></form></div></div>
@@ -722,11 +838,11 @@
                         if (response.ok) {
                             const result = await response.json();
                            // Check for expected data in the response structure
-                             const hasText = result.candidates?.[0]?.content?.parts?.[0]?.text;
-                             const hasImageData = result.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
-                             const hasStructuredResponse = payload.generationConfig?.responseMimeType === "application/json";
+                            const hasText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                            const hasImageData = result.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+                            const hasStructuredResponse = payload.generationConfig?.responseMimeType === "application/json";
 
-                            if (hasText || hasImageData || hasStructuredResponse) {
+                           if (hasText || hasImageData || hasStructuredResponse) {
                                 return result; // Successful and valid response structure
                             } else {
                                 console.warn("API response structure unexpected, but status OK:", result);
@@ -838,8 +954,14 @@
                 recipeCarouselWrapper: document.getElementById('recipe-carousel-wrapper'),
                 recipePrevIngredient: document.getElementById('recipe-prev-ingredient'),
                 recipeNextIngredient: document.getElementById('recipe-next-ingredient'),
-                // **** ADDED ****
-                recipeIngredientCount: document.getElementById('recipe-ingredient-count'),
+                
+                // --- NEW/MODIFIED UI elements ---
+                // findMacrosAiBtn: document.getElementById('find-macros-ai-btn'), // Removed, now dynamic
+                // recipeTotalCaloriesSummary: document.getElementById('recipe-total-calories-summary'), // Removed
+                ingredientScanChooserModal: document.getElementById('ingredient-scan-chooser-modal'),
+                chooserScanBarcode: document.getElementById('chooser-scan-barcode'),
+                chooserScanFood: document.getElementById('chooser-scan-food'),
+                chooserScanCancel: document.getElementById('chooser-scan-cancel'),
             };
 
             // --- CHART.JS SETUP ---
@@ -933,28 +1055,35 @@
                 lucide.createIcons();
             }
 
-            // --- **** MODIFIED addIngredientRow Function **** ---
+            // --- --- MODIFICATION 2, 6, 7, 9: Updated addIngredientRow Function --- ---
             function addIngredientRow(ingredient = null, index = null) {
                 const div = document.createElement('div');
-                div.className = 'scroll-item ingredient-row bg-input-bg rounded-lg space-y-2 p-3 pb-4'; // Added padding bottom for number
-                const ingredientNumber = index !== null ? index + 1 : ui.ingredientListContainer.children.length + 1; // Calculate number
+                // *** MODIFICATION: Removed pt-5, just using p-3 ***
+                div.className = 'scroll-item ingredient-row bg-input-bg rounded-lg space-y-2 p-3';
+                const ingredientNumber = index !== null ? index + 1 : ui.ingredientListContainer.querySelectorAll('.ingredient-row').length + 1; // Calculate number
 
+                // *** MODIFICATION: New 4-row layout ***
                 div.innerHTML = `
-                    <div class="flex items-center gap-1">
-                        <!-- Top Row: Name + Remove Button -->
+                    <!-- Row 1: Name & Remove Action -->
+                    <div class="flex items-end gap-1.5">
                         <div class="flex-grow">
-                             <input type="text" list="favorite-foods-datalist" placeholder="Ingredient Name" class="form-input ingredient-name text-sm !py-2" value="${ingredient ? ingredient.name : ''}">
+                            <label class="form-label text-xs">Ingredient Name</label>
+                            <input type="text" list="favorite-foods-datalist" placeholder="e.g., Chicken" class="form-input ingredient-name text-sm !py-1.5 mt-1" value="${ingredient ? ingredient.name : ''}">
                         </div>
-                        <button type="button" class="remove-ingredient-btn btn btn-secondary !p-2 flex-shrink-0" title="Remove Ingredient"><i data-lucide="x" class="w-4 h-4 pointer-events-none"></i></button>
+                        <div class="flex-grow">
+                            <label class="form-label text-xs">Grams</label>
+                            <input type="number" placeholder="g" min="0" class="form-input ingredient-grams text-sm !py-1.5 mt-1" value="${ingredient ? ingredient.grams : ''}">
+                        </div>
                     </div>
-                    <!-- Middle Row: 4 Macros -->
-                    <div class="grid grid-cols-4 gap-2">
+
+                    <!-- Row 3: Calories, Protein, Carbs, Fat -->
+                    <div class="grid grid-cols-4 gap-2 mt-3">
                         <div>
                             <label class="form-label text-xs">Calories</label>
                             <input type="number" step="0.01" min="0" placeholder="kcal" class="form-input ingredient-calories text-xs !py-1 mt-1" value="${ingredient ? ingredient.calories : ''}">
                         </div>
                         <div>
-                             <label class="form-label text-xs">Protein</label>
+                            <label class="form-label text-xs">Protein</label>
                             <input type="number" step="0.01" min="0" placeholder="g" class="form-input ingredient-protein text-xs !py-1 mt-1" value="${ingredient ? ingredient.protein : ''}">
                         </div>
                         <div>
@@ -962,40 +1091,45 @@
                             <input type="number" step="0.01" min="0" placeholder="g" class="form-input ingredient-carbs text-xs !py-1 mt-1" value="${ingredient ? ingredient.carbs : ''}">
                         </div>
                         <div>
-                             <label class="form-label text-xs">Fat</label>
+                            <label class="form-label text-xs">Fat</label>
                             <input type="number" step="0.01" min="0" placeholder="g" class="form-input ingredient-fat text-xs !py-1 mt-1" value="${ingredient ? ingredient.fat : ''}">
                         </div>
                     </div>
-                    <!-- Bottom Row: 3 Macros + AI Buttons + Grams Input -->
-                     <div class="grid grid-cols-4 gap-2 items-end">
-                         <div>
+
+                    <!-- Row 4: Sugar, Sodium, Potassium, # -->
+                    <div class="grid grid-cols-4 gap-2 mt-2">
+                        <div>
                             <label class="form-label text-xs">Sugar</label>
                             <input type="number" step="0.01" min="0" placeholder="g" class="form-input ingredient-sugar text-xs !py-1 mt-1" value="${ingredient ? ingredient.sugar : ''}">
-                         </div>
-                         <div>
+                        </div>
+                        <div>
                             <label class="form-label text-xs">Sodium</label>
                             <input type="number" step="0.01" min="0" placeholder="mg" class="form-input ingredient-sodium text-xs !py-1 mt-1" value="${ingredient ? ingredient.sodium : ''}">
-                         </div>
-                         <div>
+                        </div>
+                        <div>
                             <label class="form-label text-xs">Potassium</label>
                             <input type="number" step="0.01" min="0" placeholder="mg" class="form-input ingredient-potassium text-xs !py-1 mt-1" value="${ingredient ? ingredient.potassium : ''}">
-                         </div>
-                        <!-- **** SWAPPED POSITION **** -->
-                         <div class="flex flex-col gap-1">
-                             <label class="form-label text-xs invisible">Actions</label> <!-- Placeholder label for alignment -->
-                             <div class="flex gap-1">
-                                 <button type="button" class="recipe-name-ai-btn btn btn-secondary !p-1.5 flex-grow" title="Find Macros with AI"><i data-lucide="sparkles" class="w-3 h-3 pointer-events-none"></i></button>
-                                 <button type="button" class="recipe-barcode-btn btn btn-secondary !p-1.5 flex-grow" title="Scan Barcode"><i data-lucide="barcode" class="w-3 h-3 pointer-events-none"></i></button>
-                                 <button type="button" class="recipe-ai-btn btn btn-secondary !p-1.5 flex-grow" title="Scan with Camera"><i data-lucide="camera" class="w-3 h-3 pointer-events-none"></i></button>
-                             </div>
-                         </div>
-                     </div>
-                     <div class="mt-2"> <!-- Grams input on its own line -->
-                         <label class="form-label text-xs">Grams *</label>
-                         <input type="number" placeholder="g" min="0" class="form-input ingredient-grams text-xs !py-1 mt-1" value="${ingredient ? ingredient.grams : ''}" required>
-                     </div>
-                    <!-- **** ADDED Ingredient Number **** -->
-                    <span class="ingredient-number">${ingredientNumber}</span>
+                        </div>
+                        <!-- Ingredient Number as 4th item -->
+                        <div class="flex flex-col items-center justify-end">
+                            <label class="form-label text-xs opacity-0">#</label> <!-- Hidden label for alignment -->
+                            <span class="ingredient-number mt-1">${ingredientNumber}</span>
+                        </div>
+                    </div>
+
+                    <!-- Row 2: Scan, AI, Grams -->
+                    <div class="flex items-end gap-1.5 mt-2">
+                        <button type="button" class="recipe-scan-btn btn btn-secondary !p-2 flex-shrink-0" title="Scan Ingredient">
+                            <i data-lucide="camera" class="w-4 h-4 pointer-events-none"></i>
+                        </button>
+                        <button type="button" class="find-macros-ai-btn btn btn-secondary !p-2 flex-shrink-0" title="Find Macros with AI">
+                            <i data-lucide="sparkles" class="w-4 h-4 pointer-events-none"></i>
+                            <div class="loader hidden !w-4 !h-4"></div>
+                        </button>
+                        <button type="button" class="remove-ingredient-btn btn btn-secondary !p-2 flex-shrink-0" title="Remove Ingredient">
+                            <i data-lucide="x" class="w-4 h-4 pointer-events-none"></i>
+                        </button>
+                    </div>
                 `;
                 ui.ingredientListContainer.appendChild(div);
                 lucide.createIcons();
@@ -1003,28 +1137,29 @@
                 // Update carousel after adding
                 setupCarousel('ingredient-list-container', 'recipe-prev-ingredient', 'recipe-next-ingredient');
             }
+            // --- --- END MODIFIED addIngredientRow --- ---
 
             // --- Function to update ingredient numbers ---
             function updateIngredientNumbers() {
                 const rows = ui.ingredientListContainer.querySelectorAll('.ingredient-row');
                 rows.forEach((row, index) => {
+                    // *** MODIFICATION: Query selector is correct, uses .ingredient-number ***
                     const numberSpan = row.querySelector('.ingredient-number');
                     if (numberSpan) {
                         numberSpan.textContent = index + 1;
                     }
                 });
             }
-            // --- END MODIFIED addIngredientRow & helpers ---
 
-            // --- **** MODIFIED updateRecipeTotals Function **** ---
+            // --- MODIFICATION 4: updateRecipeTotals Function ---
             function updateRecipeTotals() {
                 let totalCalories = 0, totalProtein = 0, totalCarbs = 0, totalFat = 0, totalGrams = 0, totalSugar = 0, totalSodium = 0, totalPotassium = 0;
-                let ingredientCount = 0; // Initialize count
+                
                 document.querySelectorAll('.ingredient-row').forEach(row => {
                     const grams = parseFloat(row.querySelector('.ingredient-grams').value) || 0;
                     const name = row.querySelector('.ingredient-name').value.trim();
+                    
                     if (name && grams > 0) { // Only count if name and grams are valid
-                        ingredientCount++; // Increment count
                         totalGrams += grams;
                         totalCalories += parseFloat(row.querySelector('.ingredient-calories').value) || 0;
                         totalProtein += parseFloat(row.querySelector('.ingredient-protein').value) || 0;
@@ -1035,6 +1170,8 @@
                         totalPotassium += parseFloat(row.querySelector('.ingredient-potassium').value) || 0;
                     }
                 });
+                
+                // Update expanded view
                 document.getElementById('recipe-total-calories').textContent = totalCalories.toFixed(0);
                 document.getElementById('recipe-total-protein').textContent = totalProtein.toFixed(1);
                 document.getElementById('recipe-total-carbs').textContent = totalCarbs.toFixed(1);
@@ -1044,10 +1181,10 @@
                 document.getElementById('recipe-total-potassium').textContent = totalPotassium.toFixed(0);
                 document.getElementById('recipe-total-grams').textContent = totalGrams.toFixed(0);
 
-                // Update ingredient count display
-                ui.recipeIngredientCount.textContent = `(${ingredientCount} ingredient${ingredientCount !== 1 ? 's' : ''})`;
+                // Update summary view
+                // ui.recipeTotalCaloriesSummary.textContent = totalCalories.toFixed(0); // Removed
             }
-            // --- **** END MODIFIED updateRecipeTotals **** ---
+            // --- --- END MODIFIED updateRecipeTotals --- ---
 
 
             // --- FIXED: New helper functions for recipe AI ---
@@ -1057,13 +1194,20 @@
 
                 const currentGrams = parseFloat(gramsInput.value);
                 let ratio = 1;
+                
+                let baseGrams = data.servingGrams || 100.0;
+                // Handle cases where AI returns 0 or invalid servingGrams
+                if (baseGrams <= 0) { 
+                    baseGrams = 100.0;
+                }
 
                 if (isNaN(currentGrams) || currentGrams <= 0) {
-                    gramsInput.value = (data.servingGrams || 100).toFixed(0); // Default to 100g
-                    ratio = 1; // Macros are already for 100g
+                    // No grams entered, fill form for 100g
+                    gramsInput.value = baseGrams.toFixed(0);
+                    ratio = 1; // Macros from AI are already for baseGrams
                 } else {
-                    // Grams are already entered, scale the 100g data
-                    ratio = currentGrams / (data.servingGrams || 100.0);
+                    // Grams are already entered, scale the baseGrams data
+                    ratio = currentGrams / baseGrams;
                 }
 
                 caloriesInput.value = (data.calories * ratio).toFixed(0);
@@ -1103,6 +1247,21 @@
                 }
             }
             // --- END FIXED ---
+            
+            // --- NEW FUNCTION ---
+            // Processes all ingredient rows, optionally forcing an update
+            async function processAllIngredientsAI(force = false) {
+                const rows = document.querySelectorAll('.ingredient-row');
+                const lookupPromises = [];
+                rows.forEach(row => {
+                    lookupPromises.push(handleIngredientAILookup(row, force));
+                });
+
+                await Promise.all(lookupPromises);
+                updateRecipeTotals(); // Update totals after all AI lookups are done
+            }
+            // --- END NEW FUNCTION ---
+
 
             async function getDailyLogAIReport() {
                 const btn = ui.aiDailyReportBtn;
@@ -1181,10 +1340,10 @@
                     const result = await fetchWithBackoff(apiUrl, payload); // Use fetchWithBackoff
                     if (!result.candidates?.[0]?.content?.parts?.[0]?.text) throw new Error("Invalid API response format.");
                     return JSON.parse(result.candidates[0].content.parts[0].text);
-                } catch (error) {
-                    console.error("getMacrosFromAI Error:", error);
-                    throw error; // Re-throw to be caught by caller
-                }
+                 } catch (error) {
+                     console.error("getMacrosFromAI Error:", error);
+                     throw error; // Re-throw to be caught by caller
+                 }
             }
             // --- END FIXED ---
 
@@ -1223,8 +1382,8 @@
                      }
                     const totalGrams = logItem.grams || 0;
                     if (totalGrams <= 0) {
-                        showCustomAlert("Cannot Favorite", "Cannot favorite an item with 0 grams to calculate base macros.");
-                        return;
+                         showCustomAlert("Cannot Favorite", "Cannot favorite an item with 0 grams to calculate base macros.");
+                         return;
                     }
                     const ratio = 100 / totalGrams;
                     favoriteFoods.push({ name: logItem.name, calories: logItem.calories * ratio, protein: logItem.protein * ratio, carbs: logItem.carbs * ratio, fat: logItem.fat * ratio, });
@@ -1422,22 +1581,21 @@
                 editingFoodLogIndex = index;
                 ui.foodNameInput.value = item.name;
                 ui.foodServingsInput.value = item.servings;
-
-                const singleServingGrams = item.servings > 0 ? item.grams / item.servings : 0;
-                const singleServingCalories = item.servings > 0 ? item.calories / item.servings : 0;
-
+                
+                const singleServingGrams = (item.grams / item.servings) || 0;
+                
                 ui.foodGramsInput.value = singleServingGrams.toFixed(1);
 
-                document.getElementById('food-calories-input').value = (item.calories / item.servings).toFixed(2);
-                document.getElementById('food-protein-input').value = (item.protein / item.servings).toFixed(2);
-                document.getElementById('food-carbs-input').value = (item.carbs / item.servings).toFixed(2);
-                document.getElementById('food-fat-input').value = (item.fat / item.servings).toFixed(2);
-                document.getElementById('food-sugar-input').value = (item.sugar / item.servings).toFixed(2);
-                document.getElementById('food-sodium-input').value = (item.sodium / item.servings).toFixed(2);
-                document.getElementById('food-potassium-input').value = (item.potassium / item.servings).toFixed(2);
+                document.getElementById('food-calories-input').value = ((item.calories / item.servings) || 0).toFixed(2);
+                document.getElementById('food-protein-input').value = ((item.protein / item.servings) || 0).toFixed(2);
+                document.getElementById('food-carbs-input').value = ((item.carbs / item.servings) || 0).toFixed(2);
+                document.getElementById('food-fat-input').value = ((item.fat / item.servings) || 0).toFixed(2);
+                document.getElementById('food-sugar-input').value = ((item.sugar / item.servings) || 0).toFixed(2);
+                document.getElementById('food-sodium-input').value = ((item.sodium / item.servings) || 0).toFixed(2);
+                document.getElementById('food-potassium-input').value = ((item.potassium / item.servings) || 0).toFixed(2);
 
                 ui.logMealForm.scrollIntoView({ behavior: 'smooth' });
-            };
+             };
 
             const handleDeleteLogItem = (index) => {
                 showConfirmModal('Delete Log Entry?', 'Are you sure?', () => {
@@ -1559,6 +1717,13 @@
                 try {
                     const imagePart = await fileToGenerativePart(file);
                     let prompt = `Identify the food in this image. Respond ONLY with a valid JSON object with these fields: "name", "brand", "servings" (estimated number of standard servings shown), "totalGrams" (estimated total grams for all servings shown), "calories", "protein", "carbs", "fat", "sugar", "sodium", "potassium". The nutritional values (calories, protein, etc.) should be for the TOTAL amount of food pictured.`;
+                    
+                    // --- MODIFICATION 2: Check if scanning for a recipe ingredient ---
+                    if (scanningIngredientRow) {
+                        prompt = `Identify the food in this image. I only want the nutritional information for 100g. Respond ONLY with a valid JSON object with these fields: "name", "brand", "servingGrams" (which must be 100), "calories", "protein", "carbs", "fat", "sugar", "sodium", "potassium". The nutritional values must be for 100g.`;
+                    }
+                    // --- END MODIFICATION ---
+
                     const apiUrl = getApiUrl('gemini-2.5-flash-preview-09-2025');
                     const payload = { contents: [{ parts: [{ text: prompt }, imagePart] }], generationConfig: { responseMimeType: "application/json" } };
 
@@ -1570,65 +1735,90 @@
 
                     const detailsDiv = document.createElement('div');
                     detailsDiv.className = 'text-xs text-gray-400 whitespace-normal';
-                    detailsDiv.innerHTML = `
-                        <p class="font-bold text-sm text-white mb-1">${capitalizeWords(data.name) || 'Unknown Food'} (${(data.servings || 1).toFixed(1)} serv.)</p>
-                        <p>${data.totalGrams?.toFixed(0) || '?'}g | ${data.calories?.toFixed(0) || '?'} kcal</p>
-                        <p>${data.protein?.toFixed(1) || '?'}p | ${data.carbs?.toFixed(1) || '?'}c | ${data.fat?.toFixed(1) || '?'}f</p>
-                    `;
+                    
+                    // --- MODIFICATION 2: Different UI for recipe scan vs general log ---
+                    if (scanningIngredientRow) {
+                        detailsDiv.innerHTML = `
+                            <p class="font-bold text-sm text-white mb-1">${capitalizeWords(data.name) || 'Unknown Food'}</p>
+                            <p>${(data.servingGrams || 100).toFixed(0)}g | ${data.calories?.toFixed(0) || '?'} kcal</p>
+                            <p>${data.protein?.toFixed(1) || '?'}p | ${data.carbs?.toFixed(1) || '?'}c | ${data.fat?.toFixed(1) || '?'}f</p>
+                        `;
 
-                    const logButton = document.createElement('button');
-                    logButton.className = 'btn btn-primary !p-2 mt-3 w-full';
-                    logButton.innerHTML = 'Log this';
+                        const useButton = document.createElement('button');
+                        useButton.className = 'btn btn-primary !p-2 mt-3 w-full';
+                        useButton.innerHTML = 'Use this';
+                        useButton.onclick = () => {
+                            scanningIngredientRow.querySelector('.ingredient-name').value = capitalizeWords(data.name) || '';
+                            // Pass 100g-based data to fill function
+                            fillIngredientRowFromAI(scanningIngredientRow, data); 
+                            updateRecipeTotals();
+                            stopFoodCamera();
+                            hideModal(ui.foodScannerModal);
+                        };
+                        resultElement.appendChild(detailsDiv);
+                        resultElement.appendChild(useButton);
 
-                    logButton.isLogged = false;
-                    logButton.logId = null;
+                    } else {
+                        // Original logging logic
+                        detailsDiv.innerHTML = `
+                            <p class="font-bold text-sm text-white mb-1">${capitalizeWords(data.name) || 'Unknown Food'} (${(data.servings || 1).toFixed(1)} serv.)</p>
+                            <p>${data.totalGrams?.toFixed(0) || '?'}g | ${data.calories?.toFixed(0) || '?'} kcal</p>
+                            <p>${data.protein?.toFixed(1) || '?'}p | ${data.carbs?.toFixed(1) || '?'}c | ${data.fat?.toFixed(1) || '?'}f</p>
+                        `;
 
-                    logButton.onclick = () => {
-                        if (logButton.isLogged) {
-                            // --- UNLOG ---
-                            const logIndex = getDayLog(viewDate).entries.findIndex(entry => entry.logId === logButton.logId);
-                            if (logIndex > -1) {
-                                getDayLog(viewDate).entries.splice(logIndex, 1);
+                        const logButton = document.createElement('button');
+                        logButton.className = 'btn btn-primary !p-2 mt-3 w-full';
+                        logButton.innerHTML = 'Log this';
+                        logButton.isLogged = false;
+                        logButton.logId = null;
+
+                        logButton.onclick = () => {
+                            if (logButton.isLogged) {
+                                // --- UNLOG ---
+                                const logIndex = getDayLog(viewDate).entries.findIndex(entry => entry.logId === logButton.logId);
+                                if (logIndex > -1) {
+                                    getDayLog(viewDate).entries.splice(logIndex, 1);
+                                    saveData();
+                                    updateDayView(viewDate);
+                                }
+                                logButton.textContent = 'Log this';
+                                logButton.classList.remove('btn-secondary');
+                                logButton.classList.add('btn-primary');
+                                logButton.isLogged = false;
+                                logButton.logId = null;
+                            } else {
+                                // --- LOG ---
+                                const logId = Date.now();
+                                const foodItem = {
+                                    logId: logId,
+                                    name: capitalizeWords(data.name) || 'Scanned Food',
+                                    brand: data.brand || '',
+                                    servings: data.servings || 1,
+                                    grams: data.totalGrams || 0,
+                                    calories: data.calories || 0,
+                                    protein: data.protein || 0,
+                                    carbs: data.carbs || 0,
+                                    fat: data.fat || 0,
+                                    sugar: data.sugar || 0,
+                                    sodium: data.sodium || 0,
+                                    potassium: data.potassium || 0,
+                                };
+                                const dayLog = getDayLog(viewDate);
+                                dayLog.entries.push(foodItem);
                                 saveData();
                                 updateDayView(viewDate);
+
+                                logButton.textContent = 'Logged! (Tap to undo)';
+                                logButton.classList.remove('btn-primary');
+                                logButton.classList.add('btn-secondary');
+                                logButton.isLogged = true;
+                                logButton.logId = logId;
                             }
-                            logButton.textContent = 'Log this';
-                            logButton.classList.remove('btn-secondary');
-                            logButton.classList.add('btn-primary');
-                            logButton.isLogged = false;
-                            logButton.logId = null;
-                        } else {
-                            // --- LOG ---
-                            const logId = Date.now();
-                            const foodItem = {
-                                logId: logId,
-                                name: capitalizeWords(data.name) || 'Scanned Food',
-                                brand: data.brand || '',
-                                servings: data.servings || 1,
-                                grams: data.totalGrams || 0,
-                                calories: data.calories || 0,
-                                protein: data.protein || 0,
-                                carbs: data.carbs || 0,
-                                fat: data.fat || 0,
-                                sugar: data.sugar || 0,
-                                sodium: data.sodium || 0,
-                                potassium: data.potassium || 0,
-                            };
-                            const dayLog = getDayLog(viewDate);
-                            dayLog.entries.push(foodItem);
-                            saveData();
-                            updateDayView(viewDate);
-
-                            logButton.textContent = 'Logged! (Tap to undo)';
-                            logButton.classList.remove('btn-primary');
-                            logButton.classList.add('btn-secondary');
-                            logButton.isLogged = true;
-                            logButton.logId = logId;
-                        }
-                    };
-
-                    resultElement.appendChild(detailsDiv);
-                    resultElement.appendChild(logButton);
+                        };
+                        resultElement.appendChild(detailsDiv);
+                        resultElement.appendChild(logButton);
+                    }
+                    // --- END MODIFICATION ---
 
                 } catch (error) {
                     console.error("AI Image Scan Error:", error);
@@ -1665,88 +1855,126 @@
             ui.createRecipeBtn.addEventListener('click', () => {
                 editingRecipeIndex = null; ui.compoundFoodModal.querySelector('h2').textContent = "Create a Recipe";
                 ui.saveRecipeBtn.textContent = "Save & Log Recipe"; ui.compoundFoodForm.reset();
-                ui.ingredientListContainer.innerHTML = ''; addIngredientRow(); addIngredientRow();
-                updateRecipeTotals(); showModal(ui.compoundFoodModal);
+                ui.ingredientListContainer.innerHTML = ''; 
+                addIngredientRow();
+                updateRecipeTotals(); 
+                // document.getElementById('recipe-totals-details').open = false; // Close details by default
+                showModal(ui.compoundFoodModal);
                 // Setup carousel after adding initial rows
                 setupCarousel('ingredient-list-container', 'recipe-prev-ingredient', 'recipe-next-ingredient');
             });
 
-            // --- FIXED: Updated Add Ingredient button listener ---
+            // --- --- MODIFICATION 5: Add Ingredient button listener --- ---
             ui.addIngredientBtn.addEventListener('click', async () => {
-                // 1. Process all existing rows with names but no calories
-                const rows = document.querySelectorAll('.ingredient-row');
-                const lookupPromises = [];
-                rows.forEach(row => {
-                    lookupPromises.push(handleIngredientAILookup(row, false)); // false = don't force
-                });
+                // 1. Check the last row
+                const allRows = ui.ingredientListContainer.querySelectorAll('.ingredient-row');
+                if (allRows.length > 0) {
+                    const lastRow = allRows[allRows.length - 1];
+                    const name = lastRow.querySelector('.ingredient-name').value.trim();
+                    const grams = lastRow.querySelector('.ingredient-grams').value;
 
-                // Wait for all lookups to finish
-                await Promise.all(lookupPromises);
-
-                // 2. Now add the new blank row
-                addIngredientRow();
-
-                // 3. Scroll to the new row (it's the last one)
-                ui.ingredientListContainer.scrollLeft = ui.ingredientListContainer.scrollWidth;
-
-                 // 4. Update carousel (in case buttons are needed on desktop)
-                setupCarousel('ingredient-list-container', 'recipe-prev-ingredient', 'recipe-next-ingredient');
-            });
-            // --- END FIXED ---
-
-            // --- **** MODIFIED EVENT LISTENER **** ---
-            ui.ingredientListContainer.addEventListener('input', updateRecipeTotals);
-            ui.ingredientListContainer.addEventListener('click', async (e) => {
-                 const aiBtn = e.target.closest('.recipe-ai-btn');
-                 const removeBtn = e.target.closest('.remove-ingredient-btn');
-                 const barcodeBtn = e.target.closest('.recipe-barcode-btn');
-                 const nameAiBtn = e.target.closest('.recipe-name-ai-btn'); // <-- ADDED
-                 const row = e.target.closest('.ingredient-row');
-
-                if (removeBtn && row) {
-                    row.remove();
-                    updateIngredientNumbers(); // Update numbers after removal
-                    updateRecipeTotals();
-                    // Update carousel after removing rows
-                    setupCarousel('ingredient-list-container', 'recipe-prev-ingredient', 'recipe-next-ingredient');
-                }
-                if (barcodeBtn) { scanningIngredientRow = row; startBarcodeScanner(); }
-                if (aiBtn) {
-                    scanningIngredientRow = row;
-                    ui.scannerResultsContainer.innerHTML = '';
-                    ui.foodScannerStatus.textContent = '';
-                    ui.liveCameraContainer.classList.add('hidden');
-                    ui.foodScannerInitialOptions.classList.remove('hidden');
-                    ui.foodScannerCarouselWrapper.classList.add('hidden'); // Use wrapper ID
-                    showModal(ui.foodScannerModal);
-                }
-                // --- **** NEW BLOCK ADDED **** ---
-                if (nameAiBtn && row) {
-                    const btn = nameAiBtn;
-                    const icon = btn.querySelector('i');
-                    const loader = document.createElement('div');
-                    loader.className = 'loader !w-3 !h-3'; // Make loader small
-
-                    // Show loader
-                    if(icon) icon.style.display = 'none';
-                    btn.appendChild(loader);
-                    btn.disabled = true;
-
-                    try {
-                        // Call handleIngredientAILookup, forcing it (true)
-                        await handleIngredientAILookup(row, true);
-                    } catch (err) {
-                        // Error is handled inside handleIngredientAILookup (border color)
-                    } finally {
-                        // Hide loader
-                        if(icon) icon.style.display = ''; // Reset display
-                        loader.remove();
-                        btn.disabled = false;
+                    if (!name || !grams || parseFloat(grams) <= 0) {
+                        // Last row is empty, just scroll to it
+                        lastRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        // Flash the empty fields
+                        if (!name) lastRow.querySelector('.ingredient-name').classList.add('!border-red-500');
+                        if (!grams || parseFloat(grams) <= 0) lastRow.querySelector('.ingredient-grams').classList.add('!border-red-500');
+                        setTimeout(() => {
+                             lastRow.querySelector('.ingredient-name').classList.remove('!border-red-500');
+                             lastRow.querySelector('.ingredient-grams').classList.remove('!border-red-500');
+                        }, 1500);
+                        return; // Stop here
                     }
                 }
-                // --- **** END NEW BLOCK **** ---
+                
+                // 2. Process all existing rows with names but no calories (if last row was filled)
+                await processAllIngredientsAI(false); // false = don't force
+
+                // 3. Now add the new blank row
+                addIngredientRow();
+
+                // 4. Scroll to the new row (it's the last one)
+                const newRow = ui.ingredientListContainer.lastElementChild;
+                if (newRow) {
+                    newRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    newRow.querySelector('.ingredient-name').focus();
+                }
+
+                // 5. Update carousel (in case buttons are needed on desktop)
+                setupCarousel('ingredient-list-container', 'recipe-prev-ingredient', 'recipe-next-ingredient');
             });
-            // --- **** END MODIFIED LISTENER **** ---
+            // --- --- END MODIFICATION 5 --- ---
+
+            // --- Find Macros AI button listener ---
+            // ui.findMacrosAiBtn.addEventListener('click', async (e) => { // Removed
+            // });
+
+            // --- --- MODIFICATION 2 & 6: Updated Ingredient List Listener --- ---
+            ui.ingredientListContainer.addEventListener('input', updateRecipeTotals);
+            ui.ingredientListContainer.addEventListener('click', async (e) => {
+                 const removeBtn = e.target.closest('.remove-ingredient-btn');
+                 const scanBtn = e.target.closest('.recipe-scan-btn'); // New scan button
+                 const findMacrosBtn = e.target.closest('.find-macros-ai-btn'); // New find macros button
+                 const row = e.target.closest('.ingredient-row');
+
+                 if (removeBtn && row) {
+                     row.remove();
+                     updateIngredientNumbers(); // Update numbers after removal
+                     updateRecipeTotals();
+                     setupCarousel('ingredient-list-container', 'recipe-prev-ingredient', 'recipe-next-ingredient');
+                 }
+
+                 if (scanBtn && row) {
+                     scanningIngredientRow = row;
+                     // Open the new chooser modal
+                     showModal(ui.ingredientScanChooserModal);
+                 }
+                 
+                 // --- NEW LOGIC ---
+                 if (findMacrosBtn && row) {
+                     const icon = findMacrosBtn.querySelector('i');
+                     const loader = findMacrosBtn.querySelector('.loader');
+
+                     if(icon) icon.style.display = 'none';
+                     if(loader) loader.classList.remove('hidden');
+                     findMacrosBtn.disabled = true;
+
+                     try {
+                         await handleIngredientAILookup(row, true); // true = force
+                     } catch (err) {
+                         console.error("Individual AI lookup failed", err);
+                     } finally {
+                         if(icon) icon.style.display = '';
+                         if(loader) loader.classList.add('hidden');
+                         findMacrosBtn.disabled = false;
+                     }
+                 }
+                 // --- END NEW LOGIC ---
+            });
+            // --- --- END MODIFICATION 2 & 6 --- ---
+
+            // --- --- MODIFICATION 3: New Scan Chooser Listeners --- ---
+            ui.chooserScanBarcode.addEventListener('click', () => {
+                hideModal(ui.ingredientScanChooserModal);
+                // scanningIngredientRow is already set
+                startBarcodeScanner();
+            });
+            ui.chooserScanFood.addEventListener('click', () => {
+                hideModal(ui.ingredientScanChooserModal);
+                // scanningIngredientRow is already set
+                ui.scannerResultsContainer.innerHTML = '';
+                ui.foodScannerStatus.textContent = '';
+                ui.liveCameraContainer.classList.add('hidden');
+                ui.foodScannerInitialOptions.classList.remove('hidden');
+                ui.foodScannerCarouselWrapper.classList.add('hidden');
+                showModal(ui.foodScannerModal);
+            });
+            ui.chooserScanCancel.addEventListener('click', () => {
+                hideModal(ui.ingredientScanChooserModal);
+                scanningIngredientRow = null; // Clear it
+            });
+            // --- --- END MODIFICATION 3 --- ---
+
 
             ui.compoundFoodForm.addEventListener('submit', (e) => {
                 e.preventDefault(); const name = capitalizeWords(ui.recipeNameInput.value.trim());
@@ -1931,7 +2159,6 @@
                          if (quantityMatch) { defaultGrams = parseFloat(quantityMatch[0]); }
                     }
 
-
                     const resultId = `barcode-result-${decodedText}-${now}`;
                     const productName = capitalizeWords(product.product_name) || 'Scanned Item';
                     const displayImage = finalImageUrl || product.image_url || 'https://placehold.co/300x150/191919/FFFFFF?text=No+Image';
@@ -1945,7 +2172,10 @@
                                 <input type="number" value="${defaultGrams.toFixed(0)}" class="form-input !py-1.5 text-center barcode-grams-input" min="0">
                                 <span class="text-gray-400">grams</span>
                             </div>
-                            <button class="btn btn-primary !p-2 mt-3 w-full data-log-button">Log this</button>
+                            <!-- MODIFICATION 2: Check if scanning for recipe -->
+                            <button class="btn btn-primary !p-2 mt-3 w-full data-log-button">
+                                ${scanningIngredientRow ? 'Use this' : 'Log this'}
+                            </button>
                         </div>`;
                     ui.barcodeResults.insertAdjacentHTML('beforeend', resultHtml);
 
@@ -1956,7 +2186,46 @@
                     logButton.logId = null;
 
                     logButton.onclick = () => {
-                         if (logButton.isLogged) {
+                        const grams = parseFloat(gramsInput.value);
+                        if (isNaN(grams) || grams <= 0) {
+                            gramsInput.classList.add('!border-red-500');
+                            setTimeout(() => gramsInput.classList.remove('!border-red-500'), 1500);
+                            return;
+                        }
+
+                        // --- MODIFICATION 2: Handle recipe fill ---
+                        if (scanningIngredientRow) {
+                             scanningIngredientRow.querySelector('.ingredient-name').value = productName;
+                             scanningIngredientRow.querySelector('.ingredient-grams').value = grams.toFixed(0);
+                             
+                             const ratio = grams / 100.0;
+                             const data = {
+                                 servingGrams: 100.0, // Base is 100g
+                                 calories: (per100g.calories * ratio) || 0,
+                                 protein: (per100g.protein * ratio) || 0,
+                                 carbs: (per100g.carbs * ratio) || 0,
+                                 fat: (per100g.fat * ratio) || 0,
+                                 sugar: (per100g.sugar * ratio) || 0,
+                                 sodium: (per100g.sodium * ratio) || 0,
+                                 potassium: (per100g.potassium * ratio) || 0,
+                             };
+                             // Use fill function, but data is already scaled
+                             scanningIngredientRow.querySelector('.ingredient-calories').value = data.calories.toFixed(0);
+                             scanningIngredientRow.querySelector('.ingredient-protein').value = data.protein.toFixed(1);
+                             scanningIngredientRow.querySelector('.ingredient-carbs').value = data.carbs.toFixed(1);
+                             scanningIngredientRow.querySelector('.ingredient-fat').value = data.fat.toFixed(1);
+                             scanningIngredientRow.querySelector('.ingredient-sugar').value = data.sugar.toFixed(1);
+                             scanningIngredientRow.querySelector('.ingredient-sodium').value = data.sodium.toFixed(0);
+                             scanningIngredientRow.querySelector('.ingredient-potassium').value = data.potassium.toFixed(0);
+
+                             updateRecipeTotals();
+                             stopBarcodeScanner();
+                             return; // Stop here, don't log it
+                        }
+                        // --- END MODIFICATION ---
+
+
+                        if (logButton.isLogged) {
                             // --- UNLOG ---
                             const logIndex = getDayLog(viewDate).entries.findIndex(entry => entry.logId === logButton.logId);
                             if (logIndex > -1) {
@@ -1972,13 +2241,6 @@
                             gramsInput.disabled = false;
                         } else {
                             // --- LOG ---
-                            const grams = parseFloat(gramsInput.value);
-                            if (isNaN(grams) || grams <= 0) {
-                                gramsInput.classList.add('!border-red-500');
-                                setTimeout(() => gramsInput.classList.remove('!border-red-500'), 1500);
-                                return;
-                            }
-
                             const logId = Date.now();
                             const ratio = grams / 100.0;
                             const foodItem = {
@@ -2042,8 +2304,8 @@
                         const decodedText = await qrCodeInstance.scanFile(file, false);
                         onScanSuccess(decodedText, {}, imageUrl);
                         qrCodeInstance.clear();
-                    } catch (err) {
-                        ui.barcodeResults.innerHTML += `<div class="scroll-item p-3 bg-input-bg rounded-lg text-yellow-400 text-center">No barcode found in image: ${file.name}.</div>`;
+                     } catch (err) {
+                         ui.barcodeResults.innerHTML += `<div class="scroll-item p-3 bg-input-bg rounded-lg text-yellow-400 text-center">No barcode found in image: ${file.name}.</div>`;
                     }
                 }
                 // Update carousel after adding items
@@ -2057,7 +2319,7 @@
                     ui.manualBarcodeInput.value = '';
                 }
             });
-            ui.manualBarcodeInput.addEventListener('keydown', (e) => {
+             ui.manualBarcodeInput.addEventListener('keydown', (e) => {
                 if(e.key === 'Enter') {
                     e.preventDefault();
                     ui.manualBarcodeSubmit.click();
@@ -2071,7 +2333,7 @@
             });
             ui.closeAiNutritionistModalBtn.addEventListener('click', () => hideModal(ui.aiNutritionistModal));
             ui.aiChatSendBtn.addEventListener('click', handleAiChatSend);
-            ui.aiChatInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') handleAiChatSend(); });
+            ui.aiChatInput.addEventListener('keydown', (e) => { if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleAiChatSend(); } });
 
             async function handleAiChatSend() {
                 const userInput = ui.aiChatInput.value.trim();
@@ -2199,6 +2461,7 @@
                     recipe.ingredients.forEach((ing, i) => addIngredientRow(ing, i)); // Pass index here
                     if (recipe.ingredients.length === 0) addIngredientRow();
                     updateRecipeTotals();
+                    // document.getElementById('recipe-totals-details').open = true; // Open details on edit
                     showModal(ui.compoundFoodModal);
                     // Ensure carousel buttons are updated after adding rows
                     setupCarousel('ingredient-list-container', 'recipe-prev-ingredient', 'recipe-next-ingredient');
