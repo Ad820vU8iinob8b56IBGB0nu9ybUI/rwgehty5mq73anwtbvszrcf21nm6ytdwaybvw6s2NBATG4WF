@@ -155,6 +155,7 @@
             width: 100%;
             background-color: #3b82f6; /* Blue fill */
             height: 0%; /* Starts at 0 */
+            /* This transition provides the fill animation */
             transition: height 0.3s ease-out;
             z-index: 1;
         }
@@ -222,6 +223,7 @@
             max-height: 90vh;
             overflow-y: auto;
             animation: slideIn 0.3s ease;
+            position: relative; /* Added for absolute positioning of close button */
         }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -425,8 +427,8 @@
             align-items: center;
             justify-content: center;
             background-color: rgba(17, 17, 17, 0.8); /* --card-bg with opacity */
-            z-index: 5; 
-            border-radius: 0.5rem; 
+            z-index: 5;
+            border-radius: 0.5rem;
             text-align: center;
             padding: 1rem;
             color: var(--primary-text);
@@ -435,16 +437,16 @@
         .section-disabled + .disabled-overlay {
             display: flex;
         }
-        
+
         /* Scoped scrollbar styles for recipe modal */
         #compound-food-modal .custom-scrollbar {
             -ms-overflow-style: none;  /* IE and Edge */
             scrollbar-width: none;  /* Firefox */
         }
-        #compound-food-modal .custom-scrollbar::-webkit-scrollbar { 
+        #compound-food-modal .custom-scrollbar::-webkit-scrollbar {
             display: none; /* Chrome, Safari, Opera */
         }
-        
+
         /* Scoped carousel styles for recipe modal */
         #compound-food-modal .scroll-item {
             flex: 0 0 100%; /* Make items fill width */
@@ -643,9 +645,8 @@
         </main>
     </div>
 
-    <!-- 
+    <!--
       TEMPLATE FOR A NEW INGREDIENT ROW
-      (Copied from user prompt)
     -->
     <template id="ingredient-row-template">
       <!-- RE-ADDED 'scroll-item' class -->
@@ -689,7 +690,8 @@
 
             <!-- This div groups buttons and centers them in the available space -->
             <div class="flex-grow flex justify-center items-center gap-2">
-                <button type="button" class="recipe-scan-btn btn btn-secondary !p-2 flex-shrink-0" title="Scan Ingredient"><i data-lucide="camera" class="w-4 h-4 pointer-events-none"></i></button>
+                <!-- UPDATED: recipe-scan-btn now uses scan-line icon -->
+                <button type="button" class="recipe-scan-btn btn btn-secondary !p-2 flex-shrink-0" title="Scan Ingredient"><i data-lucide="scan-line" class="w-4 h-4 pointer-events-none"></i></button>
                 <button type="button" class="remove-ingredient-btn btn btn-secondary !p-2 flex-shrink-0" title="Remove Ingredient"><i data-lucide="x" class="w-4 h-4 pointer-events-none"></i></button>
                 <!-- MODIFICATION: Reverted to btn-secondary, removed data-ai-enabled, updated title -->
                 <button type="button" class="find-macros-ai-btn btn btn-secondary !p-2 flex-shrink-0" title="Find Macros with AI">
@@ -705,49 +707,37 @@
     <!-- End Template -->
 
 
-    <!-- Extracted Compound Food Modal (Copied from user prompt) -->
-    <!-- MODIFICATION: Added style="display: none;" to hide by default -->
+    <!-- Extracted Compound Food Modal -->
     <div id="compound-food-modal" class="modal-backdrop" style="display: none;">
         <!-- modal-content is (flex flex-col overflow-hidden) -->
         <div class="modal-content">
-            <!-- MODIFICATION: Button moved out of header, made absolute and positioned in the top-right corner -->
-            <button id="close-compound-food-modal-btn" class="absolute top-2 right-2 md:top-4 md:right-4 text-gray-400 hover:text-white text-3xl w-8 h-8 flex items-center justify-center z-10">&times;</button>
+            <!-- UPDATED: Button moved out of header, made absolute and positioned in the top-right corner -->
+            <button id="close-compound-food-modal-btn" class="absolute top-8 right-4 md:top-8 md:right-4 text-gray-400 hover:text-white text-5xl w-8 h-8 flex items-center justify-center z-10">&times;</button>
 
             <!-- Modal Header (Non-scrolling) -->
-            <!-- MODIFICATION: Replaced h2 with the recipe-name-input -->
             <div class="flex-shrink-0 flex justify-between items-center mb-2">
-                <!-- MODIFICATION: Added spacer div for centering, w-8 (2rem) -->
+                <!-- Added spacer div for centering, w-8 (2rem) -->
                 <div class="w-8 flex-shrink-0"></div>
 
-                <!-- MODIFICATION: Removed mr-4 -->
+                <!-- Replaced h2 with the recipe-name-input, removed mr-4 -->
                 <input type="text" id="recipe-name-input" form="compound-food-form" class="form-input !py-1.5 text-1xl font-bold flex-grow text-center" required placeholder="Build Your Creation">
-                
-                <!-- MODIFICATION: Replaced button with a matching spacer to keep input centered -->
+
+                <!-- Replaced button with a matching spacer to keep input centered -->
                 <div class="w-8 flex-shrink-0"></div>
             </div>
 
             <!-- Scrollable Content Area -->
             <div class="flex-grow overflow-y-auto custom-scrollbar pr-2 mb-4">
-                <!-- MODIFICATION: Removed the recipe-name-input and its parent div from here -->
                 <form id="compound-food-form" class="space-y-4">
 
                     <div class="border-gray-800">
                         <h3 class="font-semibold text-sm text-center mb-2">Ingredients</h3>
-                        <!-- RE-ADDED carousel wrapper and buttons -->
                         <div id="recipe-carousel-wrapper" class="carousel-wrapper">
                             <button id="recipe-prev-ingredient" type="button" class="carousel-btn carousel-prev"><i data-lucide="chevron-left"></i></button>
-                            <!-- REVERTED classes on ingredient-list-container -->
-                            <!-- MODIFICATION: Removed min-h-[250px] to reduce extra space -->
-                            <!-- NEW: Added section-disabled class -->
                             <div id="ingredient-list-container" class="horizontal-scroll-container recipe-carousel items-start border border-gray-700 rounded-lg p-2 section-disabled">
-                                
-                                <!-- 
-                                    INGREDIENT ROWS
-                                    Will be added here by JS
-                                -->
-
+                                <!-- INGREDIENT ROWS Will be added here by JS -->
                             </div>
-                            <!-- NEW: Added overlay -->
+                            <!-- Added overlay -->
                             <div class="disabled-overlay">
                                 <p class="flex items-center gap-2 text-sm"><i data-lucide="arrow-up" class="w-4 h-4 -mt-1"></i> Enter a name above to start</p>
                             </div>
@@ -765,7 +755,6 @@
                             <div><p class="text-xs text-gray-400">Fat</p><p class="font-bold text-sm"><span id="recipe-total-fat">0</span>g</p></div>
                             <div><p class="text-xs text-gray-400">Grams</p><p id="recipe-total-grams" class="font-bold text-sm">0</p></div>
                             <div><p class="text-xs text-gray-400">Sugar</p><p class="font-bold text-sm"><span id="recipe-total-sugar">0</span>g</p></div>
-                            <!-- FIXED BUG: Added missing closing > tag on first <p> -->
                             <div><p class="text-xs text-gray-400">Sodium</p><p class="font-bold text-sm"><span id="recipe-total-sodium">0</span>mg</p></div>
                             <div><p class="text-xs text-gray-400">Potassium</p><p class="font-bold text-sm"><span id="recipe-total-potassium">0</span>mg</p></div>
                         </div>
@@ -776,7 +765,7 @@
             <!-- Sticky Footer / Action Bar (Non-scrolling) -->
             <div class="flex-shrink-0 border-gray-800">
                 <div class="grid grid-cols-2 gap-2 mt-2">
-                    <!-- NEW: Added disabled attribute -->
+                    <!-- Added disabled attribute -->
                     <button type="button" id="add-ingredient-btn" class="btn btn-secondary w-full !py-1 !text-sm" disabled><i data-lucide="plus"></i>Add Ingredient</button>
                     <button type="submit" form="compound-food-form" id="save-recipe-btn" class="btn btn-primary w-full !py-1 !text-sm">Save & Log Recipe</button>
                 </div>
@@ -974,9 +963,6 @@
 
     <!-- END: RE-ADDED MODALS -->
 
-    <!-- REMOVED: Water Log Modal -->
-    <!-- <div id="water-log-modal" class="modal-backdrop"> ... </div> -->
-
      <!-- Undo Toast -->
     <div id="undo-toast" class="fixed bottom-20 left-1/2 -translate-x-1/2 bg-gray-800 text-white py-2 px-4 rounded-lg shadow-lg flex items-center gap-4 transform translate-y-24 opacity-0 transition-all duration-300 z-[100]">
         <span id="undo-toast-text"></span>
@@ -1034,6 +1020,7 @@
             let lastAction = null;
             let lastWaterLogAmount = 0; // NEW: Store last water amount for undo
             let openModalCount = 0;
+            let activeRecipeScanBtn = null; // Store the button that triggered the scanner for ingredients
 
             // --- CORE & HELPER FUNCTIONS ---
             function dateToKey(date) { return date.toISOString().split('T')[0]; }
@@ -1523,21 +1510,19 @@
                 // Clone the template
                 const newRowFragment = ui.ingredientTemplate.content.cloneNode(true);
                 const newRow = newRowFragment.firstElementChild; // Get the actual <div>
-                
+
                 const ingredientNumber = ui.ingredientListContainer.querySelectorAll('.ingredient-row').length + 1;
-                
+
                 // Update the number
                 newRow.querySelector('.ingredient-number').textContent = ingredientNumber;
 
                 // --- Add unique IDs for accessibility (robust version) ---
                 const uniqueIdSuffix = `_row_${ingredientNumber}`;
                 const inputs = newRow.querySelectorAll('input[type="text"], input[type="number"]');
-                
-                // MODIFICATION: Simplified label-finding logic
-                inputs.forEach(input => {
-                    // Find the associated label, which is the preceding sibling <label>
-                    const label = input.previousElementSibling;
 
+                inputs.forEach(input => {
+                    // Find the associated label
+                    const label = input.previousElementSibling;
                     if (label && label.tagName === 'LABEL') {
                         // Get a clean ID from the input's class list
                         const idName = Array.from(input.classList).find(c => c.startsWith('ingredient-'));
@@ -1552,24 +1537,24 @@
 
                 // Add the new row to the DOM
                 ui.ingredientListContainer.appendChild(newRow);
-                
+
                 // Create icons *only* for the new row (much faster)
                 lucide.createIcons({
                     nodes: [newRow]
                 });
-                
+
                 // Renumber all items
                 updateIngredientNumbers();
 
                 // Scroll to the new ingredient (useful if list is long)
                 newRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                
+
                 // Disable the "Add" button since this new row is empty
                 validateLastRow();
             }
-            
+
             /**
-             * MODIFICATION: Checks if the last ingredient row is valid (name filled).
+             * Checks if the last ingredient row is valid (name filled).
              * Enables or disables the "Add Ingredient" button based on the result.
              */
             function validateLastRow() {
@@ -1586,21 +1571,19 @@
                     ui.addIngredientBtn.removeAttribute('title');
                     return true;
                 }
-                
+
                 const lastRow = allRows[allRows.length - 1];
                 const name = lastRow.querySelector('.ingredient-name').value.trim();
-                
-                // MODIFICATION: Changed validation to only check for name
+
                 const isValid = name !== '';
-                
+
                 ui.addIngredientBtn.disabled = !isValid;
                 if (isValid) {
                     ui.addIngredientBtn.removeAttribute('title');
                 } else {
-                    // MODIFICATION: Updated tooltip text
                     ui.addIngredientBtn.setAttribute('title', 'Please fill out the ingredient name first.');
                 }
-                
+
                 return isValid;
             }
 
@@ -1643,11 +1626,10 @@
                 const setTotal = (id, value, maxDecimals = 1) => {
                     const el = document.getElementById(id);
                     if (el) {
-                         // Format to 1 decimal, but remove .0 if it's a whole number
                          el.textContent = parseFloat(value.toFixed(maxDecimals));
                     }
                 };
-                
+
                 // Get the span elements for text content
                 const setTotalSpan = (id, value, maxDecimals = 1) => {
                     const el = document.getElementById(id);
@@ -1667,14 +1649,10 @@
                 setTotalSpan('recipe-total-potassium', total.potassium, 0);
             }
 
-            /**
-             * MODIFICATION: Updated function signature and logic
-             */
             async function fetchIngredientMacros(recipeName, ingredientData, signal) {
                 const apiKey = ""; // Leave empty
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
 
-                // MODIFICATION: Dynamically build query with quantity
                 let userQuery = `Recipe context: "${recipeName}". Ingredient: "${ingredientData.quantity || 1} ${ingredientData.name}".`;
                 const providedInfo = [];
                 if (ingredientData.grams) providedInfo.push(`Amount: ${ingredientData.grams}g`);
@@ -1686,13 +1664,13 @@
                 if (providedInfo.length > 0) {
                     userQuery += ` Provided info: ${providedInfo.join(', ')}.`;
                 }
-                
+
                 if (ingredientData.grams) {
                      userQuery += " Please find all nutritional data for the specified amount.";
                 } else {
                     userQuery += " Amount not specified, so please estimate a typical serving size in grams and find all nutritional data for that estimated amount.";
                 }
-                
+
                 const systemPrompt = "You are a nutritional database. Given a recipe context, an ingredient name, and (optionally) some existing nutritional data (like grams or protein), find all missing nutritional information and return the complete set. If grams are not specified, estimate a typical serving size in grams. Respond only with the valid JSON object described in the schema. Do not include 'g' or 'mg' units, just the numbers. For sugar, sodium, and potassium, if data is unavailable, return 0.";
 
                 const payload = {
@@ -1988,7 +1966,7 @@
                 if (!isWaterSwiping && (Math.abs(waterPointerDelta.x) > 10 || Math.abs(waterPointerDelta.y) > 10)) {
                     isWaterSwiping = true;
                 }
-                
+
                 if (isWaterSwiping) {
                     // Prevent page scroll only if swiping vertically significantly
                     if (Math.abs(waterPointerDelta.y) > Math.abs(waterPointerDelta.x) && Math.abs(waterPointerDelta.y) > 10) {
@@ -2112,6 +2090,7 @@
             // --- END Water Button Gesture Handling ---
 
             ui.scanCombinedBtn.addEventListener('click', () => {
+                activeRecipeScanBtn = null; // Ensure this is null when opening main scanner
                 ui.scannerResultsContainer.innerHTML = '';
                 ui.foodScannerStatus.textContent = '';
                 ui.liveCameraContainer.classList.add('hidden');
@@ -2389,6 +2368,25 @@
                             logButton.isLogged = true;
                             logButton.logId = logId;
                             gramsInput.disabled = true;
+
+                            // NEW: Populate ingredient row if applicable
+                            if (activeRecipeScanBtn) {
+                                const row = activeRecipeScanBtn.closest('.ingredient-row');
+                                if (row) {
+                                    row.querySelector('.ingredient-name').value = productName;
+                                    row.querySelector('.ingredient-grams').value = grams.toFixed(0);
+                                    row.querySelector('.ingredient-calories').value = foodItem.calories.toFixed(0);
+                                    row.querySelector('.ingredient-protein').value = foodItem.protein.toFixed(1);
+                                    row.querySelector('.ingredient-carbs').value = foodItem.carbs.toFixed(1);
+                                    row.querySelector('.ingredient-fat').value = foodItem.fat.toFixed(1);
+                                    row.querySelector('.ingredient-sugar').value = foodItem.sugar.toFixed(1);
+                                    row.querySelector('.ingredient-sodium').value = foodItem.sodium.toFixed(0);
+                                    row.querySelector('.ingredient-potassium').value = foodItem.potassium.toFixed(0);
+                                    updateRecipeTotals();
+                                    validateLastRow();
+                                }
+                                hideModal(ui.foodScannerModal); // Close scanner after populating
+                            }
                         }
                     };
 
@@ -2483,6 +2481,10 @@
                     logButton.logId = null;
 
                     logButton.onclick = () => {
+                         const servings = data.servings || 1;
+                         const grams = data.totalGrams || 0;
+                         const perServingGrams = servings > 0 ? grams / servings : 0;
+
                         if (logButton.isLogged) {
                             // UNLOG
                             const logIndex = getDayLog(viewDate).entries.findIndex(entry => entry.logId === logButton.logId);
@@ -2501,7 +2503,7 @@
                             const logId = Date.now();
                             const foodItem = {
                                 logId: logId, name: capitalizeWords(data.name) || 'Scanned Food', brand: data.brand || '',
-                                servings: data.servings || 1, grams: data.totalGrams || 0,
+                                servings: servings, grams: grams,
                                 calories: data.calories || 0, protein: data.protein || 0, carbs: data.carbs || 0, fat: data.fat || 0,
                                 sugar: data.sugar || 0, sodium: data.sodium || 0, potassium: data.potassium || 0,
                             };
@@ -2515,6 +2517,26 @@
                             logButton.classList.add('btn-secondary');
                             logButton.isLogged = true;
                             logButton.logId = logId;
+
+                             // NEW: Populate ingredient row if applicable
+                            if (activeRecipeScanBtn) {
+                                const row = activeRecipeScanBtn.closest('.ingredient-row');
+                                if (row) {
+                                    row.querySelector('.ingredient-name').value = foodItem.name;
+                                    row.querySelector('.ingredient-quantity').value = foodItem.servings;
+                                    row.querySelector('.ingredient-grams').value = foodItem.grams.toFixed(0);
+                                    row.querySelector('.ingredient-calories').value = foodItem.calories.toFixed(0);
+                                    row.querySelector('.ingredient-protein').value = foodItem.protein.toFixed(1);
+                                    row.querySelector('.ingredient-carbs').value = foodItem.carbs.toFixed(1);
+                                    row.querySelector('.ingredient-fat').value = foodItem.fat.toFixed(1);
+                                    row.querySelector('.ingredient-sugar').value = foodItem.sugar.toFixed(1);
+                                    row.querySelector('.ingredient-sodium').value = foodItem.sodium.toFixed(0);
+                                    row.querySelector('.ingredient-potassium').value = foodItem.potassium.toFixed(0);
+                                    updateRecipeTotals();
+                                    validateLastRow();
+                                }
+                                hideModal(ui.foodScannerModal); // Close scanner after populating
+                            }
                         }
                     };
                     resultElement.appendChild(detailsDiv);
@@ -2561,6 +2583,7 @@
             function handleAiScanFiles(files) {
                 if (!files || files.length === 0) return;
                  ui.foodScannerCarouselWrapper.classList.remove('hidden');
+                 ui.scannerResultsContainer.innerHTML = ''; // Clear previous results
 
                 for(const file of files) {
                     const resultElement = document.createElement('div');
@@ -2975,9 +2998,9 @@
             const datalist = document.getElementById('favorite-foods-datalist');
             datalist.innerHTML = favoriteFoods.map(f => `<option value="${f.name}"></option>`).join('');
 
-            // --- NEW: Compound Food Modal Initialization ---
+            // --- Compound Food Modal Initialization ---
             lucide.createIcons({ nodes: [ui.compoundFoodModal.querySelector('.disabled-overlay')] });
-            
+
             // Open modal button
             ui.openCompoundFoodModalBtn.addEventListener('click', () => {
                 showModal(ui.compoundFoodModal);
@@ -2997,8 +3020,7 @@
                     const hasName = ui.recipeNameInput.value.trim() !== '';
                     if (hasName) {
                         ui.ingredientListContainer.classList.remove('section-disabled');
-                        // Let validateLastRow control the button state from here on
-                        validateLastRow(); 
+                        validateLastRow();
                     } else {
                         ui.ingredientListContainer.classList.add('section-disabled');
                         ui.addIngredientBtn.disabled = true;
@@ -3013,49 +3035,39 @@
                 });
             }
 
-            // Event listener for "Remove" button and live validation/totals
+            // Event listener for "Remove" button, AI lookup, and scan within ingredient rows
             if (ui.ingredientListContainer) {
-                // MODIFICATION: Make event handler async
                 ui.ingredientListContainer.addEventListener('click', async (e) => {
                     const removeBtn = e.target.closest('.remove-ingredient-btn');
-                    const aiBtn = e.target.closest('.find-macros-ai-btn'); // NEW: Get AI button
+                    const aiBtn = e.target.closest('.find-macros-ai-btn');
+                    const scanBtn = e.target.closest('.recipe-scan-btn'); // Get scan button
                     const row = e.target.closest('.ingredient-row');
-                    
+
                     if (removeBtn && row) {
-                        // Prevent removing the last row
                         if (ui.ingredientListContainer.querySelectorAll('.ingredient-row').length > 1) {
                             row.remove();
                             updateIngredientNumbers();
                         } else {
-                            // MODIFICATION: Clear inputs, but reset quantity to 1
                             row.querySelectorAll('input').forEach(input => {
                                 if (input.classList.contains('ingredient-quantity')) {
-                                    input.value = '1'; // Reset quantity to 1
+                                    input.value = '1';
                                 } else {
-                                    input.value = ''; // Clear other inputs
+                                    input.value = '';
                                 }
                             });
                         }
-                        // Update totals and re-validate after removing/clearing
                         updateRecipeTotals();
                         validateLastRow();
                     }
 
-                    // MODIFICATION: Updated AI Button Click Logic
                     if (aiBtn && row) {
-                        e.preventDefault(); // Prevent any default form action
-                        
-                        // Don't do anything if it's already loading
+                        e.preventDefault();
                         if (aiBtn.disabled) return;
-
-                        // --- Run the AI search ---
                         const loader = aiBtn.querySelector('.loader');
                         const icon = aiBtn.querySelector('.lucide-icon');
                         const recipeName = ui.recipeNameInput.value.trim();
-
-                        // Get all available data from the row for context
                         const ingredientData = {
-                            quantity: row.querySelector('.ingredient-quantity').value.trim(), // NEW
+                            quantity: row.querySelector('.ingredient-quantity').value.trim(),
                             name: row.querySelector('.ingredient-name').value.trim(),
                             grams: row.querySelector('.ingredient-grams').value.trim(),
                             calories: row.querySelector('.ingredient-calories').value.trim(),
@@ -3066,34 +3078,16 @@
                             sodium: row.querySelector('.ingredient-sodium').value.trim(),
                             potassium: row.querySelector('.ingredient-potassium').value.trim()
                         };
-
-                        // Only require name for AI search
-                        if (!ingredientData.name) {
-                            console.log("Need name for AI search.");
-                            // Here you could show a temporary error message
-                            return;
-                        }
-
-                        // Abort any previous search on this row (shouldn't be any, but good practice)
-                        if (row.abortController) {
-                            row.abortController.abort();
-                        }
+                        if (!ingredientData.name) { return; }
+                        if (row.abortController) { row.abortController.abort(); }
                         const controller = new AbortController();
                         row.abortController = controller;
                         row.dataset.loading = 'true';
-
-                        // Show loader, hide icon
                         aiBtn.disabled = true;
                         loader.classList.remove('hidden');
                         icon.classList.add('hidden');
-                        
-                        console.log(`AI Search for:`, ingredientData);
-
                         try {
-                            // REAL AI CALL (with signal)
                             const data = await fetchIngredientMacros(recipeName, ingredientData, controller.signal);
-
-                            // Populate fields with real data
                             row.querySelector('.ingredient-grams').value = data.grams.toFixed(0);
                             row.querySelector('.ingredient-calories').value = data.calories.toFixed(0);
                             row.querySelector('.ingredient-protein').value = data.protein.toFixed(1);
@@ -3102,45 +3096,47 @@
                             row.querySelector('.ingredient-sugar').value = data.sugar.toFixed(1);
                             row.querySelector('.ingredient-sodium').value = data.sodium.toFixed(0);
                             row.querySelector('.ingredient-potassium').value = data.potassium.toFixed(0);
-
-                            // Update totals
                             updateRecipeTotals();
-
                         } catch (error) {
-                            // NEW: Check for AbortError
-                            if (error.name === 'AbortError') {
-                                console.log('AI search aborted by user.');
-                            } else {
-                                console.error("AI Macro Search Failed:", error);
-                            }
+                            if (error.name !== 'AbortError') { console.error("AI Macro Search Failed:", error); }
                         } finally {
-                            // Hide loader, show icon
                             aiBtn.disabled = false;
                             loader.classList.add('hidden');
                             icon.classList.remove('hidden');
-                            // NEW: Clean up controller and loading state
                             delete row.abortController;
                             delete row.dataset.loading;
                         }
                     }
+
+                    // UPDATED: Handle recipe scan button click
+                     if (scanBtn && row) {
+                        activeRecipeScanBtn = scanBtn; // Store the button that was clicked
+                        ui.scannerResultsContainer.innerHTML = ''; // Clear previous scan results
+                        ui.foodScannerStatus.textContent = '';
+                        ui.liveCameraContainer.classList.add('hidden');
+                        ui.foodScannerInitialOptions.classList.remove('hidden');
+                        ui.foodScannerCarouselWrapper.classList.add('hidden');
+                        showModal(ui.foodScannerModal); // Show the main scanner modal
+                    }
+
                 });
 
                 // Add live calculation and validation listener
                 ui.ingredientListContainer.addEventListener('input', (e) => {
-                    // MODIFICATION: Check for negative numbers
                     if (e.target.type === 'number' && parseFloat(e.target.value) < 0) {
                         e.target.value = ''; // Clear negative input
                     }
                     updateRecipeTotals();
-                    validateLastRow(); // Re-check validation on every input
+                    validateLastRow();
                 });
             }
 
-            // --- RE-ADDED Carousel Logic ---
+            // Carousel Logic for Recipe Ingredients
             if (ui.ingredientListContainer && ui.recipeCarouselPrev && ui.recipeCarouselNext) {
                 const scrollAmount = () => {
                     const firstItem = ui.ingredientListContainer.querySelector('.scroll-item');
-                    return firstItem ? firstItem.offsetWidth + 16 : 300; // 1rem gap = 16px
+                    // Ensure full width scroll for ingredients
+                    return firstItem ? firstItem.offsetWidth + 16 : 300; // Use offsetWidth + gap
                 };
 
                 ui.recipeCarouselPrev.addEventListener('click', () => {
@@ -3150,14 +3146,29 @@
                 ui.recipeCarouselNext.addEventListener('click', () => {
                     ui.ingredientListContainer.scrollBy({ left: scrollAmount(), behavior: 'smooth' });
                 });
+
+                 // Add scroll listener to show/hide buttons for recipe carousel
+                 ui.ingredientListContainer.addEventListener('scroll', () => {
+                    const scrollLeft = ui.ingredientListContainer.scrollLeft;
+                    const scrollWidth = ui.ingredientListContainer.scrollWidth;
+                    const clientWidth = ui.ingredientListContainer.clientWidth;
+
+                    ui.recipeCarouselPrev.style.display = scrollLeft > 10 ? 'flex' : 'none';
+                    ui.recipeCarouselNext.style.display = scrollLeft < scrollWidth - clientWidth - 10 ? 'flex' : 'none';
+                });
+
+                // Initial check for recipe carousel buttons
+                setTimeout(() => {
+                    const scrollWidth = ui.ingredientListContainer.scrollWidth;
+                    const clientWidth = ui.ingredientListContainer.clientWidth;
+                    ui.recipeCarouselPrev.style.display = 'none'; // Prev always hidden initially
+                    ui.recipeCarouselNext.style.display = scrollWidth > clientWidth + 10 ? 'flex' : 'none';
+                }, 100);
             }
-            
-            // --- Load Initial Ingredient ---
-            // Start the modal with one ingredient row already added
+
+            // Load Initial Ingredient
             addIngredientRow();
-            // Call updateRecipeTotals once to set initial state to 0
-            updateRecipeTotals(); 
-            // Call validateLastRow to set the initial disabled state of the button
+            updateRecipeTotals();
             validateLastRow();
             // --- END: Compound Food Modal Initialization ---
 
