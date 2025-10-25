@@ -384,6 +384,59 @@
         .col-span-full {
             grid-column: span 1 / span 1;
         }
+        
+        /* --- AI PLAN GENERATOR CUSTOM STYLES (NEW) --- */
+        .ai-step-section {
+            border-left: 3px solid var(--border-color);
+            padding-left: 1.5rem;
+            margin-left: 0.75rem;
+            position: relative;
+            opacity: 0.3; /* Default inactive state */
+            transition: all 0.4s ease;
+        }
+        .ai-step-section.active {
+            border-left-color: #3b82f6; /* Blue border for active step */
+            opacity: 1;
+        }
+        .ai-step-section.completed {
+            border-left-color: #10b981; /* Green border for completed step */
+            opacity: 0.6;
+        }
+        .step-indicator {
+            position: absolute;
+            top: 0;
+            left: -10px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: var(--card-bg);
+            border: 2px solid var(--border-color);
+            color: var(--secondary-text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: bold;
+            transition: all 0.4s ease;
+        }
+        .ai-step-section.active .step-indicator {
+            background-color: #3b82f6;
+            border-color: #3b82f6;
+            color: var(--primary-text);
+            transform: scale(1.1);
+        }
+        .ai-step-section.completed .step-indicator {
+            background-color: #10b981;
+            border-color: #10b981;
+            color: var(--primary-text);
+            content: '✓';
+        }
+        .ai-step-header {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--primary-text);
+        }
 
     </style>
 </head>
@@ -396,10 +449,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white"><path d="m6.5 6.5 11 11"/><path d="m21 21-1-1"/><path d="m3 3 1 1"/><path d="m18 22 4-4"/><path d="m6 2 4 4"/><path d="m3 10.5 4.5-4.5"/><path d="m13.5 21 4.5-4.5"/></svg>
                 <h1 class="text-2xl font-bold">FitTrack AI</h1>
             </a>
-            <!-- AI Plan Generator remains here as a quick action in the app header (but is hidden) -->
-            <button id="ai-plan-generator-btn" class="btn btn-primary !p-2 hidden">
-                <i data-lucide="wand-2" class="w-5 h-5"></i>
-            </button>
+            <!-- AI Plan Generator was here as a quick action in the app header (but is hidden) - REMOVED TO PREVENT ID CONFLICT -->
         </header>
 
 
@@ -524,31 +574,135 @@
     </nav>
     
     <!-- Modals here... -->
-    <div id="ai-plan-generator-modal" class="modal-backdrop"><div class="modal-content !max-w-3xl"><div class="flex justify-between items-center mb-4"><h2 class="text-xl sm:text-2xl font-bold">AI Plan Generator</h2><button id="close-ai-plan-generator-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button></div><div id="ai-plan-panel"><form id="ai-plan-generator-form" class="space-y-4"><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label for="ai-plan-goal" class="form-label">Primary Goal</label><select id="ai-plan-goal" class="form-select mt-1"><option value="muscle hypertrophy">Muscle Hypertrophy</option><option value="fat loss">Fat Loss</option><option value="body recomposition">Body Recomposition</option><option value="general fitness">General Fitness</option><option value="strength gain">Strength Gain</option><option value="custom">Custom</option></select></div><div id="ai-plan-split-container"><label for="ai-plan-split-select" class="form-label">Workout Split Template</label><select id="ai-plan-split-select" class="form-select mt-1"><option value="Push, Pull, Legs">Push, Pull, Legs</option><option value="Optimized PPL">Optimized PPL (Pre-built)</option><option value="Upper, Lower">Upper, Lower</option><option value="Full Body">Full Body</option></select></div></div><div id="ai-plan-goal-text-container" class="hidden"><label for="ai-plan-goal-text" class="form-label">Describe Your Goal</label><textarea id="ai-plan-goal-text" rows="2" class="form-input mt-1" placeholder="e.g., 'I want to build bigger arms and get a six-pack.'"></textarea></div><details class="pt-2" open><summary class="cursor-pointer text-sm text-gray-400 hover:text-white flex items-center justify-between"><span>Weekly Schedule & Duration</span><i data-lucide="chevron-down" class="w-4 h-4"></i></summary><div class="pt-4 mt-4 border-t border-gray-800 space-y-4"><p class="text-xs text-secondary-text">Click each day to cycle through available workout types to build your weekly schedule.</p><div id="ai-plan-schedule-builder"></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label for="ai-plan-duration" class="form-label">Default Duration (minutes)</label><input type="number" id="ai-plan-duration" value="60" class="form-input mt-1"><button type="button" id="customize-duration-btn" class="text-sm text-blue-400 hover:underline mt-2">Customize per day</button><div id="ai-plan-durations-container" class="space-y-2 mt-2 hidden"></div></div><div><label for="ai-plan-rest" class="form-label">Rest Between Sets (minutes)</label><input type="number" id="ai-plan-rest" value="2" step="0.5" min="0" class="form-input mt-1"></div></div></div></details><details class="pt-2" open><summary class="cursor-pointer text-sm text-gray-400 hover:text-white flex items-center justify-between"><span>Equipment & Focus</span><i data-lucide="chevron-down" class="w-4 h-4"></i></summary><div class="space-y-4 pt-4 mt-4 border-t border-gray-800">
-        <div>
-            <div class="flex justify-between items-center mb-2">
-                <label class="form-label">Equipment Available</label>
-                <div class="flex gap-2">
-                    <button type="button" class="text-xs text-blue-400 hover:underline select-all-btn" data-target="ai-plan-equipment-container">All</button>
-                    <button type="button" class="text-xs text-blue-400 hover:underline deselect-all-btn" data-target="ai-plan-equipment-container">None</button>
-                </div>
+    <!-- MODIFIED AI PLAN GENERATOR MODAL FOR STEP-BY-STEP FLOW -->
+    <div id="ai-plan-generator-modal" class="modal-backdrop">
+        <div class="modal-content !max-w-3xl">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl sm:text-2xl font-bold">AI Plan Generator</h2>
+                <button id="close-ai-plan-generator-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button>
             </div>
-            <div id="ai-plan-equipment-container" class="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-2 mt-2"></div>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-                <div class="flex justify-between items-center mb-2">
-                    <label class="form-label">Focus Muscle Groups</label>
-                    <div class="flex gap-2">
-                        <button type="button" class="text-xs text-blue-400 hover:underline select-all-btn" data-target="ai-plan-focus-muscle-container">All</button>
-                        <button type="button" class="text-xs text-blue-400 hover:underline deselect-all-btn" data-target="ai-plan-focus-muscle-container">None</button>
+            <div id="ai-plan-panel">
+                <form id="ai-plan-generator-form" class="space-y-6">
+
+                    <!-- STEP 1: Goal & Split (Initial View) -->
+                    <div id="ai-step-1" class="ai-step-section active" data-step="1">
+                        <span class="step-indicator">1</span>
+                        <div class="ai-step-header">Define Your Foundation</div>
+                        <div class="space-y-4">
+                            <div>
+                                <label for="ai-plan-goal" class="form-label">Primary Goal</label>
+                                <select id="ai-plan-goal" class="form-select mt-1">
+                                    <option value="muscle hypertrophy">Muscle Hypertrophy (Build Muscle)</option>
+                                    <option value="fat loss">Fat Loss</option>
+                                    <option value="body recomposition">Body Recomposition</option>
+                                    <option value="general fitness">General Fitness</option>
+                                    <option value="strength gain">Strength Gain</option>
+                                    <option value="custom">Custom (Describe Below)</option>
+                                </select>
+                            </div>
+                            <div id="ai-plan-goal-text-container" class="hidden">
+                                <label for="ai-plan-goal-text" class="form-label">Describe Your Custom Goal</label>
+                                <textarea id="ai-plan-goal-text" rows="2" class="form-input mt-1" placeholder="e.g., 'I want to build bigger arms and get a six-pack.'"></textarea>
+                            </div>
+                            <div id="ai-plan-split-container">
+                                <label for="ai-plan-split-select" class="form-label">Workout Split Template</label>
+                                <select id="ai-plan-split-select" class="form-select mt-1">
+                                    <option value="Optimized PPL">Optimized PPL (Push, Pull, Legs)</option>
+                                    <option value="Upper, Lower">Upper, Lower</option>
+                                    <option value="Full Body">Full Body</option>
+                                    <option value="Push, Pull, Legs">Custom PPL</option>
+                                </select>
+                                <p class="text-xs text-secondary-text mt-1">This determines the main themes (Push/Pull/Legs) of your workouts.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STEP 2: Schedule & Duration -->
+                    <div id="ai-step-2" class="ai-step-section" data-step="2">
+                         <span class="step-indicator">2</span>
+                         <div class="ai-step-header">Plan Your Week</div>
+                         <div class="space-y-4">
+                            <p class="text-xs text-secondary-text">Click each day below to cycle through the available workout types (e.g., Push, Pull, Rest) to build your schedule.</p>
+                            <div id="ai-plan-schedule-builder" class="grid grid-cols-4 sm:grid-cols-7 gap-2"></div>
+                             <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label for="ai-plan-duration" class="form-label">Default Duration (minutes)</label>
+                                    <input type="number" id="ai-plan-duration" value="60" class="form-input mt-1">
+                                    <button type="button" id="customize-duration-btn" class="text-sm text-blue-400 hover:underline mt-2">Customize duration per day</button>
+                                    <div id="ai-plan-durations-container" class="space-y-2 mt-2 hidden"></div>
+                                </div>
+                                <div>
+                                    <label for="ai-plan-rest" class="form-label">Rest Between Sets (minutes)</label>
+                                    <input type="number" id="ai-plan-rest" value="2" step="0.5" min="0" class="form-input mt-1">
+                                </div>
+                            </div>
+                         </div>
+                    </div>
+
+                    <!-- STEP 3: Equipment & Focus -->
+                    <div id="ai-step-3" class="ai-step-section" data-step="3">
+                        <span class="step-indicator">3</span>
+                        <div class="ai-step-header">Equipment & Preferences</div>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between items-center mb-2">
+                                    <label class="form-label">Equipment Available</label>
+                                    <div class="flex gap-2">
+                                        <button type="button" class="text-xs text-blue-400 hover:underline select-all-btn" data-target="ai-plan-equipment-container">All</button>
+                                        <button type="button" class="text-xs text-blue-400 hover:underline deselect-all-btn" data-target="ai-plan-equipment-container">None</button>
+                                    </div>
+                                </div>
+                                <div id="ai-plan-equipment-container" class="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-2 mt-2"></div>
+                            </div>
+                             <details class="pt-2"><summary class="cursor-pointer text-sm text-gray-400 hover:text-white flex items-center justify-between"><span>Advanced Focus & Preferences</span><i data-lucide="chevron-down" class="w-4 h-4"></i></summary><div class="space-y-4 pt-4 mt-4 border-t border-gray-800">
+                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                     <div>
+                                         <div class="flex justify-between items-center mb-2">
+                                             <label class="form-label">Muscle Group Focus</label>
+                                             <div class="flex gap-2">
+                                                 <button type="button" class="text-xs text-blue-400 hover:underline select-all-btn" data-target="ai-plan-focus-muscle-container">All</button>
+                                                 <button type="button" class="text-xs text-blue-400 hover:underline deselect-all-btn" data-target="ai-plan-focus-muscle-container">None</button>
+                                             </div>
+                                         </div>
+                                         <div id="ai-plan-focus-muscle-container" class="grid grid-cols-2 gap-x-4 gap-y-2 mt-2"></div>
+                                     </div>
+                                     <div>
+                                          <label for="ai-plan-unit" class="form-label">Weight Unit</label>
+                                          <select id="ai-plan-unit" class="form-select mt-1">
+                                              <option value="kg">Kilograms (kg)</option>
+                                              <option value="lbs">Pounds (lbs)</option>
+                                          </select>
+                                          <div class="pt-4 mt-4 border-t border-gray-800">
+                                             <label for="ai-plan-default-sets" class="form-label">Default Sets Per Exercise</label>
+                                             <input type="number" id="ai-plan-default-sets" class="form-input mt-1" value="3" placeholder="3">
+                                          </div>
+                                     </div>
+                                 </div>
+                                 <details class="pt-2"><summary class="cursor-pointer text-sm text-gray-400 hover:text-white flex items-center justify-between"><span>Expert Mode: Sets Per Muscle Group</span><i data-lucide="chevron-down" class="w-4 h-4"></i></summary><div class="pt-4 mt-4 border-t border-gray-800"><p class="text-xs text-secondary-text mb-4">Override the default set count per week for specific muscles (Recommended for experts only).</p><button type="button" id="customize-sets-btn" class="text-sm text-blue-400 hover:underline mt-2 hidden">Customize per muscle group</button><div id="ai-plan-sets-container" class="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-2"></div></div></details>
+                                 <details class="pt-2"><summary class="cursor-pointer text-sm text-gray-400 hover:text-white flex items-center justify-between"><span>Expert Mode: Exercise Preferences</span><i data-lucide="chevron-down" class="w-4 h-4"></i></summary><div class="pt-4 mt-4 border-t border-gray-800"><p class="text-xs text-secondary-text mb-4">Remove exercises you dislike from the AI's selection pool.</p><div id="ai-plan-exercise-prefs-container" class="grid grid-cols-2 md:grid-cols-3 gap-2"></div></div></details>
+                            </div></details>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="w-full btn btn-primary !mt-6" id="ai-plan-generate-submit-btn">
+                        <span class="btn-text">Generate My Plan</span>
+                        <div class="loader hidden"></div>
+                    </button>
+                </form>
+
+                <!-- Plan Output Section (Hidden by default) -->
+                <div id="ai-plan-output" class="mt-6 hidden">
+                    <h3 class="text-xl font-bold mb-3">Plan Summary</h3>
+                    <div id="ai-plan-explanation" class="text-sm p-3 bg-black/30 rounded-lg mb-4"></div>
+                    <pre id="ai-plan-json-output" class="hidden"></pre>
+                    <div class="flex justify-end gap-4">
+                        <button id="cancel-new-plan-btn" class="btn btn-secondary">Cancel</button>
+                        <button id="save-new-plan-btn" class="btn btn-primary">Save & Apply Plan</button>
                     </div>
                 </div>
-                <div id="ai-plan-focus-muscle-container" class="grid grid-cols-2 gap-x-4 gap-y-2 mt-2"></div>
             </div>
-            <div><label for="ai-plan-unit" class="form-label">Weight Unit</label><select id="ai-plan-unit" class="form-select mt-1"><option value="kg">Kilograms (kg)</option><option value="lbs">Pounds (lbs)</option></select></div>
         </div>
-    </div></details><details class="pt-2"><summary class="cursor-pointer text-sm text-gray-400 hover:text-white flex items-center justify-between"><span>Exercise Preferences</span><i data-lucide="chevron-down" class="w-4 h-4"></i></summary><div id="ai-plan-exercise-prefs-container" class="grid grid-cols-2 md:grid-cols-3 gap-2 pt-4 mt-4 border-t border-gray-800"></div></details><details class="pt-2"><summary class="cursor-pointer text-sm text-gray-400 hover:text-white flex items-center justify-between"><span>Advanced: Target Sets</span><i data-lucide="chevron-down" class="w-4 h-4"></i></summary><div class="pt-4 mt-4 border-t border-gray-800"><div class="mb-4"><label for="ai-plan-default-sets" class="form-label">Default Sets Per Muscle Group</label><input type="number" id="ai-plan-default-sets" class="form-input mt-1" placeholder="Auto"><button type="button" id="customize-sets-btn" class="text-sm text-blue-400 hover:underline mt-2">Customize per muscle group</button></div><div id="ai-plan-sets-container" class="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-2 hidden"></div></div></details><button type="submit" class="w-full btn btn-primary !mt-6"><span class="btn-text">Generate My Plan</span><div class="loader hidden"></div></button></form><div id="ai-plan-output" class="mt-6 hidden"><div id="ai-plan-explanation" class="text-sm p-3 bg-black/30 rounded-lg mb-4"></div><pre id="ai-plan-json-output" class="hidden"></pre><div class="flex justify-end gap-4"><button id="cancel-new-plan-btn" class="btn btn-secondary">Cancel</button><button id="save-new-plan-btn" class="btn btn-primary">Save & Apply Plan</button></div></div></div></div></div>
+    </div>
     
     <!-- NEW EDIT PLAN MODAL -->
     <div id="edit-plan-modal" class="modal-backdrop">
@@ -691,6 +845,9 @@
 
             // FIX 3: State for preventing tap on scroll
             let pointerDelta = { x: 0, y: 0 };
+            
+            // NEW: AI Plan Generator Step state
+            let currentAiPlanStep = 1;
 
             let ALL_MUSCLE_GROUPS = [];
             let ALL_EQUIPMENT_TYPES = [];
@@ -720,7 +877,7 @@
                 reorganizeAiBtn: document.getElementById('reorganize-ai-btn'),
                 unitToggleKg: document.getElementById('unit-toggle-kg'), unitToggleLbs: document.getElementById('unit-toggle-lbs'),
                 aiPlanGeneratorModal: document.getElementById('ai-plan-generator-modal'), closeAiPlanGeneratorModalBtn: document.getElementById('close-ai-plan-generator-modal-btn'),
-                aiPlanGeneratorForm: document.getElementById('ai-plan-generator-form'), aiPlanGeneratorBtn: document.getElementById('ai-plan-generator-btn'),
+                aiPlanGeneratorForm: document.getElementById('ai-plan-generator-form'), aiPlanGeneratorBtn: document.getElementById('ai-plan-generate-submit-btn'),
                 aiPlanScheduleBuilder: document.getElementById('ai-plan-schedule-builder'),
                 aiPlanDurationsContainer: document.getElementById('ai-plan-durations-container'),
                 aiPlanSetsContainer: document.getElementById('ai-plan-sets-container'), aiPlanOutput: document.getElementById('ai-plan-output'),
@@ -760,6 +917,10 @@
                 permanentEditWarningModal: document.getElementById('permanent-edit-warning-modal'),
                 permanentEditOkBtn: document.getElementById('permanent-edit-ok-btn'),
                 permanentEditDontShowAgain: document.getElementById('permanent-edit-dont-show-again'),
+                // AI Plan Generator Step UI
+                aiStep1: document.getElementById('ai-step-1'),
+                aiStep2: document.getElementById('ai-step-2'),
+                aiStep3: document.getElementById('ai-step-3'),
             };
 
             // --- CHART.JS SETUP ---
@@ -839,7 +1000,7 @@
             // --- CORE & HELPER FUNCTIONS ---
             const getApiUrl = (model, action = 'generateContent') => {
                 const apiKey = "AIzaSyDY48xF1byvU05kS9qKvN8iyrIR3hheP8w"; // API key is handled by the environment
-                return `https://generativelanguaage.googleapis.com/v1beta/models/${model}:${action}?key=${apiKey}`;
+                return `https://generativelanguage.googleapis.com/v1beta/models/${model}:${action}?key=${apiKey}`;
             };
             
             function dateToKey(date) { return date.toISOString().split('T')[0]; }
@@ -1008,8 +1169,8 @@
                 const isFutureDay = date > today;
 
                 const dayViewBtn = document.getElementById('day-view-date-display-btn');
-                dayViewBtn.querySelector('#day-view-title-span').textContent = date.toLocaleDateString(undefined, { weekday: 'long' }) + (isToday ? ' (Today)' : '');
-                dayViewBtn.querySelector('#day-view-date-span').textContent = date.toLocaleDateString(undefined, { month: 'long', day: 'numeric' });
+                dayViewBtn.querySelector('#day-view-title-span').textContent = date.toLocaleDateString('en-US', { weekday: 'long' }) + (isToday ? ' (Today)' : '');
+                dayViewBtn.querySelector('#day-view-date-span').textContent = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
                 
                 const addTempExBtn = document.getElementById('add-temporary-exercise-btn');
                 const addTempWarmupBtn = document.getElementById('add-temporary-warmup-btn');
@@ -1196,6 +1357,8 @@
             let swipedElement = null;
             let lastTap = 0; // For double tap detection
 
+            function getPointerCoordinates(e) { return e.touches ? { x: e.touches[0].clientX, y: e.touches[0].clientY } : { x: e.clientX, y: e.clientY }; }
+            
             function handleItemDelete(element) {
                 const name = element.dataset.name;
                 const type = element.dataset.type;
@@ -1269,8 +1432,6 @@
                     openEditPlanModal();
                 }
             }
-
-            function getPointerCoordinates(e) { return e.touches ? { x: e.touches[0].clientX, y: e.touches[0].clientY } : { x: e.clientX, y: e.clientY }; }
             
             function handlePointerDown(e) {
                 const target = e.target.closest('.swipe-item');
@@ -1555,7 +1716,7 @@
                 const btn = ui.getAIAdviceBtn;
                 btn.disabled = true; btn.querySelector('.btn-text').style.display = 'none'; btn.querySelector('.loader').classList.remove('hidden'); ui.aiAdviceOutput.innerHTML = '';
                 const exerciseLogs = workoutHistory.filter(log => log.name === exerciseName).slice(-3);
-                const prompt = `Act as an expert fitness coach. A user performed these recent sessions for ${exerciseName}: ${exerciseLogs.map((log, i) => { const sets = typeof log.sets === 'string' ? JSON.parse(log.sets) : log.sets; return `Session ${i+1} (${new Date(log.date.replace(/-/g, '/')).toLocaleDateString()}): ${sets.map(set => set.map(part => `${part.weight}kg x ${part.reps} reps`).join(' + ')).join(', ')}`}).join('\n')} Based on progressive overload, give a clear, actionable recommendation for their *next* session. Be specific (e.g., "Aim for 6-8 reps with 52.5kg"). Keep it under 75 words.`;
+                const prompt = `Act as an expert fitness coach. A user performed these recent sessions for ${exerciseName}: ${exerciseLogs.map((log, i) => { const sets = typeof log.sets === 'string' ? JSON.parse(log.sets) : log.sets; return `Session ${i+1} (${new Date(log.date.replace(/-/g, '/')).toLocaleDateString('en-US')}): ${sets.map(set => set.map(part => `${part.weight}kg x ${part.reps} reps`).join(' + ')).join(', ')}`}).join('\n')} Based on progressive overload, give a clear, actionable recommendation for their *next* session. Be specific (e.g., "Aim for 6-8 reps with 52.5kg"). Keep it under 75 words.`;
                 const apiUrl = getApiUrl('gemini-2.5-flash-preview-05-20');
                 try {
                     const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }) });
@@ -1624,7 +1785,7 @@
                 }
                 exerciseLogs.sort((a,b) => new Date(a.date) - new Date(b.date));
 
-                const labels = exerciseLogs.map(log => { if (!log.date || typeof log.date !== 'string') return 'Unknown'; return new Date(log.date.replace(/-/g, '/')).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }); });
+                const labels = exerciseLogs.map(log => { if (!log.date || typeof log.date !== 'string') return 'Unknown'; return new Date(log.date.replace(/-/g, '/')).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); });
                 
                 const maxWeightData = exerciseLogs.map(log => { const sets = typeof log.sets === 'string' ? JSON.parse(log.sets) : log.sets; const maxWeightKg = Math.max(...sets.flatMap(set => set.map(s => s.weight || 0))); return userSettings.unit === 'lbs' ? kgToLbs(maxWeightKg) : maxWeightKg; });
                 
@@ -1665,7 +1826,7 @@
                     if (!volumeByDay[dateKey]) { volumeByDay[dateKey] = 0; } volumeByDay[dateKey] += logVolume;
                 });
                 const sortedDates = Object.keys(volumeByDay).sort((a, b) => new Date(a) - new Date(b));
-                const labels = sortedDates.map(dateStr => { if (!dateStr || typeof dateStr !== 'string') return 'Unknown'; return new Date(dateStr.replace(/-/g, '/')).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }); });
+                const labels = sortedDates.map(dateStr => { if (!dateStr || typeof dateStr !== 'string') return 'Unknown'; return new Date(dateStr.replace(/-/g, '/')).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); });
                 const volumeData = sortedDates.map(date => { const volumeKg = volumeByDay[date]; return userSettings.unit === 'lbs' ? kgToLbs(volumeKg) : volumeKg; });
                 progressChart.data.labels = labels;
                 progressChart.data.datasets = [{ label: `Total Daily Volume (${userSettings.unit})`, data: volumeData, borderColor: '#a78bfa', backgroundColor: '#a78bfa33', tension: 0.2, fill: true }];
@@ -1694,7 +1855,7 @@
                 });
                 if (Object.keys(volumeByDay).length === 0) { progressChart.data.labels = []; progressChart.data.datasets = [ { label: `Volume for Today's Workout (${userSettings.unit})`, data: [], borderColor: '#34d399', backgroundColor: '#34d39933', tension: 0.2, fill: true }]; progressChart.update(); return; }
                 const sortedDates = Object.keys(volumeByDay).sort((a, b) => new Date(a) - new Date(b));
-                const labels = sortedDates.map(dateStr => { if (!dateStr || typeof dateStr !== 'string') return 'Unknown'; return new Date(dateStr.replace(/-/g, '/')).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }); });
+                const labels = sortedDates.map(dateStr => { if (!dateStr || typeof dateStr !== 'string') return 'Unknown'; return new Date(dateStr.replace(/-/g, '/')).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); });
                 const volumeData = sortedDates.map(date => { const volumeKg = volumeByDay[date]; return userSettings.unit === 'lbs' ? kgToLbs(volumeKg) : volumeKg; });
                 progressChart.data.labels = labels;
                 progressChart.data.datasets = [{ label: `Volume for Today's Workout (${userSettings.unit})`, data: volumeData, borderColor: '#34d399', backgroundColor: '#34d39933', tension: 0.2, fill: true }];
@@ -1872,7 +2033,7 @@
             });
 
             
-            // --- PLAN GENERATOR FUNCTIONS ---
+            // --- AI PLAN GENERATOR FUNCTIONS (UPDATED FOR STEP-BY-STEP) ---
             function openAiPlanGenerator() {
                 if (exerciseDB.length === 0) { showCustomAlert("Data Missing", "The exercise database (exercises.json) could not be loaded. The AI Plan Generator is unavailable."); return; }
                 const splitSelect = document.getElementById('ai-plan-split-select');
@@ -1880,10 +2041,87 @@
                 const focusMuscleContainer = document.getElementById('ai-plan-focus-muscle-container');
                 focusMuscleContainer.innerHTML = ALL_MUSCLE_GROUPS.map(g => `<label class="flex items-center gap-2"><input type="checkbox" name="focusMuscle" value="${g}" checked class="form-checkbox h-4 w-4 bg-input-bg border-border-color rounded text-blue-500 focus:ring-blue-500"><span class="text-sm">${g}</span></label>`).join('');
                 ui.aiPlanSetsContainer.innerHTML = ALL_MUSCLE_GROUPS.map(group => `<div class="flex items-center gap-2"><label for="sets-${group}" class="form-label text-sm flex-1">${group}</label><input type="number" id="sets-${group}" class="form-input !w-20 !py-1 text-center" placeholder="Auto"></div>`).join('');
+                
+                // Initialize split/schedule
                 splitSelect.dispatchEvent(new Event('change'));
-                focusMuscleContainer.dispatchEvent(new Event('change'));
+                
+                // Initialize step flow
+                currentAiPlanStep = 1;
+                updateAiPlanGeneratorStep();
+                
                 showModal(ui.aiPlanGeneratorModal);
             }
+            
+            // --- NEW: STEP CONTROL LOGIC ---
+            function updateAiPlanGeneratorStep() {
+                const steps = [ui.aiStep1, ui.aiStep2, ui.aiStep3];
+                const sections = [ui.aiStep1, ui.aiStep2, ui.aiStep3];
+                const stepCount = steps.length;
+                let isComplete = true;
+
+                sections.forEach((section, index) => {
+                    const stepNum = index + 1;
+                    
+                    // Toggle active/completed classes
+                    section.classList.toggle('active', stepNum === currentAiPlanStep);
+                    section.classList.toggle('completed', stepNum < currentAiPlanStep);
+                    
+                    // Hide content of future steps
+                    const contentDiv = section.querySelector('.space-y-4');
+                    if (contentDiv) {
+                        contentDiv.style.display = stepNum <= currentAiPlanStep ? 'block' : 'none';
+                    }
+                });
+                
+                 // Update scroll position to the current step (smooth UX)
+                const activeStep = document.getElementById(`ai-step-${currentAiPlanStep}`);
+                if (activeStep) {
+                    activeStep.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+
+                // Check for completion criteria for current step (simplified for dummy-proof UX)
+                if (currentAiPlanStep === 3) {
+                    // Step 3 (Preferences) is always completed if reached
+                    ui.aiPlanGeneratorBtn.querySelector('.btn-text').textContent = 'Generate My Plan';
+                    ui.aiPlanGeneratorBtn.disabled = false;
+                } else if (currentAiPlanStep < stepCount) {
+                    // Enable/Disable the Generate button when its not the last step
+                    ui.aiPlanGeneratorBtn.querySelector('.btn-text').textContent = 'Next Step';
+                    // For steps 1 and 2, check if necessary fields are filled
+                    isComplete = true;
+                    if (currentAiPlanStep === 1) {
+                         const goal = document.getElementById('ai-plan-goal').value;
+                         const isCustomValid = goal !== 'custom' || document.getElementById('ai-plan-goal-text').value.trim() !== '';
+                         isComplete = isCustomValid;
+                    } else if (currentAiPlanStep === 2) {
+                        const hasWorkoutDay = Array.from(document.querySelectorAll('#ai-plan-schedule-builder .day-schedule-btn')).some(btn => btn.querySelector('.text-xs').textContent !== 'Rest');
+                        isComplete = hasWorkoutDay;
+                    }
+                    ui.aiPlanGeneratorBtn.disabled = !isComplete;
+                } else {
+                     ui.aiPlanGeneratorBtn.querySelector('.btn-text').textContent = 'Generate My Plan';
+                }
+            }
+
+            // Override submit to control step flow
+            ui.aiPlanGeneratorForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const btnText = ui.aiPlanGeneratorBtn.querySelector('.btn-text').textContent;
+
+                if (btnText === 'Next Step') {
+                    if (currentAiPlanStep < 3) {
+                        currentAiPlanStep++;
+                        updateAiPlanGeneratorStep();
+                    }
+                } else if (btnText === 'Generate My Plan') {
+                    // Original generation logic
+                    startPlanGeneration(e);
+                }
+            });
+            
+            // --- End NEW Step Control Logic ---
+
+
             document.getElementById('ai-plan-generator-btn-inline').addEventListener('click', openAiPlanGenerator);
             // AI Coach Tab Listeners
             ui.aiTabSpecific.addEventListener('click', () => { ui.aiTabSpecific.classList.add('border-accent', 'text-primary-text'); ui.aiTabSpecific.classList.remove('border-transparent', 'text-secondary-text'); ui.aiTabGeneral.classList.add('border-transparent', 'text-secondary-text'); ui.aiTabGeneral.classList.remove('border-accent', 'text-primary-text'); ui.aiPanelSpecific.classList.remove('hidden'); document.getElementById('ai-panel-general').classList.add('hidden'); });
@@ -1903,18 +2141,28 @@
             
              const renderScheduleBuilder = (splitTypes) => {
                  const dayGrid = document.getElementById('ai-plan-schedule-builder');
-                 dayGrid.className = "grid grid-cols-2 gap-2";
+                 // NEW: Use 4 columns on mobile, 7 on desktop/wider screens
+                 dayGrid.className = "grid grid-cols-4 sm:grid-cols-7 gap-2";
                  const weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
                  const isPPL = splitTypes.join(',') === 'Push,Pull,Legs'; const defaultPPLSchedule = { Monday: "Push", Tuesday: "Pull", Wednesday: "Legs", Thursday: "Push", Friday: "Pull", Saturday: "Legs", Sunday: "Rest" };
                  const isUpperLower = splitTypes.join(',') === 'Upper,Lower'; const defaultULSchedule = { Monday: "Upper", Tuesday: "Lower", Wednesday: "Rest", Thursday: "Upper", Friday: "Lower", Saturday: "Rest", Sunday: "Rest" };
                  dayGrid.innerHTML = weekDays.map(day => { let defaultType = 'Rest'; if(isPPL) defaultType = defaultPPLSchedule[day]; if(isUpperLower) defaultType = defaultULSchedule[day]; const defaultIndex = ALL_SPLIT_TYPES.indexOf(defaultType); return ` <button type="button" class="text-center p-2 rounded-lg bg-input-bg day-schedule-btn" data-day="${day}" data-current-index="${defaultIndex > -1 ? defaultIndex : 0}"> <p class="font-semibold text-sm">${day.substring(0, 3)}</p> <p class="text-xs text-blue-400">${defaultType}</p> </button> `; }).join('');
-                 dayGrid.querySelectorAll('.day-schedule-btn').forEach(btn => { btn.addEventListener('click', () => { let currentIndex = parseInt(btn.dataset.currentIndex) + 1; if (currentIndex >= ALL_SPLIT_TYPES.length) currentIndex = 0; btn.dataset.currentIndex = currentIndex; btn.querySelector('.text-xs').textContent = ALL_SPLIT_TYPES[currentIndex]; renderDurations(); }); });
+                 dayGrid.querySelectorAll('.day-schedule-btn').forEach(btn => { btn.addEventListener('click', () => { 
+                     let currentIndex = parseInt(btn.dataset.currentIndex) + 1; 
+                     if (currentIndex >= ALL_SPLIT_TYPES.length) currentIndex = 0; 
+                     btn.dataset.currentIndex = currentIndex; 
+                     btn.querySelector('.text-xs').textContent = ALL_SPLIT_TYPES[currentIndex]; 
+                     renderDurations(); 
+                     updateAiPlanGeneratorStep(); // Check validity on schedule change
+                    }); 
+                 });
                  renderDurations();
              };
 
             const splitSelect = document.getElementById('ai-plan-split-select');
-            const updateSplit = () => { let splitTypes = splitSelect.value.split(',').map(s => s.trim()).filter(Boolean); renderScheduleBuilder(splitTypes); };
+            const updateSplit = () => { let splitTypes = splitSelect.value.split(',').map(s => s.trim()).filter(Boolean); if (splitSelect.value === 'Optimized PPL') splitTypes = ['Push', 'Pull', 'Legs']; updateAiPlanGeneratorStep(); renderScheduleBuilder(splitTypes); };
             splitSelect.addEventListener('change', updateSplit);
+            
             const renderDurations = () => {
                 const container = ui.aiPlanDurationsContainer; const scheduleButtons = document.querySelectorAll('.day-schedule-btn');
                 let hasWorkoutDay = false; let durationHTML = '';
@@ -2033,18 +2281,24 @@
             document.getElementById('ai-plan-focus-muscle-container').addEventListener('change', renderExercisePreferences);
             
             const aiPlanGoalSelect = document.getElementById('ai-plan-goal');
-            if(aiPlanGoalSelect){ aiPlanGoalSelect.addEventListener('change', (e) => { document.getElementById('ai-plan-goal-text-container').classList.toggle('hidden', e.target.value !== 'custom'); }); }
+            if(aiPlanGoalSelect){ aiPlanGoalSelect.addEventListener('change', (e) => { document.getElementById('ai-plan-goal-text-container').classList.toggle('hidden', e.target.value !== 'custom'); updateAiPlanGeneratorStep(); }); }
 
+            // NEW: Add listener to all step inputs to auto-advance when ready
+            ui.aiPlanGeneratorModal.addEventListener('input', (e) => {
+                if (e.target.closest('#ai-step-1') || e.target.closest('#ai-step-2')) {
+                    updateAiPlanGeneratorStep();
+                }
+            });
 
-            ui.aiPlanGeneratorForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
+            async function startPlanGeneration(e) {
+                 e.preventDefault();
                 const splitSelectVal = document.getElementById('ai-plan-split-select').value;
                 if (splitSelectVal === 'Optimized PPL') {
-                    const optimizedPlan = { name: "Optimized PPL", schedule: { "Monday": "Push", "Tuesday": "Pull", "Wednesday": "Legs", "Thursday": "Push", "Friday": "Pull", "Saturday": "Legs", "Sunday": "Rest" }, workouts: [ { day: "Push", exercises: ["Dumbell Incline bench press", "Overhead Press (Dumbbell)", "Triceps Pushdown", "Tricep Kickback (Dumbbell)", "Front Raise (Dumbbell)", "Plate Squeeze (Svend Press)"] }, { day: "Pull", exercises: ["Lat Pulldown (Cable)", "Seated Cable Row - V Grip (Cable)", "Dumbbell Row", "Bicep Curl (Dumbbell)", "Face Pull", "Shrug (Dumbbell)"] }, { day: "Legs", exercises: ["Squat (Barbell)", "Romanian Deadlift (Barbell)", "Leg Extension (Machine)", "Lying Leg Curl (Machine)", "Standing Calf Raise (Machine)", "Hanging Leg Raise"] } ], restTime: 2, reasoning: "This is your custom-built Optimized Push, Pull, Legs split. It ensures each muscle group is trained twice a week with a variety of compound and isolation movements for balanced development." };
+                    const optimizedPlan = { name: "Optimized PPL", schedule: { "Monday": "Push", "Tuesday": "Pull", "Wednesday": "Legs", "Thursday": "Push", "Friday": "Pull", "Saturday": "Legs", "Sunday": "Rest" }, workouts: [ { day: "Push", exercises: ["Bench Press (Dumbbell)", "Overhead Press (Dumbbell)", "Triceps Pushdown", "Tricep Kickback (Dumbbell)", "Front Raise (Dumbbell)", "Plate Squeeze (Svend Press)"] }, { day: "Pull", exercises: ["Lat Pulldown (Cable)", "Seated Cable Row - V Grip (Cable)", "Dumbbell Row", "Bicep Curl (Dumbbell)", "Face Pull", "Shrug (Dumbbell)"] }, { day: "Legs", exercises: ["Squat (Barbell)", "Romanian Deadlift (Barbell)", "Leg Extension (Machine)", "Lying Leg Curl (Machine)", "Standing Calf Raise (Machine)", "Hanging Leg Raise"] } ], restTime: 2, reasoning: "This is your custom-built Optimized Push, Pull, Legs split. It ensures each muscle group is trained twice a week with a variety of compound and isolation movements for balanced development." };
                     ui.aiPlanOutput.classList.remove('hidden'); ui.aiPlanExplanation.innerHTML = `<strong>${optimizedPlan.name}</strong><br>${optimizedPlan.reasoning}`; ui.aiPlanJsonOutput.textContent = JSON.stringify(optimizedPlan, null, 2); 
                     return; 
                 }
-                const btn = e.target.querySelector('button[type="submit"]');
+                const btn = document.getElementById('ai-plan-generate-submit-btn');
                 btn.disabled = true; btn.querySelector('.loader').classList.remove('hidden'); btn.querySelector('.btn-text').style.display = 'none';
                 const statusDiv = ui.aiPlanExplanation;
                 ui.aiPlanOutput.classList.remove('hidden');
@@ -2072,7 +2326,8 @@
                     ui.aiPlanExplanation.innerHTML = reasoningHtml; ui.aiPlanJsonOutput.textContent = JSON.stringify(parsedPlan, null, 2);
                 } catch (error) { console.error("AI Plan Generation Error:", error); ui.aiPlanExplanation.textContent = "Sorry, couldn't generate a plan. The AI might be unavailable or the request was too complex. Please try again.";
                 } finally { btn.disabled = false; btn.querySelector('.loader').classList.add('hidden'); btn.querySelector('.btn-text').style.display = 'inline'; }
-            });
+            }
+            
             ui.cancelNewPlanBtn.addEventListener('click', () => ui.aiPlanOutput.classList.add('hidden'));
             ui.saveNewPlanBtn.addEventListener('click', () => {
                 const todayKey = dateToKey(new Date()); const hasWorkedOutToday = workoutHistory.some(log => log.date === todayKey);
@@ -2445,7 +2700,7 @@
                 chatInput.value = ''; sendBtn.disabled = true; addMessageToChat('<div class="loader"></div>', 'model', true);
                 try {
                     const twoWeeksAgo = new Date(); twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
-                    const recentHistory = workoutHistory.filter(log => new Date(log.date) >= twoWeeksAgo).map(log => { const sets = typeof log.sets === 'string' ? JSON.parse(log.sets) : log.sets; return `On ${new Date(log.date.replace(/-/g, '/')).toLocaleDateString()}: ${log.name} - ${sets.map(s => s.map(p => `${p.weight}kg x ${p.reps}r`).join('/')).join(', ')}`; }).join('; ');
+                    const recentHistory = workoutHistory.filter(log => new Date(log.date) >= twoWeeksAgo).map(log => { const sets = typeof log.sets === 'string' ? JSON.parse(log.sets) : log.sets; return `On ${new Date(log.date.replace(/-/g, '/')).toLocaleDateString('en-US')}: ${log.name} - ${sets.map(s => s.map(p => `${p.weight}kg x ${p.reps}r`).join('/')).join(', ')}`; }).join('; ');
                     const context = ` User's Workout Plan: ${JSON.stringify(workoutPlan)} User's Exercise Library: ${exerciseDB.map(ex => `${ex.name} (${ex.group})`).join(', ')} Last 14 Days Workout History: ${recentHistory || "No workouts logged."} `;
                     const systemPrompt = `You are FitTrack AI, an expert fitness and workout coach. Analyze the user's provided data (plan, history, available exercises) to give specific, actionable advice based on their question. Be encouraging and provide clear, concise answers. Here is the user's data context: ${context}`;
                     const response = await fetch(getApiUrl('gemini-2.5-flash-preview-05-20'), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: workoutChatHistory, systemInstruction: { parts: [{ text: systemPrompt }] } }) });
