@@ -361,6 +361,9 @@
 
         .horizontal-scroll-container {
             display: flex;
+            /* FIX 1: Ensure flex row layout */
+            flex-direction: row;
+            flex-wrap: nowrap;
             overflow-x: auto;
             scroll-behavior: smooth;
             scroll-snap-type: x mandatory;
@@ -819,7 +822,8 @@
                 <p id="ai-scanner-status" class="text-center text-secondary-text text-sm min-h-[1.25rem]"></p>
                 <div id="ai-scanner-carousel-wrapper" class="carousel-wrapper hidden">
                     <button id="ai-scanner-prev" type="button" class="carousel-btn carousel-prev"><i data-lucide="chevron-left"></i></button>
-                    <div id="ai-scanner-results-container" class="horizontal-scroll-container scanner-carousel mt-4 min-h-[220px]">
+                    <!-- FIX 1: Added !flex !flex-row !flex-nowrap to enforce horizontal scrolling -->
+                    <div id="ai-scanner-results-container" class="horizontal-scroll-container scanner-carousel mt-4 min-h-[220px] !flex !flex-row !flex-nowrap">
                         <!-- Results injected here -->
                     </div>
                     <button id="ai-scanner-next" type="button" class="carousel-btn carousel-next"><i data-lucide="chevron-right"></i></button>
@@ -1671,6 +1675,7 @@
 
             async function fetchIngredientMacros(recipeName, ingredientData, signal) {
                 const apiKey = ""; // Leave empty
+                // FIX 2: Use the new, faster model
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
 
                 let userQuery = `Recipe context: "${recipeName}". Ingredient: "${ingredientData.quantity || 1} ${ingredientData.name}".`;
@@ -1695,6 +1700,8 @@
 
                 const payload = {
                     contents: [{ parts: [{ text: userQuery }] }],
+                    // FIX 2: Added search grounding to improve food lookup reliability
+                    tools: [{ "google_search": {} }],
                     systemInstruction: {
                         parts: [{ text: systemPrompt }]
                     },
@@ -2192,6 +2199,8 @@
                 const apiUrl = getApiUrl('gemini-2.5-flash-preview-09-2025');
                 const payload = {
                      contents: [{ parts: [{ text: userQuery }] }],
+                     // FIX 2: Added search grounding to improve food lookup reliability
+                     tools: [{ "google_search": {} }],
                      systemInstruction: { parts: [{ text: systemPrompt }] },
                      generationConfig: { responseMimeType: "application/json" }
                 };
@@ -2211,7 +2220,7 @@
             ui.aiMacroSwapOutput.addEventListener('click', (e) => {
                 const swapBtn = e.target.closest('.swap-suggestion-btn');
                 if (swapBtn) {
-                    const foodName = swapBtn.dataset.foodName;
+                    const foodName = swapBtn.dataset.food-name;
                     if (foodName) {
                         ui.foodNameInput.value = foodName;
                         const macroInputs = ui.logMealForm.querySelectorAll('.macro-input');
@@ -2634,7 +2643,8 @@
 
                 for(const file of files) {
                     const resultElement = document.createElement('div');
-                    resultElement.className = 'scroll-item p-4 bg-input-bg rounded-lg text-center';
+                    // FIX 1: Added !flex-shrink-0 to ensure items don't shrink and stay in the single row
+                    resultElement.className = 'scroll-item p-4 bg-input-bg rounded-lg text-center !flex-shrink-0';
                     const reader = new FileReader();
                     reader.onload = (e) => {
                         resultElement.innerHTML = `
@@ -2712,6 +2722,7 @@
                     `;
                     const systemPrompt = `You are FitTrack AI, a helpful and knowledgeable nutritionist. Analyze the user's provided data to give specific, actionable advice based on their question. Be encouraging and provide clear, concise answers. Here is the user's data context: ${context}`;
 
+                    // FIX 2: Use the new, faster model
                     const apiUrl = getApiUrl('gemini-2.5-flash-preview-09-2025');
                     const payload = {
                         contents: chatHistory,
