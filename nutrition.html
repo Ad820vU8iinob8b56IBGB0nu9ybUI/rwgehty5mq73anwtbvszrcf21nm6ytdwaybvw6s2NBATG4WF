@@ -480,9 +480,9 @@
 </head>
 <body class="antialiased">
 
-    <div class="container mx-auto max-w-7xl px-4 py-8">
+    <div class="container mx-auto max-w-7xl px-4 py-6">
         <!-- Header -->
-        <header class="flex items-center justify-between mb-8 pb-4 border-b border-gray-900">
+        <header class="flex items-center justify-between mb-4 pb-4 border-b border-gray-900">
              <a href="index.html" class="flex items-center gap-3">
                  <!-- Replaced PNG with inline SVG -->
                 <svg width="100" height="24" viewBox="0 0 100 24" fill="#FFFFFF" xmlns="http://www.w3.org/2000/svg" style="height: 24px; width: auto;">
@@ -503,7 +503,7 @@
             </a>
         </header>
         <!-- Main Content -->
-        <main class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <main class="grid grid-cols-1 md:grid-cols-2 gap-4">
              <!-- Left Column: Summary -->
             <div class="space-y-8">
                 <div id="daily-summary-card" class="content-card">
@@ -532,7 +532,7 @@
                 </div>
             </div>
             <!-- Right Column: Logging & Food Log -->
-            <div class="space-y-8">
+            <div class="space-y-4">
                 <div class="content-card">
                     <h3 class="text-2xl font-bold mb-6">Log Your Meal</h3>
                     <form id="log-meal-form" class="space-y-4">
@@ -556,7 +556,7 @@
                                 <span>Enter Macros for 1 Serving</span>
                                 <i data-lucide="chevron-down" class="w-4 h-4 chevron"></i>
                             </summary>
-                            <div class="space-y-3 pt-4 mt-4 border-t border-gray-800">
+                            <div class="space-y-3 pt-2 mt-2 border-t border-gray-800">
                                 <div class="grid grid-cols-4 gap-2">
                                     <div>
                                         <label class="form-label text-xs">Calories</label>
@@ -596,7 +596,7 @@
                             </div>
                         </details>
                         <!-- Updated Button Grid -->
-                        <div class="grid grid-cols-5 gap-2 sm:gap-4 pt-6"> <!-- MODIFIED: to 5 cols -->
+                        <div class="grid grid-cols-5 gap-2 sm:gap-4"> <!-- MODIFIED: to 5 cols -->
                             <!-- Compound Food/Recipe Button -->
                             <button id="open-compound-food-modal-btn" type="button" class="btn btn-secondary !p-2 sm:!p-3" title="Build a Recipe">
                                 <i data-lucide="chef-hat" class="w-4 h-4 sm:w-5 sm:h-5"></i> <!-- Changed icon to chef-hat -->
@@ -638,7 +638,7 @@
                                 </div>
                             </button>
                         </div>
-                        <div id="add-food-error" class="text-red-400 text-sm mt-2 h-4"></div>
+                        <div id="add-food-error" class="text-red-400 text-sm mt-2"></div>
                     </form>
                 </div>
                 <!-- Daily Log Content & AI Report Output -->
