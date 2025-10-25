@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-AR">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FitTrack AI | Nutrition</title>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -140,6 +140,32 @@
             transform: translateY(0);
         }
 
+        /* NEW: Water Button Styles */
+        #add-water-btn {
+            position: relative;
+            overflow: hidden;
+            /* Ensure gestures are captured */
+            touch-action: none; 
+        }
+        #water-fill {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            background-color: #3b82f6; /* Blue fill */
+            height: 0%; /* Starts at 0 */
+            transition: height 0.3s ease-out;
+            z-index: 1;
+        }
+        #add-water-btn > i {
+            position: relative;
+            z-index: 2;
+             /* Add a subtle shadow to make icon pop */
+            filter: drop-shadow(0 1px 1px rgba(0,0,0,0.4));
+        }
+        /* END: Water Button Styles */
+
         .btn-primary {
             background-color: var(--accent);
             color: var(--background);
@@ -182,7 +208,7 @@
             align-items: center;
             animation: fadeIn 0.3s ease;
             /* Added for mobile full-screen modals */
-            padding: 0; 
+            padding: 0;
         }
 
         /* Standard modal content */
@@ -201,34 +227,6 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        /* --- MODIFICATION 1 & 8 & 9: Recipe Modal Styling --- */
-        /* Target only the recipe modal content */
-        #compound-food-modal .modal-content {
-            width: 100%;
-            height: 100%;
-            max-height: 100vh;
-            max-width: 100vw;
-            border-radius: 0;
-            padding: 1rem; /* Reduced padding for mobile */
-            display: flex; /* Enable flex-col layout */
-            flex-direction: column;
-            overflow: hidden; /* Prevent modal itself from scrolling */
-        }
-
-        /* Re-apply desktop/tablet constraints */
-        @media (min-width: 768px) {
-            #compound-food-modal .modal-content {
-                width: 90vw;
-                height: auto;
-                max-height: 90vh;
-                max-width: 48rem; /* 768px, same as max-w-3xl */
-                border-radius: 0.75rem;
-                padding: 2rem;
-            }
-        }
-        /* --- END MODIFICATION 1 & 8 & 9 --- */
-
-
         .loader {
             border: 2px solid #333;
             border-top: 2px solid var(--accent);
@@ -244,12 +242,10 @@
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #666; }
 
-        .recipe-ingredients-details { display: none; }
-
         details > summary { list-style: none; }
         details > summary::-webkit-details-marker { display: none; }
-        
-        /* --- MODIFICATION 4: Style for details summary --- */
+
+        /* Style for details summary */
         details summary {
             display: flex;
             justify-content: space-between;
@@ -263,7 +259,6 @@
         details[open] summary .chevron {
             transform: rotate(180deg);
         }
-        /* --- END MODIFICATION 4 --- */
 
 
         /* Prevents number input arrows */
@@ -276,7 +271,7 @@
           -moz-appearance: textfield;
         }
 
-        /* Swipe gesture styles from workouts.html */
+        /* Swipe gesture styles */
         .swipe-item {
             position: relative;
             overflow: hidden;
@@ -315,7 +310,7 @@
         }
         .swipe-content {
             position: relative;
-            background-color: var(--card-bg);
+            background-color: var(--card-bg); /* Use card background for swipable item */
             touch-action: pan-y; /* Allow vertical scroll while capturing horizontal */
             cursor: pointer;
         }
@@ -396,40 +391,6 @@
              /* Adjust width calculation based on the scanner item width (95%) */
             width: calc((100% - 95%) / 2 - 0.5rem);
         }
-
-        /* Recipe ingredients carousel item width - CHANGED for mobile */
-        .recipe-carousel .scroll-item {
-            flex: 0 0 100%; /* Make recipe items fill width */
-            width: 100%;
-            position: relative; /* Added for ingredient number positioning */
-        }
-        /* Remove centering padding for recipe carousel - CHANGED for mobile */
-        .recipe-carousel::before,
-        .recipe-carousel::after {
-            content: none; /* Remove side padding */
-        }
-        
-        /* --- MODIFICATION 7: Ingredient Number Styling --- */
-        /* --- MODIFIED: REMOVED absolute positioning --- */
-        .ingredient-number {
-            /* position: absolute; ... removed */
-            /* top: 0; ... removed */
-            /* left: 0; ... removed */
-            /* transform: translate(-25%, -25%); ... removed */
-            width: 1.5rem; /* 24px */
-            height: 1.5rem; /* 24px */
-            background-color: var(--accent);
-            color: var(--background);
-            border-radius: 9999px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.875rem; /* 14px */
-            font-weight: 700;
-            /* z-index: 10; ... removed */
-            /* border: 2px solid var(--card-bg); ... removed */
-        }
-        /* --- END MODIFICATION 7 --- */
 
     </style>
 </head>
@@ -536,15 +497,25 @@
                                 </div>
                             </div>
                         </details>
-                        <div class="grid grid-cols-5 gap-2 sm:gap-4 pt-6">
-                            <button id="scan-barcode-btn" type="button" class="btn btn-secondary !p-2 sm:!p-3" title="Scan Barcode"><i data-lucide="barcode" class="w-4 h-4 sm:w-5 sm:h-5"></i></button>
-                            <button id="create-recipe-btn" type="button" class="btn btn-secondary !p-2 sm:!p-3" title="Create Recipe"><i data-lucide="notebook-tabs" class="w-4 h-4 sm:w-5 sm:h-5"></i></button>
-                            <button id="add-food-btn" type="button" class="btn btn-primary !p-2 sm:!p-3" title="Add Food">
+                        <!-- Updated Button Grid -->
+                        <div class="grid grid-cols-4 gap-2 sm:gap-4 pt-6">
+                            <!-- Combined Scan Button -->
+                            <button id="scan-combined-btn" type="button" class="btn btn-secondary !p-2 sm:!p-3" title="Scan Barcode or Food"><i data-lucide="scan-line" class="w-4 h-4 sm:w-5 sm:h-5"></i></button>
+                            <!-- NEW: AI Macro Swap Button -->
+                            <button id="ai-macro-swap-btn" type="button" class="btn btn-secondary !p-2 sm:!p-3" title="AI Macro Swap">
+                                <i data-lucide="replace" class="w-4 h-4 sm:w-5 sm:h-5 btn-text"></i>
+                                <div class="loader hidden"></div>
+                            </button>
+                            <!-- Add Food (AI Lookup) Button -->
+                            <button id="add-food-btn" type="button" class="btn btn-primary !p-2 sm:!p-3" title="Add Food / AI Lookup">
                                 <i data-lucide="sparkles" class="w-4 h-4 sm:w-5 sm:h-5 btn-text"></i>
                                 <div class="loader hidden"></div>
                             </button>
-                            <button id="scan-food-btn" type="button" class="btn btn-secondary !p-2 sm:!p-3" title="Scan Food with AI Camera"><i data-lucide="camera" class="w-4 h-4 sm:w-5 sm:h-5"></i></button>
-                            <button id="add-water-btn" type="button" class="btn btn-secondary !p-2 sm:!p-3" title="Log Water"><i data-lucide="glass-water" class="w-4 h-4 sm:w-5 sm:h-5"></i></button>
+                            <!-- Log Water Button -->
+                            <button id="add-water-btn" type="button" class="btn btn-secondary !p-2 sm:!p-3" title="Log Water (Tap, Swipe Up/Down, Swipe Left/Right)">
+                                <span id="water-fill"></span> <!-- New fill element -->
+                                <i data-lucide="glass-water" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+                            </button>
                         </div>
                         <div id="add-food-error" class="text-red-400 text-sm mt-2 h-4"></div>
                     </form>
@@ -574,179 +545,198 @@
     </div>
 
     <!-- Modals -->
-    <div id="food-scanner-modal" class="modal-backdrop" style="z-index: 60;">
+    <!-- REMOVED Combined Scanner Chooser Modal -->
+
+    <!-- Renamed and Unified AI Scanner Modal (was food-scanner-modal) -->
+    <div id="ai-scanner-modal" class="modal-backdrop" style="z-index: 60;">
         <div class="modal-content">
             <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold">Scan Food with AI</h2>
-                <button id="close-food-scanner-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button>
+                <h2 class="text-2xl font-bold">AI Scanner</h2>
+                <button id="close-ai-scanner-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button>
             </div>
             <div class="space-y-4">
-                <div id="food-scanner-initial-options" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <label for="upload-photo-input" class="btn btn-secondary cursor-pointer"><i data-lucide="upload"></i>Upload Photo(s)</label>
-                    <input type="file" id="upload-photo-input" class="hidden" accept="image/*" multiple>
-                    <!-- Updated button style -->
-                    <button id="start-food-camera-btn" class="btn bg-white text-black hover:bg-gray-200"><i data-lucide="camera"></i>Start Live Camera</button>
+                <div id="ai-scanner-initial-options" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <label for="ai-upload-photo-input" class="btn btn-secondary cursor-pointer"><i data-lucide="upload"></i>Upload (Food or Barcode)</label>
+                    <input type="file" id="ai-upload-photo-input" class="hidden" accept="image/*" multiple>
+                    <button id="start-ai-camera-btn" class="btn bg-white text-black hover:bg-gray-200"><i data-lucide="camera"></i>Start Live Camera</button>
                 </div>
-                <div id="live-camera-container" class="hidden space-y-2">
-                    <video id="food-camera-video" class="w-full rounded-lg border border-border-color" autoplay playsinline></video>
-                    <canvas id="food-camera-canvas" class="hidden"></canvas> <!-- For capturing frames -->
-                    <button id="capture-food-photo-btn" class="btn btn-primary w-full">Capture Photo</button>
-                    <button id="stop-food-camera-btn" class="btn btn-danger w-full">Close Camera</button>
+                <div id="ai-live-camera-container" class="hidden space-y-2">
+                    <video id="ai-camera-video" class="w-full rounded-lg border border-border-color" autoplay playsinline></video>
+                    <canvas id="ai-camera-canvas" class="hidden"></canvas> <!-- For capturing frames -->
+                    <button id="capture-ai-photo-btn" class="btn btn-primary w-full">Capture Photo</button>
+                    <button id="stop-ai-camera-btn" class="btn btn-danger w-full">Close Camera</button>
                 </div>
-                <!-- Carousel structure for food scanner -->
-                <div id="food-scanner-carousel-wrapper" class="carousel-wrapper hidden">
-                    <button id="food-scanner-prev" type="button" class="carousel-btn carousel-prev"><i data-lucide="chevron-left"></i></button>
-                    <div id="scanner-results-container" class="horizontal-scroll-container scanner-carousel mt-4 min-h-[220px]">
+                <!-- This status text was missing in your file, re-adding it -->
+                <p id="ai-scanner-status" class="text-center text-secondary-text text-sm min-h-[1.25rem]"></p>
+                <div id="ai-scanner-carousel-wrapper" class="carousel-wrapper hidden">
+                    <button id="ai-scanner-prev" type="button" class="carousel-btn carousel-prev"><i data-lucide="chevron-left"></i></button>
+                    <div id="ai-scanner-results-container" class="horizontal-scroll-container scanner-carousel mt-4 min-h-[220px]">
                         <!-- Results injected here -->
                     </div>
-                    <button id="food-scanner-next" type="button" class="carousel-btn carousel-next"><i data-lucide="chevron-right"></i></button>
+                    <button id="ai-scanner-next" type="button" class="carousel-btn carousel-next"><i data-lucide="chevron-right"></i></button>
                 </div>
-                <p id="food-scanner-status" class="text-center text-sm text-gray-400 mt-2 h-5"></p>
+                <!-- This was the end of the scanner results container -->
+                </div>
             </div>
         </div>
     </div>
-    <div id="barcode-scanner-modal" class="modal-backdrop" style="z-index: 60;">
-        <div class="modal-content">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold">Scan Barcode</h2>
-                <button id="close-barcode-scanner-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button>
+
+    <!-- START: RE-ADDED MODALS -->
+
+    <!-- AI Nutritionist Chat Modal -->
+    <div id="ai-nutritionist-modal" class="modal-backdrop" style="z-index: 70;">
+        <div class="modal-content !h-[90vh] !max-h-[800px] flex flex-col">
+            <div class="flex justify-between items-center mb-4 pb-4 border-b border-border-color">
+                <h2 class="text-2xl font-bold flex items-center gap-2"><i data-lucide="bot" class="w-6 h-6 text-blue-400"></i>AI Nutritionist</h2>
+                <button id="close-ai-nutritionist-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button>
             </div>
-            <div class="space-y-4">
-                <div id="barcode-reader" class="w-full aspect-square bg-black rounded-lg border border-border-color hidden"></div>
-                <div id="barcode-initial-options" class="flex flex-col gap-4">
-                    <button id="start-camera-scan-btn" class="btn btn-primary w-full"><i data-lucide="camera"></i>Start Live Scan</button>
-                    <label for="barcode-upload-input" class="btn btn-secondary cursor-pointer w-full"><i data-lucide="upload"></i>Upload Barcode Image(s)</label>
-                    <input type="file" id="barcode-upload-input" class="hidden" accept="image/*" multiple>
-                    <div class="relative"><span class="absolute inset-0 flex items-center"><span class="w-full border-t border-border-color"></span></span><span class="relative flex justify-center text-xs uppercase"><span class="bg-card-bg px-2 text-secondary-text">Or</span></span></div>
-                </div>
-                <div class="flex gap-2">
-                    <input type="number" id="manual-barcode-input" class="form-input" placeholder="Enter barcode manually...">
-                    <button id="manual-barcode-submit" class="btn btn-secondary"><i data-lucide="search"></i></button>
-                </div>
+            <div id="ai-chat-history" class="flex-grow overflow-y-auto space-y-4 pr-2 custom-scrollbar">
+                <!-- Chat history will be rendered here -->
             </div>
-            <p id="barcode-scanner-status" class="text-center text-sm text-secondary-text h-5"></p>
-            <!-- Carousel structure for barcode scanner -->
-            <div id="barcode-scanner-carousel-wrapper" class="carousel-wrapper hidden">
-                <button id="barcode-scanner-prev" type="button" class="carousel-btn carousel-prev"><i data-lucide="chevron-left"></i></button>
-                <div id="barcode-results" class="horizontal-scroll-container scanner-carousel mt-4 min-h-[220px]">
-                    <!-- Results injected here -->
-                </div>
-                <button id="barcode-scanner-next" type="button" class="carousel-btn carousel-next"><i data-lucide="chevron-right"></i></button>
+            <div class="mt-4 pt-4 border-t border-border-color flex gap-2">
+                <input type="text" id="ai-chat-input" class="form-input flex-grow" placeholder="Ask about your diet...">
+                <button id="ai-chat-send-btn" class="btn btn-primary !p-3"><i data-lucide="send" class="w-5 h-5"></i></button>
             </div>
         </div>
     </div>
-    <div id="confirm-modal" class="modal-backdrop"><div class="modal-content"><h2 id="confirm-modal-title" class="text-xl font-bold mb-4">Are you sure?</h2><p id="confirm-modal-text" class="text-gray-300 mb-6">This action cannot be undone.</p><div class="flex justify-end gap-4"><button id="confirm-modal-cancel-btn" class="btn btn-secondary">Cancel</button><button id="confirm-modal-confirm-btn" class="btn btn-danger">Confirm</button></div></div></div>
-    <div id="alert-modal" class="modal-backdrop"><div class="modal-content"><h2 id="alert-modal-title" class="text-xl font-bold mb-4">Alert</h2><p id="alert-modal-text" class="text-gray-300 mb-6"></p><div class="flex justify-end"><button id="alert-modal-ok-btn" class="btn btn-primary">OK</button></div></div></div>
-    <div id="ai-report-modal" class="modal-backdrop"><div class="modal-content"><div class="flex justify-between items-center mb-4"><h2 class="text-xl font-bold flex items-center gap-2"><i data-lucide="sparkles" class="w-5 h-5 text-yellow-400"></i>AI Nutrition Report</h2><button id="close-ai-report-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button></div><p id="ai-report-modal-text" class="text-gray-300 mb-6"></p><div class="flex justify-end"><button id="ai-report-modal-ok-btn" class="btn btn-primary">OK</button></div></div></div>
 
-    <!-- --- MODIFICATION 1, 4, 8: Recipe Modal (Compound Food Modal) - RESTRUCTURED --- -->
-    <div id="compound-food-modal" class="modal-backdrop">
-        <!-- The modal-content class is now heavily modified by CSS -->
+    <!-- Edit Favorite Modal -->
+    <div id="edit-favorite-modal" class="modal-backdrop">
         <div class="modal-content">
-            <!-- Modal Header -->
-            <div class="flex-shrink-0 flex justify-between items-center mb-4">
-                <h2 id="compound-food-modal-title" class="text-2xl font-bold">Create a Recipe</h2>
-                <button id="close-compound-food-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button>
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold">Edit Favorite Food</h2>
+                <button id="close-edit-favorite-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button>
             </div>
-
-            <!-- Form now wraps content and footer -->
-            <form id="compound-food-form" class="flex flex-col flex-grow overflow-hidden">
-                
-                <!-- Scrollable Content Area -->
-                <!-- *** MODIFICATION: Moved recipe-totals-container out of this div *** -->
-                <div class="flex-grow space-y-4 overflow-y-auto custom-scrollbar pr-2">
+            <form id="edit-favorite-form" class="space-y-4">
+                <div>
+                    <label for="edit-fav-food-name" class="form-label">Food Name (100g serving)</label>
+                    <input type="text" id="edit-fav-food-name" class="form-input mt-1" required>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <input type="text" id="recipe-name-input" class="form-input" required placeholder="Name Your Creation">
+                        <label for="edit-fav-food-calories" class="form-label">Calories</label>
+                        <input type="number" step="0.01" id="edit-fav-food-calories" class="form-input mt-1" required>
                     </div>
-                    
-                    <div class="border-b border-gray-800 pb-2">
-                        <h3 class="text-lg font-semibold text-center">Ingredients</h3>
-                        <div id="recipe-carousel-wrapper" class="carousel-wrapper">
-                            <button id="recipe-prev-ingredient" type="button" class="carousel-btn carousel-prev"><i data-lucide="chevron-left"></i></button>
-                            <!-- Container now has more vertical room -->
-                            <div id="ingredient-list-container" class="horizontal-scroll-container recipe-carousel min-h-[250px] items-start border border-gray-700 rounded-lg p-2">
-                                <!-- Ingredient rows will be added here -->
-                            </div>
-                            <button id="recipe-next-ingredient" type="button" class="carousel-btn carousel-next"><i data-lucide="chevron-right"></i></button>
-                        </div>
+                    <div>
+                        <label for="edit-fav-food-protein" class="form-label">Protein (g)</label>
+                        <input type="number" step="0.01" id="edit-fav-food-protein" class="form-input mt-1" required>
                     </div>
                 </div>
-                
-                <!-- --- MODIFICATION: Moved totals outside of scroll area --- -->
-                <div id="recipe-totals-container" class="flex-shrink-0 border-t border-b border-gray-800 py-3 px-2">
-                    <h3 class="text-lg font-semibold text-center mb-2">Total Macros</h3>
-                    <div id="recipe-totals" class="grid grid-cols-4 gap-x-2 gap-y-3 text-center">
-                        <!-- Calories -->
-                        <div>
-                            <p class="text-sm text-gray-400">Calories</p>
-                            <p id="recipe-total-calories" class="font-bold text-base">0</p>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-400">Protein</p>
-                            <p class="font-bold text-base"><span id="recipe-total-protein">0</span>g</p>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-400">Carbs</p>
-                            <p class="font-bold text-base"><span id="recipe-total-carbs">0</span>g</p>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-400">Fat</p>
-                            <p class="font-bold text-base"><span id="recipe-total-fat">0</span>g</p>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-400">Grams</p>
-                            <p id="recipe-total-grams" class="font-bold text-base">0</p>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-400">Sugar</p>
-                            <p class="font-bold text-base"><span id="recipe-total-sugar">0</span>g</p>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-400">Sodium</p>
-                            <p class="font-bold text-base"><span id="recipe-total-sodium">0</span>mg</p>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-400">Potassium</p>
-                            <p class="font-bold text-base"><span id="recipe-total-potassium">0</span>mg</p>
-                        </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="edit-fav-food-carbs" class="form-label">Carbs (g)</label>
+                        <input type="number" step="0.01" id="edit-fav-food-carbs" class="form-input mt-1" required>
+                    </div>
+                    <div>
+                        <label for="edit-fav-food-fat" class="form-label">Fat (g)</label>
+                        <input type="number" step="0.01" id="edit-fav-food-fat" class="form-input mt-1" required>
                     </div>
                 </div>
-                <!-- --- END MODIFICATION --- -->
-                
-                <!-- --- MODIFICATION 1 & 4: Sticky Footer / Action Bar --- -->
-                <div class="flex-shrink-0 pt-3 mt-auto border-t border-gray-800">
-                    <div class="grid grid-cols-2 gap-2">
-                        <button type="button" id="add-ingredient-btn" class="btn btn-secondary w-full"><i data-lucide="plus"></i>Add Ingredient</button>
-                        <button type="submit" id="save-recipe-btn" class="btn btn-primary w-full">Save & Log Recipe</button>
+                <!-- Optional micronutrients -->
+                <details class="pt-2">
+                    <summary class="cursor-pointer text-sm text-gray-400 hover:text-white">Optional Macros (per 100g)</summary>
+                    <div class="grid grid-cols-3 gap-3 pt-3">
+                        <div>
+                            <label for="edit-fav-food-sugar" class="form-label text-xs">Sugar (g)</label>
+                            <input type="number" step="0.01" id="edit-fav-food-sugar" class="form-input mt-1 !py-1.5 text-sm">
+                        </div>
+                        <div>
+                            <label for="edit-fav-food-sodium" class="form-label text-xs">Sodium (mg)</label>
+                            <input type="number" step="0.01" id="edit-fav-food-sodium" class="form-input mt-1 !py-1.5 text-sm">
+                        </div>
+                        <div>
+                            <label for="edit-fav-food-potassium" class="form-label text-xs">Potassium (mg)</label>
+                            <input type="number" step="0.01" id="edit-fav-food-potassium" class="form-input mt-1 !py-1.5 text-sm">
+                        </div>
                     </div>
-                </div>
-                <!-- --- END MODIFICATION 1 & 4 --- -->
-
+                </details>
+                <button type="submit" class="btn btn-primary w-full mt-4">Save Changes</button>
             </form>
         </div>
     </div>
-    <!-- --- END MODIFICATION 1, 4, 8 --- -->
 
-    <!-- --- MODIFICATION 3: New Scan Chooser Modal --- -->
-    <div id="ingredient-scan-chooser-modal" class="modal-backdrop" style="z-index: 70;">
+    <!-- Generic Alert Modal -->
+    <div id="alert-modal" class="modal-backdrop" style="z-index: 80;">
         <div class="modal-content">
-            <h2 class="text-xl font-bold mb-6 text-center">Scan Ingredient</h2>
-            <div class="grid grid-cols-1 gap-4">
-                <button id="chooser-scan-barcode" class="btn btn-primary !py-4"><i data-lucide="barcode"></i>Scan Barcode</button>
-                <button id="chooser-scan-food" class="btn btn-secondary !py-4"><i data-lucide="camera"></i>Scan Food Image</button>
-            </div>
-            <button id="chooser-scan-cancel" class="btn btn-secondary w-full mt-6">Cancel</button>
+            <h2 id="alert-modal-title" class="text-2xl font-bold mb-4">Alert</h2>
+            <p id="alert-modal-text" class="text-gray-300 mb-6"></p>
+            <button id="alert-modal-ok-btn" class="btn btn-primary w-full">OK</button>
         </div>
     </div>
-    <!-- --- END MODIFICATION 3 --- -->
 
+    <!-- Generic Confirm Modal -->
+    <div id="confirm-modal" class="modal-backdrop" style="z-index: 80;">
+        <div class="modal-content">
+            <h2 id="confirm-modal-title" class="text-2xl font-bold mb-4">Confirm</h2>
+            <p id="confirm-modal-text" class="text-gray-300 mb-6"></p>
+            <div class="flex gap-4">
+                <button id="confirm-modal-cancel-btn" class="btn btn-secondary w-full">Cancel</button>
+                <button id="confirm-modal-confirm-btn" class="btn btn-danger w-full">Confirm</button>
+            </div>
+        </div>
+    </div>
 
-    <div id="prompt-modal" class="modal-backdrop"><div class="modal-content"><h2 id="prompt-modal-title" class="text-xl font-bold mb-4">Input Required</h2><p id="prompt-modal-text" class="text-gray-300 mb-4"></p><input type="number" id="prompt-modal-input" min="0" class="form-input mb-6"><div class="flex justify-end gap-4"><button id="prompt-modal-cancel-btn" class="btn btn-secondary">Cancel</button><button id="prompt-modal-ok-btn" class="btn btn-primary">OK</button></div></div></div>
-    <div id="edit-favorite-modal" class="modal-backdrop"><div class="modal-content"><div class="flex justify-between items-center mb-4"><h2 class="text-2xl font-bold">Edit Favorite Food</h2><button id="close-edit-favorite-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button></div><form id="edit-favorite-form" class="space-y-4"><p class="text-sm text-gray-400">All values should be per 100g.</p><div><label for="edit-fav-food-name" class="form-label">Food Name</label><input type="text" id="edit-fav-food-name" class="form-input mt-1" required></div><div class="grid grid-cols-2 gap-4"><div><label for="edit-fav-food-calories" class="form-label">Calories (kcal)</label><input type="number" step="0.01" min="0" id="edit-fav-food-calories" class="form-input mt-1" required></div><div><label for="edit-fav-food-protein" class="form-label">Protein (g)</label><input type="number" step="0.01" min="0" id="edit-fav-food-protein" class="form-input mt-1" required></div></div><div class="grid grid-cols-2 gap-4"><div><label for="edit-fav-food-carbs" class="form-label">Carbs (g)</label><input type="number" step="0.01" min="0" id="edit-fav-food-carbs" class="form-input mt-1" required></div><div><label for="edit-fav-food-fat" class="form-label">Fat (g)</label><input type="number" step="0.01" min="0" id="edit-fav-food-fat" class="form-input mt-1" required></div></div><button type="submit" class="btn btn-primary w-full">Update Favorite</button></form></div></div>
-    <!-- AI Nutritionist Chat Modal -->
-    <div id="ai-nutritionist-modal" class="modal-backdrop"><div class="modal-content !max-w-2xl flex flex-col"><div class="flex justify-between items-center mb-4"><h2 class="text-2xl font-bold">AI Nutritionist Chat</h2><button id="close-ai-nutritionist-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button></div><div id="ai-chat-history" class="flex-grow space-y-4 overflow-y-auto custom-scrollbar pr-2 mb-4 min-h-[300px]"></div><div class="flex gap-2"><input type="text" id="ai-chat-input" class="form-input" placeholder="Ask a nutrition question..."><button id="ai-chat-send-btn" class="btn btn-primary"><i data-lucide="send"></i></button></div></div></div>
+    <!-- Generic Prompt Modal -->
+    <div id="prompt-modal" class="modal-backdrop" style="z-index: 80;">
+        <div class="modal-content">
+            <h2 id="prompt-modal-title" class="text-2xl font-bold mb-4">Input</h2>
+            <p id="prompt-modal-text" class="text-gray-300 mb-4"></p>
+            <input type="text" id="prompt-modal-input" class="form-input w-full">
+            <div class="flex gap-4 mt-6">
+                <button id="prompt-modal-cancel-btn" class="btn btn-secondary w-full">Cancel</button>
+                <button id="prompt-modal-ok-btn" class="btn btn-primary w-full">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Daily Report Modal -->
+    <div id="ai-report-modal" class="modal-backdrop">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold flex items-center gap-2"><i data-lucide="clipboard-list" class="w-5 h-5 text-blue-400"></i>Daily AI Report</h2>
+                <button id="close-ai-report-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button>
+            </div>
+            <div id="ai-report-modal-text" class="text-gray-300 max-h-60 overflow-y-auto custom-scrollbar pr-2"></div>
+            <button id="ai-report-modal-ok-btn" class="btn btn-primary w-full mt-6">Got it</button>
+        </div>
+    </div>
+
     <!-- AI Meal Suggester Modal -->
-    <div id="ai-suggester-modal" class="modal-backdrop"><div class="modal-content"><div class="flex justify-between items-center mb-4"><h2 class="text-2xl font-bold">AI Meal Suggester</h2><button id="close-ai-suggester-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button></div><p class="text-gray-400 mb-4 text-sm">Enter ingredients you have, and the AI will suggest a quick, healthy meal.</p><div><label for="ai-ingredients" class="form-label">Your Ingredients</label><textarea id="ai-ingredients-input" rows="3" class="form-input mt-1" placeholder="e.g., chicken breast, rice, broccoli, olive oil"></textarea></div><button id="ai-suggestion-btn" class="btn btn-secondary w-full mt-4"><span class="btn-text">Generate Ideas</span><div class="loader hidden"></div></button><div id="ai-suggestions-output" class="mt-4 space-y-3"></div></div></div>
+    <div id="ai-suggester-modal" class="modal-backdrop">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold">AI Meal Suggester</h2>
+                <button id="close-ai-suggester-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button>
+            </div>
+            <p class="text-gray-400 mb-4 text-sm">Enter ingredients you have, and the AI will suggest a quick, healthy meal.</p>
+            <div>
+                <label for="ai-ingredients-input" class="form-label">Your Ingredients</label>
+                <textarea id="ai-ingredients-input" rows="3" class="form-input mt-1" placeholder="e.g., chicken breast, rice, broccoli, olive oil"></textarea>
+            </div>
+            <button id="ai-suggestion-btn" class="btn btn-secondary w-full mt-4"><span class="btn-text">Generate Ideas</span><div class="loader hidden"></div></button>
+            <div id="ai-suggestions-output" class="mt-4 space-y-3"></div>
+        </div>
+    </div>
+
+    <!-- AI Macro Swap Modal -->
+    <div id="ai-macro-swap-modal" class="modal-backdrop">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold flex items-center gap-2"><i data-lucide="replace" class="w-5 h-5 text-blue-400"></i>AI Macro Swap</h2>
+                <button id="close-ai-macro-swap-modal-btn" class="text-gray-400 hover:text-white text-3xl">&times;</button>
+            </div>
+            <p class="text-gray-400 mb-4 text-sm">Healthier alternatives for <strong id="ai-swap-food-name" class="text-white">...</strong></p>
+            <div id="ai-macro-swap-output" class="space-y-3 min-h-[150px]">
+                <!-- Suggestions will be injected here -->
+                <div class="loader mx-auto"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- END: RE-ADDED MODALS -->
+
+    <!-- REMOVED: Water Log Modal -->
+    <!-- <div id="water-log-modal" class="modal-backdrop"> ... </div> -->
 
      <!-- Undo Toast -->
     <div id="undo-toast" class="fixed bottom-20 left-1/2 -translate-x-1/2 bg-gray-800 text-white py-2 px-4 rounded-lg shadow-lg flex items-center gap-4 transform translate-y-24 opacity-0 transition-all duration-300 z-[100]">
@@ -779,6 +769,9 @@
         </a>
     </nav>
 
+    <!-- Hidden helper for html5-qrcode library -->
+    <div id="barcode-reader-hidden-helper" class="hidden"></div>
+
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -790,20 +783,20 @@
             let savedRecipes = [];
             let editingFoodLogIndex = null;
             let editingFavoriteFoodName = null;
-            let editingRecipeIndex = null;
+            // let editingRecipeIndex = null; // Removed recipe edit state
             let confirmCallback = null;
             let promptCallback = null;
-            let scanningIngredientRow = null;
             let viewDate = new Date();
             viewDate.setHours(0, 0, 0, 0);
-            let html5QrCode;
+            // let html5QrCode; // No longer needed as a global
             let foodCameraStream = null;
             let aiBaseMacros = null;
             let chatHistory = [];
             let lastScannedBarcode = { code: null, time: 0 };
             let undoTimeout = null;
             let lastAction = null;
-            let openModalCount = 0; // <-- FIXED: Added for modal scroll lock
+            let lastWaterLogAmount = 0; // NEW: Store last water amount for undo
+            let openModalCount = 0;
 
             // --- CORE & HELPER FUNCTIONS ---
             function dateToKey(date) { return date.toISOString().split('T')[0]; }
@@ -821,7 +814,7 @@
 
             // --- GEMINI API ---
             const getApiUrl = (model, action = 'generateContent') => {
-                 const apiKey = "AIzaSyDY48xF1byvU05kS9qKvN8iyrIR3hheP8w"; // Leave empty for Canvas environment
+                 const apiKey = ""; // Leave empty for Canvas environment
                  return `https://generativelanguage.googleapis.com/v1beta/models/${model}:${action}?key=${apiKey}`;
             };
 
@@ -852,7 +845,6 @@
                         } else if (response.status === 429 || response.status >= 500) { // Retry on rate limit or server errors
                             if (i === maxRetries - 1) throw new Error(`API Error: ${response.status} after ${maxRetries} attempts.`);
                             const delay = Math.pow(2, i) * 1000 + Math.random() * 1000; // Exponential backoff with jitter
-                            // console.log(`API call failed with status ${response.status}. Retrying in ${delay}ms...`);
                             await new Promise(resolve => setTimeout(resolve, delay));
                         } else { // Don't retry for other client errors (4xx)
                             throw new Error(`API Error: ${response.status}`);
@@ -868,7 +860,7 @@
             }
             // --- END GEMINI API ---
 
-            // --- FIXED: Modal show/hide functions ---
+            // --- Modal show/hide functions ---
             function showModal(modalElement) {
                 modalElement.style.display = 'flex';
                 if (openModalCount === 0) {
@@ -884,7 +876,7 @@
                     openModalCount = 0; // Failsafe
                 }
             }
-            // --- END FIXED Modal functions ---
+            // --- END Modal functions ---
 
             function showCustomAlert(title, text) { if (ui.alertModal.style.display === 'flex') return; ui.alertModalTitle.textContent = title; ui.alertModalText.textContent = text; showModal(ui.alertModal); }
             function showConfirmModal(title, text, onConfirm) { if (ui.confirmModal.style.display === 'flex') return; ui.confirmModalTitle.textContent = title; ui.confirmModalText.textContent = text; confirmCallback = onConfirm; showModal(ui.confirmModal); }
@@ -921,20 +913,47 @@
 
             // --- UI ELEMENT DEFINITIONS ---
             const ui = {
-                foodNameInput: document.getElementById('food-name-input'), foodBrandInput: document.getElementById('food-brand-input'), foodServingsInput: document.getElementById('food-servings-input'), foodGramsInput: document.getElementById('food-grams-input'), logMealForm: document.getElementById('log-meal-form'), addFoodBtn: document.getElementById('add-food-btn'), addFoodError: document.getElementById('add-food-error'), dailyLogContentDiv: document.getElementById('daily-log-content'), scanFoodBtn: document.getElementById('scan-food-btn'), foodScannerModal: document.getElementById('food-scanner-modal'), closeFoodScannerModalBtn: document.getElementById('close-food-scanner-modal-btn'), uploadPhotoInput: document.getElementById('upload-photo-input'), scannerResultsContainer: document.getElementById('scanner-results-container'), foodScannerStatus: document.getElementById('food-scanner-status'), confirmModal: document.getElementById('confirm-modal'), confirmModalTitle: document.getElementById('confirm-modal-title'), confirmModalText: document.getElementById('confirm-modal-text'), confirmModalCancelBtn: document.getElementById('confirm-modal-cancel-btn'), confirmModalConfirmBtn: document.getElementById('confirm-modal-confirm-btn'), alertModal: document.getElementById('alert-modal'), alertModalTitle: document.getElementById('alert-modal-title'), alertModalText: document.getElementById('alert-modal-text'), alertModalOkBtn: document.getElementById('alert-modal-ok-btn'), createRecipeBtn: document.getElementById('create-recipe-btn'), compoundFoodModal: document.getElementById('compound-food-modal'), closeCompoundFoodModalBtn: document.getElementById('close-compound-food-modal-btn'), compoundFoodForm: document.getElementById('compound-food-form'), recipeNameInput: document.getElementById('recipe-name-input'), ingredientListContainer: document.getElementById('ingredient-list-container'), addIngredientBtn: document.getElementById('add-ingredient-btn'), saveRecipeBtn: document.getElementById('save-recipe-btn'), savedItemsListDiv: document.getElementById('saved-items-list'), promptModal: document.getElementById('prompt-modal'), promptModalTitle: document.getElementById('prompt-modal-title'), promptModalText: document.getElementById('prompt-modal-text'), promptModalInput: document.getElementById('prompt-modal-input'), promptModalCancelBtn: document.getElementById('prompt-modal-cancel-btn'), promptModalOkBtn: document.getElementById('prompt-modal-ok-btn'), editFavoriteModal: document.getElementById('edit-favorite-modal'), closeEditFavoriteModalBtn: document.getElementById('close-edit-favorite-modal-btn'), editFavoriteForm: document.getElementById('edit-favorite-form'), dailySummaryCard: document.getElementById('daily-summary-card'), dayViewTitleSpan: document.getElementById('day-view-title-span'), dayViewDateSpan: document.getElementById('day-view-date-span'), aiDailyReportBtn: document.getElementById('ai-daily-report-btn'),
+                foodNameInput: document.getElementById('food-name-input'), foodBrandInput: document.getElementById('food-brand-input'), foodServingsInput: document.getElementById('food-servings-input'), foodGramsInput: document.getElementById('food-grams-input'), logMealForm: document.getElementById('log-meal-form'), addFoodBtn: document.getElementById('add-food-btn'), addFoodError: document.getElementById('add-food-error'), dailyLogContentDiv: document.getElementById('daily-log-content'),
+                
+                // Renamed AI Scanner Modal elements
+                foodScannerModal: document.getElementById('ai-scanner-modal'), // Kept old name for compatibility, points to new ID
+                closeFoodScannerModalBtn: document.getElementById('close-ai-scanner-modal-btn'),
+                uploadPhotoInput: document.getElementById('ai-upload-photo-input'),
+                scannerResultsContainer: document.getElementById('ai-scanner-results-container'),
+                foodScannerStatus: document.getElementById('ai-scanner-status'),
+
+                confirmModal: document.getElementById('confirm-modal'), confirmModalTitle: document.getElementById('confirm-modal-title'), confirmModalText: document.getElementById('confirm-modal-text'), confirmModalCancelBtn: document.getElementById('confirm-modal-cancel-btn'), confirmModalConfirmBtn: document.getElementById('confirm-modal-confirm-btn'), alertModal: document.getElementById('alert-modal'), alertModalTitle: document.getElementById('alert-modal-title'), alertModalText: document.getElementById('alert-modal-text'), alertModalOkBtn: document.getElementById('alert-modal-ok-btn'), 
+                
+                // createRecipeBtn: document.getElementById('create-recipe-btn'), // Removed
+                aiMacroSwapBtn: document.getElementById('ai-macro-swap-btn'), // Added
+
+                savedItemsListDiv: document.getElementById('saved-items-list'), promptModal: document.getElementById('prompt-modal'), promptModalTitle: document.getElementById('prompt-modal-title'), promptModalText: document.getElementById('prompt-modal-text'), promptModalInput: document.getElementById('prompt-modal-input'), promptModalCancelBtn: document.getElementById('prompt-modal-cancel-btn'), promptModalOkBtn: document.getElementById('prompt-modal-ok-btn'), editFavoriteModal: document.getElementById('edit-favorite-modal'), closeEditFavoriteModalBtn: document.getElementById('close-edit-favorite-modal-btn'), editFavoriteForm: document.getElementById('edit-favorite-form'), dailySummaryCard: document.getElementById('daily-summary-card'), dayViewTitleSpan: document.getElementById('day-view-title-span'), dayViewDateSpan: document.getElementById('day-view-date-span'), aiDailyReportBtn: document.getElementById('ai-daily-report-btn'),
                 aiReportModal: document.getElementById('ai-report-modal'), aiReportModalText: document.getElementById('ai-report-modal-text'), closeAiReportModalBtn: document.getElementById('close-ai-report-modal-btn'), aiReportModalOkBtn: document.getElementById('ai-report-modal-ok-btn'),
                 addWaterBtn: document.getElementById('add-water-btn'),
-                scanBarcodeBtn: document.getElementById('scan-barcode-btn'), barcodeScannerModal: document.getElementById('barcode-scanner-modal'), closeBarcodeScannerModalBtn: document.getElementById('close-barcode-scanner-modal-btn'), barcodeReader: document.getElementById('barcode-reader'), barcodeScannerStatus: document.getElementById('barcode-scanner-status'), barcodeResults: document.getElementById('barcode-results'),
+                waterFill: document.getElementById('water-fill'), // NEW: Water fill UI
+                
+                // Removed Barcode Modal elements
+                // barcodeScannerModal: document.getElementById('barcode-scanner-modal'), 
+                // closeBarcodeScannerModalBtn: document.getElementById('close-barcode-scanner-modal-btn'), 
+                // barcodeReader: document.getElementById('barcode-reader'), 
+                // barcodeScannerStatus: document.getElementById('barcode-scanner-status'), 
+                // barcodeResults: document.getElementById('barcode-results'),
+
                 openNutritionistChatBtn: document.getElementById('open-nutritionist-chat-btn'), aiNutritionistModal: document.getElementById('ai-nutritionist-modal'), closeAiNutritionistModalBtn: document.getElementById('close-ai-nutritionist-modal-btn'), aiChatHistory: document.getElementById('ai-chat-history'), aiChatInput: document.getElementById('ai-chat-input'), aiChatSendBtn: document.getElementById('ai-chat-send-btn'),
-                foodScannerInitialOptions: document.getElementById('food-scanner-initial-options'),
-                liveCameraContainer: document.getElementById('live-camera-container'),
-                startFoodCameraBtn: document.getElementById('start-food-camera-btn'),
-                stopFoodCameraBtn: document.getElementById('stop-food-camera-btn'),
-                captureFoodPhotoBtn: document.getElementById('capture-food-photo-btn'),
-                foodCameraVideo: document.getElementById('food-camera-video'),
-                foodCameraCanvas: document.getElementById('food-camera-canvas'),
-                manualBarcodeSubmit: document.getElementById('manual-barcode-submit'),
-                manualBarcodeInput: document.getElementById('manual-barcode-input'),
+                
+                // More renamed AI Scanner elements
+                foodScannerInitialOptions: document.getElementById('ai-scanner-initial-options'),
+                liveCameraContainer: document.getElementById('ai-live-camera-container'),
+                startFoodCameraBtn: document.getElementById('start-ai-camera-btn'),
+                stopFoodCameraBtn: document.getElementById('stop-ai-camera-btn'),
+                captureFoodPhotoBtn: document.getElementById('capture-ai-photo-btn'),
+                foodCameraVideo: document.getElementById('ai-camera-video'),
+                foodCameraCanvas: document.getElementById('ai-camera-canvas'),
+                
+                // Removed manual barcode elements
+                // manualBarcodeSubmit: document.getElementById('manual-barcode-submit'),
+                // manualBarcodeInput: document.getElementById('manual-barcode-input'),
+
                 aiMealSuggesterBtn: document.getElementById('ai-meal-suggester-btn'),
                 aiSuggesterModal: document.getElementById('ai-suggester-modal'),
                 closeAiSuggesterModalBtn: document.getElementById('close-ai-suggester-modal-btn'),
@@ -945,23 +964,38 @@
                 undoToastBtn: document.getElementById('undo-toast-btn'),
                 undoToastText: document.getElementById('undo-toast-text'),
                 // Carousel Buttons
-                foodScannerCarouselWrapper: document.getElementById('food-scanner-carousel-wrapper'),
-                foodScannerPrev: document.getElementById('food-scanner-prev'),
-                foodScannerNext: document.getElementById('food-scanner-next'),
-                barcodeScannerCarouselWrapper: document.getElementById('barcode-scanner-carousel-wrapper'),
-                barcodeScannerPrev: document.getElementById('barcode-scanner-prev'),
-                barcodeScannerNext: document.getElementById('barcode-scanner-next'),
-                recipeCarouselWrapper: document.getElementById('recipe-carousel-wrapper'),
-                recipePrevIngredient: document.getElementById('recipe-prev-ingredient'),
-                recipeNextIngredient: document.getElementById('recipe-next-ingredient'),
+                foodScannerCarouselWrapper: document.getElementById('ai-scanner-carousel-wrapper'),
+                foodScannerPrev: document.getElementById('ai-scanner-prev'),
+                foodScannerNext: document.getElementById('ai-scanner-next'),
                 
-                // --- NEW/MODIFIED UI elements ---
-                // findMacrosAiBtn: document.getElementById('find-macros-ai-btn'), // Removed, now dynamic
-                // recipeTotalCaloriesSummary: document.getElementById('recipe-total-calories-summary'), // Removed
-                ingredientScanChooserModal: document.getElementById('ingredient-scan-chooser-modal'),
-                chooserScanBarcode: document.getElementById('chooser-scan-barcode'),
-                chooserScanFood: document.getElementById('chooser-scan-food'),
-                chooserScanCancel: document.getElementById('chooser-scan-cancel'),
+                // Removed Barcode Carousel buttons
+                // barcodeScannerCarouselWrapper: document.getElementById('barcode-scanner-carousel-wrapper'),
+                // barcodeScannerPrev: document.getElementById('barcode-scanner-prev'),
+                // barcodeScannerNext: document.getElementById('barcode-scanner-next'),
+
+                // Removed chooser modal elements
+                scanCombinedBtn: document.getElementById('scan-combined-btn'),
+                // combinedScannerChooserModal: document.getElementById('combined-scanner-chooser-modal'),
+                // chooserScanBarcodeBtn: document.getElementById('chooser-scan-barcode-btn'),
+                // chooserScanFoodBtn: document.getElementById('chooser-scan-food-btn'),
+                // chooserScanCancelBtn: document.getElementById('chooser-scan-cancel-btn'),
+
+                // Added AI Macro Swap Modal
+                aiMacroSwapModal: document.getElementById('ai-macro-swap-modal'),
+                closeAiMacroSwapModalBtn: document.getElementById('close-ai-macro-swap-modal-btn'),
+                aiMacroSwapOutput: document.getElementById('ai-macro-swap-output'),
+                aiSwapFoodName: document.getElementById('ai-swap-food-name'),
+
+                // REMOVED: Water Log Modal UI elements
+                // waterLogModal: document.getElementById('water-log-modal'),
+                // closeWaterLogModalBtn: document.getElementById('close-water-log-modal-btn'),
+                // waterModalCurrent: document.getElementById('water-modal-current'),
+                // waterModalAddDefaultBtn: document.getElementById('water-modal-add-default-btn'),
+                // waterModalAdd500Btn: document.getElementById('water-modal-add-500-btn'),
+                // waterModalRemoveDefaultBtn: document.getElementById('water-modal-remove-default-btn'),
+                // waterModalRemove500Btn: document.getElementById('water-modal-remove-500-btn'),
+                // waterModalSetTotalInput: document.getElementById('water-modal-set-total-input'),
+                // waterModalSetTotalBtn: document.getElementById('water-modal-set-total-btn'),
             };
 
             // --- CHART.JS SETUP ---
@@ -984,6 +1018,12 @@
                 document.getElementById('current-potassium').textContent = totals.potassium.toFixed(0); document.getElementById('goal-potassium').textContent = goals.potassium;
                 document.getElementById('current-water').textContent = dayLog.water; document.getElementById('goal-water').textContent = goals.water;
 
+                // NEW: Update water fill
+                const waterPercent = Math.min(100, (dayLog.water / (goals.water || 1)) * 100);
+                if (ui.waterFill) {
+                    ui.waterFill.style.height = `${waterPercent}%`;
+                }
+
                 const macroSum = totals.protein + totals.carbs + totals.fat;
                 macroChart.data.datasets[0].data = macroSum > 0 ? [totals.protein, totals.carbs, totals.fat] : [1, 1, 1];
                 macroChart.update();
@@ -999,7 +1039,7 @@
                             <div class="swipe-action-container left"><div class="action delete"><i data-lucide="trash-2" class="pointer-events-none"></i><span class="ml-2 pointer-events-none">Delete</span></div></div>
                             <div class="swipe-action-container right"><div class="action edit"><span class="mr-2 pointer-events-none">Edit</span><i data-lucide="pencil" class="pointer-events-none"></i></div></div>
                         </div>
-                        <div class="swipe-content p-3 rounded-lg">
+                        <div class="swipe-content p-3 rounded-lg border border-transparent hover:border-gray-700"> <!-- Added border for hover -->
                             <div class="flex justify-between items-center">
                                 <div class="flex items-center gap-3">
                                     ${isFavorite(item.name) ? '<i data-lucide="star" class="w-4 h-4 text-yellow-400 fill-yellow-400 flex-shrink-0"></i>' : '<div class="w-4 h-4 flex-shrink-0"></div>'}
@@ -1033,7 +1073,7 @@
                             <div class="swipe-action-container left"><div class="action delete"><i data-lucide="trash-2" class="pointer-events-none"></i><span class="ml-2 pointer-events-none">Delete</span></div></div>
                             <div class="swipe-action-container right"><div class="action edit"><span class="mr-2 pointer-events-none">Edit</span><i data-lucide="pencil" class="pointer-events-none"></i></div></div>
                         </div>
-                        <div class="swipe-content p-3 rounded-lg">
+                        <div class="swipe-content p-3 rounded-lg border border-transparent hover:border-gray-700"> <!-- Added border for hover -->
                             <div class="flex justify-between items-center">
                                 <div class="flex items-center gap-3">
                                    ${isFavorite(item.name) ? '<i data-lucide="star" class="w-4 h-4 text-yellow-400 fill-yellow-400 flex-shrink-0"></i>' : '<div class="w-4 h-4 flex-shrink-0"></div>'}
@@ -1055,215 +1095,10 @@
                 lucide.createIcons();
             }
 
-            // --- --- MODIFICATION 2, 6, 7, 9: Updated addIngredientRow Function --- ---
-            function addIngredientRow(ingredient = null, index = null) {
-                const div = document.createElement('div');
-                // *** MODIFICATION: Removed pt-5, just using p-3 ***
-                div.className = 'scroll-item ingredient-row bg-input-bg rounded-lg space-y-2 p-3';
-                const ingredientNumber = index !== null ? index + 1 : ui.ingredientListContainer.querySelectorAll('.ingredient-row').length + 1; // Calculate number
+            // --- Recipe Modal Logic Removed ---
 
-                // *** MODIFICATION: New 4-row layout ***
-                div.innerHTML = `
-                    <!-- Row 1: Name & Remove Action -->
-                    <div class="flex items-end gap-1.5">
-                        <div class="flex-grow">
-                            <label class="form-label text-xs">Ingredient Name</label>
-                            <input type="text" list="favorite-foods-datalist" placeholder="e.g., Chicken" class="form-input ingredient-name text-sm !py-1.5 mt-1" value="${ingredient ? ingredient.name : ''}">
-                        </div>
-                        <div class="flex-grow">
-                            <label class="form-label text-xs">Grams</label>
-                            <input type="number" placeholder="g" min="0" class="form-input ingredient-grams text-sm !py-1.5 mt-1" value="${ingredient ? ingredient.grams : ''}">
-                        </div>
-                    </div>
-
-                    <!-- Row 3: Calories, Protein, Carbs, Fat -->
-                    <div class="grid grid-cols-4 gap-2 mt-3">
-                        <div>
-                            <label class="form-label text-xs">Calories</label>
-                            <input type="number" step="0.01" min="0" placeholder="kcal" class="form-input ingredient-calories text-xs !py-1 mt-1" value="${ingredient ? ingredient.calories : ''}">
-                        </div>
-                        <div>
-                            <label class="form-label text-xs">Protein</label>
-                            <input type="number" step="0.01" min="0" placeholder="g" class="form-input ingredient-protein text-xs !py-1 mt-1" value="${ingredient ? ingredient.protein : ''}">
-                        </div>
-                        <div>
-                            <label class="form-label text-xs">Carbs</label>
-                            <input type="number" step="0.01" min="0" placeholder="g" class="form-input ingredient-carbs text-xs !py-1 mt-1" value="${ingredient ? ingredient.carbs : ''}">
-                        </div>
-                        <div>
-                            <label class="form-label text-xs">Fat</label>
-                            <input type="number" step="0.01" min="0" placeholder="g" class="form-input ingredient-fat text-xs !py-1 mt-1" value="${ingredient ? ingredient.fat : ''}">
-                        </div>
-                    </div>
-
-                    <!-- Row 4: Sugar, Sodium, Potassium, # -->
-                    <div class="grid grid-cols-4 gap-2 mt-2">
-                        <div>
-                            <label class="form-label text-xs">Sugar</label>
-                            <input type="number" step="0.01" min="0" placeholder="g" class="form-input ingredient-sugar text-xs !py-1 mt-1" value="${ingredient ? ingredient.sugar : ''}">
-                        </div>
-                        <div>
-                            <label class="form-label text-xs">Sodium</label>
-                            <input type="number" step="0.01" min="0" placeholder="mg" class="form-input ingredient-sodium text-xs !py-1 mt-1" value="${ingredient ? ingredient.sodium : ''}">
-                        </div>
-                        <div>
-                            <label class="form-label text-xs">Potassium</label>
-                            <input type="number" step="0.01" min="0" placeholder="mg" class="form-input ingredient-potassium text-xs !py-1 mt-1" value="${ingredient ? ingredient.potassium : ''}">
-                        </div>
-                        <!-- Ingredient Number as 4th item -->
-                        <div class="flex flex-col items-center justify-end">
-                            <label class="form-label text-xs opacity-0">#</label> <!-- Hidden label for alignment -->
-                            <span class="ingredient-number mt-1">${ingredientNumber}</span>
-                        </div>
-                    </div>
-
-                    <!-- Row 2: Scan, AI, Grams -->
-                    <div class="flex items-end gap-1.5 mt-2">
-                        <button type="button" class="recipe-scan-btn btn btn-secondary !p-2 flex-shrink-0" title="Scan Ingredient">
-                            <i data-lucide="camera" class="w-4 h-4 pointer-events-none"></i>
-                        </button>
-                        <button type="button" class="find-macros-ai-btn btn btn-secondary !p-2 flex-shrink-0" title="Find Macros with AI">
-                            <i data-lucide="sparkles" class="w-4 h-4 pointer-events-none"></i>
-                            <div class="loader hidden !w-4 !h-4"></div>
-                        </button>
-                        <button type="button" class="remove-ingredient-btn btn btn-secondary !p-2 flex-shrink-0" title="Remove Ingredient">
-                            <i data-lucide="x" class="w-4 h-4 pointer-events-none"></i>
-                        </button>
-                    </div>
-                `;
-                ui.ingredientListContainer.appendChild(div);
-                lucide.createIcons();
-                updateRecipeTotals(); // Update count immediately after adding
-                // Update carousel after adding
-                setupCarousel('ingredient-list-container', 'recipe-prev-ingredient', 'recipe-next-ingredient');
-            }
-            // --- --- END MODIFIED addIngredientRow --- ---
-
-            // --- Function to update ingredient numbers ---
-            function updateIngredientNumbers() {
-                const rows = ui.ingredientListContainer.querySelectorAll('.ingredient-row');
-                rows.forEach((row, index) => {
-                    // *** MODIFICATION: Query selector is correct, uses .ingredient-number ***
-                    const numberSpan = row.querySelector('.ingredient-number');
-                    if (numberSpan) {
-                        numberSpan.textContent = index + 1;
-                    }
-                });
-            }
-
-            // --- MODIFICATION 4: updateRecipeTotals Function ---
-            function updateRecipeTotals() {
-                let totalCalories = 0, totalProtein = 0, totalCarbs = 0, totalFat = 0, totalGrams = 0, totalSugar = 0, totalSodium = 0, totalPotassium = 0;
-                
-                document.querySelectorAll('.ingredient-row').forEach(row => {
-                    const grams = parseFloat(row.querySelector('.ingredient-grams').value) || 0;
-                    const name = row.querySelector('.ingredient-name').value.trim();
-                    
-                    if (name && grams > 0) { // Only count if name and grams are valid
-                        totalGrams += grams;
-                        totalCalories += parseFloat(row.querySelector('.ingredient-calories').value) || 0;
-                        totalProtein += parseFloat(row.querySelector('.ingredient-protein').value) || 0;
-                        totalCarbs += parseFloat(row.querySelector('.ingredient-carbs').value) || 0;
-                        totalFat += parseFloat(row.querySelector('.ingredient-fat').value) || 0;
-                        totalSugar += parseFloat(row.querySelector('.ingredient-sugar').value) || 0;
-                        totalSodium += parseFloat(row.querySelector('.ingredient-sodium').value) || 0;
-                        totalPotassium += parseFloat(row.querySelector('.ingredient-potassium').value) || 0;
-                    }
-                });
-                
-                // Update expanded view
-                document.getElementById('recipe-total-calories').textContent = totalCalories.toFixed(0);
-                document.getElementById('recipe-total-protein').textContent = totalProtein.toFixed(1);
-                document.getElementById('recipe-total-carbs').textContent = totalCarbs.toFixed(1);
-                document.getElementById('recipe-total-fat').textContent = totalFat.toFixed(1);
-                document.getElementById('recipe-total-sugar').textContent = totalSugar.toFixed(1);
-                document.getElementById('recipe-total-sodium').textContent = totalSodium.toFixed(0);
-                document.getElementById('recipe-total-potassium').textContent = totalPotassium.toFixed(0);
-                document.getElementById('recipe-total-grams').textContent = totalGrams.toFixed(0);
-
-                // Update summary view
-                // ui.recipeTotalCaloriesSummary.textContent = totalCalories.toFixed(0); // Removed
-            }
-            // --- --- END MODIFIED updateRecipeTotals --- ---
-
-
-            // --- FIXED: New helper functions for recipe AI ---
-            async function fillIngredientRowFromAI(rowElement, data) {
-                const gramsInput = rowElement.querySelector('.ingredient-grams');
-                const caloriesInput = rowElement.querySelector('.ingredient-calories');
-
-                const currentGrams = parseFloat(gramsInput.value);
-                let ratio = 1;
-                
-                let baseGrams = data.servingGrams || 100.0;
-                // Handle cases where AI returns 0 or invalid servingGrams
-                if (baseGrams <= 0) { 
-                    baseGrams = 100.0;
-                }
-
-                if (isNaN(currentGrams) || currentGrams <= 0) {
-                    // No grams entered, fill form for 100g
-                    gramsInput.value = baseGrams.toFixed(0);
-                    ratio = 1; // Macros from AI are already for baseGrams
-                } else {
-                    // Grams are already entered, scale the baseGrams data
-                    ratio = currentGrams / baseGrams;
-                }
-
-                caloriesInput.value = (data.calories * ratio).toFixed(0);
-                rowElement.querySelector('.ingredient-protein').value = (data.protein * ratio).toFixed(1);
-                rowElement.querySelector('.ingredient-carbs').value = (data.carbs * ratio).toFixed(1);
-                rowElement.querySelector('.ingredient-fat').value = (data.fat * ratio).toFixed(1);
-                rowElement.querySelector('.ingredient-sugar').value = (data.sugar * ratio).toFixed(1);
-                rowElement.querySelector('.ingredient-sodium').value = (data.sodium * ratio).toFixed(0);
-                rowElement.querySelector('.ingredient-potassium').value = (data.potassium * ratio).toFixed(0);
-            }
-
-            async function handleIngredientAILookup(rowElement, force = false) {
-                const nameInput = rowElement.querySelector('.ingredient-name');
-                const caloriesInput = rowElement.querySelector('.ingredient-calories');
-                const name = nameInput.value.trim();
-                const calories = caloriesInput.value.trim();
-
-                // If no name, or (calories exist AND we're not forcing)
-                if (!name || (calories && !force)) {
-                    return;
-                }
-
-                nameInput.disabled = true;
-                nameInput.classList.add('opacity-50'); // Show disabled state
-
-                try {
-                    const data = await getMacrosFromAI(name, ''); // Call with no brand
-                    await fillIngredientRowFromAI(rowElement, data);
-                } catch (error) {
-                    console.error("Ingredient AI Error:", error);
-                    nameInput.classList.add('!border-red-500');
-                    setTimeout(() => nameInput.classList.remove('!border-red-500'), 2000);
-                } finally {
-                    nameInput.disabled = false;
-                    nameInput.classList.remove('opacity-50');
-                    updateRecipeTotals(); // IMPORTANT
-                }
-            }
-            // --- END FIXED ---
-            
-            // --- NEW FUNCTION ---
-            // Processes all ingredient rows, optionally forcing an update
-            async function processAllIngredientsAI(force = false) {
-                const rows = document.querySelectorAll('.ingredient-row');
-                const lookupPromises = [];
-                rows.forEach(row => {
-                    lookupPromises.push(handleIngredientAILookup(row, force));
-                });
-
-                await Promise.all(lookupPromises);
-                updateRecipeTotals(); // Update totals after all AI lookups are done
-            }
-            // --- END NEW FUNCTION ---
-
-
-            async function getDailyLogAIReport() {
+            // --- Existing functions for AI lookup, report generation, day view update, macros calculation ---
+             async function getDailyLogAIReport() {
                 const btn = ui.aiDailyReportBtn;
                 if (btn.disabled) return;
 
@@ -1328,7 +1163,7 @@
                 fullRender();
             }
 
-            // --- FIXED: Updated AI prompt for 100g ---
+            // Function to get macros (per 100g) using AI
             async function getMacrosFromAI(foodName, brand) {
                 let prompt = `Provide nutritional information for 100g of "${foodName}"`;
                 if (brand) prompt += ` from the brand "${brand}"`;
@@ -1337,7 +1172,7 @@
                 const apiUrl = getApiUrl('gemini-2.5-flash-preview-09-2025');
                 const payload = { contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "application/json" } };
                  try {
-                    const result = await fetchWithBackoff(apiUrl, payload); // Use fetchWithBackoff
+                    const result = await fetchWithBackoff(apiUrl, payload);
                     if (!result.candidates?.[0]?.content?.parts?.[0]?.text) throw new Error("Invalid API response format.");
                     return JSON.parse(result.candidates[0].content.parts[0].text);
                  } catch (error) {
@@ -1345,8 +1180,8 @@
                      throw error; // Re-throw to be caught by caller
                  }
             }
-            // --- END FIXED ---
 
+            // Function to estimate missing macros using AI
             async function getPartialMacrosFromAI(foodName, brand, knownMacros) {
                 let knownMacrosString = Object.entries(knownMacros).map(([key, value]) => `${key}: ${value}`).join(', ');
                 let prompt = `For a standard single serving of "${foodName}"`;
@@ -1357,15 +1192,15 @@
                 const payload = { contents: [{ parts: [{ text: prompt }] }], generationConfig: { responseMimeType: "application/json" } };
 
                 try {
-                    const result = await fetchWithBackoff(apiUrl, payload); // Use fetchWithBackoff
+                    const result = await fetchWithBackoff(apiUrl, payload);
                     if (!result.candidates?.[0]?.content?.parts?.[0]?.text) throw new Error("Invalid API response format.");
                     return JSON.parse(result.candidates[0].content.parts[0].text);
                 } catch (error) {
                     console.error("getPartialMacrosFromAI Error:", error);
-                    throw error; // Re-throw to be caught by caller
+                    throw error;
                 }
             }
-
+             // Function to toggle favorite status
             function toggleFavorite(itemName) {
                 if (savedRecipes.some(r => r.name.toLowerCase() === itemName.toLowerCase())) {
                     showCustomAlert("Action Not Allowed", "Recipes are automatically favorited and cannot be unfavorited.");
@@ -1385,17 +1220,37 @@
                          showCustomAlert("Cannot Favorite", "Cannot favorite an item with 0 grams to calculate base macros.");
                          return;
                     }
-                    const ratio = 100 / totalGrams;
-                    favoriteFoods.push({ name: logItem.name, calories: logItem.calories * ratio, protein: logItem.protein * ratio, carbs: logItem.carbs * ratio, fat: logItem.fat * ratio, });
+                    // Calculate macros per 100g
+                    const ratio = 100 / (totalGrams / (logItem.servings || 1)); // Correct calculation
+                    favoriteFoods.push({
+                        name: logItem.name,
+                        calories: (logItem.calories / (logItem.servings || 1)) * ratio,
+                        protein: (logItem.protein / (logItem.servings || 1)) * ratio,
+                        carbs: (logItem.carbs / (logItem.servings || 1)) * ratio,
+                        fat: (logItem.fat / (logItem.servings || 1)) * ratio,
+                        // Add other optional macros if available in logItem
+                        sugar: ((logItem.sugar || 0) / (logItem.servings || 1)) * ratio,
+                        sodium: ((logItem.sodium || 0) / (logItem.servings || 1)) * ratio,
+                        potassium: ((logItem.potassium || 0) / (logItem.servings || 1)) * ratio,
+                     });
                 }
                 saveData();
                 fullRender();
             }
 
+            // Function to show undo toast
             function showUndo(type, data) {
                 clearTimeout(undoTimeout);
                 lastAction = { type, data };
-                const text = type === 'delete' ? `Deleted "${data.item.name}"` : `Edited "${data.originalItem.name}"`;
+                let text; // Declare text here
+                if (type === 'delete') {
+                    text = `Deleted "${data.item.name}"`;
+                } else if (type === 'edit') {
+                    text = `Edited "${data.originalItem.name}"`;
+                } else if (type === 'water') {
+                    text = `Water updated to ${data.newWater}ml`;
+                }
+                
                 ui.undoToastText.textContent = text;
                 ui.undoToast.classList.remove('translate-y-24', 'opacity-0');
 
@@ -1404,12 +1259,13 @@
                 }, 5000);
             }
 
+            // Function to hide undo toast
             function hideUndo() {
                 lastAction = null;
                 ui.undoToast.classList.add('translate-y-24', 'opacity-0');
             }
 
-            // --- CAROUSEL SETUP - MODIFIED TO HIDE BUTTONS ---
+            // --- CAROUSEL SETUP ---
             function setupCarousel(containerId, prevBtnId, nextBtnId) {
                 const container = document.getElementById(containerId);
                 const prevBtn = document.getElementById(prevBtnId);
@@ -1417,16 +1273,12 @@
                 const wrapper = container ? container.closest('.carousel-wrapper') : null;
 
                 if (!container || !prevBtn || !nextBtn || !wrapper) {
-                     //console.warn(`Carousel setup failed for ${containerId}. Elements missing.`);
-                     return; // Exit if elements are not found
+                     return;
                 }
 
-                 // --- CHANGED: Always hide buttons for mobile optimization ---
                  prevBtn.style.display = 'none';
                  nextBtn.style.display = 'none';
-                 // --- END CHANGE ---
 
-                // Keep scroll logic if needed for potential future desktop use or manual triggers
                 const scrollAmount = () => {
                     const firstItem = container.querySelector('.scroll-item');
                     return firstItem ? firstItem.offsetWidth + 16 : container.offsetWidth * 0.9;
@@ -1439,12 +1291,11 @@
                 nextBtn.onclick = () => {
                     container.scrollBy({ left: scrollAmount(), behavior: 'smooth' });
                 };
-
-                // No need for updateButtons logic if they are always hidden
             }
 
 
             // --- EVENT LISTENERS ---
+            // Log Meal Form Submission / AI Lookup
             ui.addFoodBtn.addEventListener('click', async () => {
                 ui.addFoodError.textContent = '';
                 const btn = ui.addFoodBtn;
@@ -1481,7 +1332,7 @@
                             manualMacroCount++;
                         }
                     } else {
-                        singleServingMacros[m] = 0;
+                        singleServingMacros[m] = 0; // Initialize with 0 if blank
                     }
                 });
 
@@ -1489,15 +1340,47 @@
 
                 let servingGrams = parseFloat(ui.foodGramsInput.value) || 0;
 
-                // AI LOGIC
+                // AI LOGIC (Only if not editing)
                 if (editingFoodLogIndex === null) {
-                     if (manualMacroCount > 0 && manualMacroCount < macroKeys.length) { // SOME macros entered
+                    if (manualMacroCount > 0 && manualMacroCount < macroKeys.length) { // SOME macros entered
                         btn.disabled = true; btnText.style.display = 'none'; loader.classList.remove('hidden');
                         try {
                             const brand = ui.foodBrandInput.value.trim();
                             const data = await getPartialMacrosFromAI(foodName, brand, manualMacros);
-                            servingGrams = data.servingGrams || servingGrams || 0;
-                            singleServingMacros = { ...data, ...manualMacros };
+                            servingGrams = data.servingGrams || servingGrams || 0; // Use AI grams if available
+                            // Merge AI data with manual data, prioritizing manual
+                            // --- FIX START ---
+                            // Original lines:
+                            // singleServingMacros = {
+                            //    calories: manualMacros.calories ?? data.calories ?? 0,
+                            //    protein: manualMacros.protein ?? data.protein ?? 0,
+                            //    carbs: manualMacros.carbs ?? data.carbs ?? 0,
+                            //    fat: manualMacros.fat ?? data.fat ?? 0,
+                            //    sugar: manualMacros.sugar ?? data.sugar ?? 0,
+                            //    sodium: manualMacros.sodium ?? data.sodium ?? 0,
+                            //    potassium: manualMacros.potassium ?? data.potassium ?? 0,
+                            // };
+                            // Fixed lines: Ensure AI data is parsed as float
+                            singleServingMacros = {
+                                calories: manualMacros.calories ?? (parseFloat(data.calories) || 0),
+                                protein: manualMacros.protein ?? (parseFloat(data.protein) || 0),
+                                carbs: manualMacros.carbs ?? (parseFloat(data.carbs) || 0),
+                                fat: manualMacros.fat ?? (parseFloat(data.fat) || 0),
+                                sugar: manualMacros.sugar ?? (parseFloat(data.sugar) || 0),
+                                sodium: manualMacros.sodium ?? (parseFloat(data.sodium) || 0),
+                                potassium: manualMacros.potassium ?? (parseFloat(data.potassium) || 0),
+                            };
+                            // --- FIX END ---
+                             // Update form with completed values
+                            document.getElementById('food-calories-input').value = singleServingMacros.calories.toFixed(0);
+                            document.getElementById('food-protein-input').value = singleServingMacros.protein.toFixed(1);
+                            document.getElementById('food-carbs-input').value = singleServingMacros.carbs.toFixed(1);
+                            document.getElementById('food-fat-input').value = singleServingMacros.fat.toFixed(1);
+                            document.getElementById('food-sugar-input').value = singleServingMacros.sugar.toFixed(1);
+                            document.getElementById('food-sodium-input').value = singleServingMacros.sodium.toFixed(0);
+                            document.getElementById('food-potassium-input').value = singleServingMacros.potassium.toFixed(0);
+                            if (servingGrams > 0) ui.foodGramsInput.value = servingGrams.toFixed(0);
+
                         } catch (error) {
                             console.error("AI Partial Macros Error:", error);
                             ui.addFoodError.textContent = `Could not estimate missing macros. ${error.message}`;
@@ -1508,21 +1391,45 @@
                         btn.disabled = true; btnText.style.display = 'none'; loader.classList.remove('hidden');
                         try {
                             const brand = ui.foodBrandInput.value.trim();
-                            const data = await getMacrosFromAI(foodName, brand); // This now returns 100g data
-                            servingGrams = data.servingGrams || 100; // It should be 100
-                            singleServingMacros = { calories: data.calories, protein: data.protein, carbs: data.carbs, fat: data.fat, sugar: data.sugar, sodium: data.sodium, potassium: data.potassium };
+                            const data = await getMacrosFromAI(foodName, brand); // Returns 100g data
+                            servingGrams = 100; // AI data is per 100g
+                            // --- FIX START ---
+                            // Original line:
+                            // singleServingMacros = { calories: data.calories, protein: data.protein, carbs: data.carbs, fat: data.fat, sugar: data.sugar, sodium: data.sodium, potassium: data.potassium };
+                            // Fixed line: Coerce all values to numbers, default to 0
+                            singleServingMacros = {
+                                calories: parseFloat(data.calories) || 0,
+                                protein: parseFloat(data.protein) || 0,
+                                carbs: parseFloat(data.carbs) || 0,
+                                fat: parseFloat(data.fat) || 0,
+                                sugar: parseFloat(data.sugar) || 0,
+                                sodium: parseFloat(data.sodium) || 0,
+                                potassium: parseFloat(data.potassium) || 0
+                            };
+                            // --- FIX END ---
 
-                            // FIXED: If user entered grams, scale the 100g data
+
+                            // If user entered grams, scale the 100g data for the total log entry
                             const userGrams = parseFloat(ui.foodGramsInput.value);
                             if (!isNaN(userGrams) && userGrams > 0) {
                                 const ratio = userGrams / 100.0;
-                                servingGrams = userGrams;
+                                servingGrams = userGrams; // Serving grams is the user input
+                                // Scale the macros *for the log entry*
                                 for (const key in singleServingMacros) {
                                     singleServingMacros[key] *= ratio;
                                 }
+                                // Fill the form with SINGLE SERVING (user grams) values
+                                document.getElementById('food-calories-input').value = singleServingMacros.calories.toFixed(0);
+                                document.getElementById('food-protein-input').value = singleServingMacros.protein.toFixed(1);
+                                document.getElementById('food-carbs-input').value = singleServingMacros.carbs.toFixed(1);
+                                document.getElementById('food-fat-input').value = singleServingMacros.fat.toFixed(1);
+                                document.getElementById('food-sugar-input').value = singleServingMacros.sugar.toFixed(1);
+                                document.getElementById('food-sodium-input').value = singleServingMacros.sodium.toFixed(0);
+                                document.getElementById('food-potassium-input').value = singleServingMacros.potassium.toFixed(0);
+
                             } else {
-                                // If no grams entered, fill the form with 100g data
-                                ui.foodGramsInput.value = servingGrams;
+                                // If no grams entered, fill the form with 100g data, set grams to 100
+                                ui.foodGramsInput.value = servingGrams.toFixed(0);
                                 document.getElementById('food-calories-input').value = singleServingMacros.calories.toFixed(0);
                                 document.getElementById('food-protein-input').value = singleServingMacros.protein.toFixed(1);
                                 document.getElementById('food-carbs-input').value = singleServingMacros.carbs.toFixed(1);
@@ -1539,17 +1446,26 @@
                             btn.disabled = false; btnText.style.display = 'inline-block'; loader.classList.add('hidden');
                         }
                     }
-                }
+                } // End AI Logic Block
 
-                if (ui.addFoodError.textContent) return;
 
+                if (ui.addFoodError.textContent) return; // Stop if AI errored
+
+                // Log the food (or update if editing)
                 const dayLog = getDayLog(viewDate);
                 const totalMacros = {};
+                 // Use the macros from singleServingMacros (which might have been updated by AI or manual input)
                 macroKeys.forEach(m => {
                     totalMacros[m] = (singleServingMacros[m] || 0) * servings;
                 });
 
-                const foodItem = { name: foodName, brand: ui.foodBrandInput.value.trim(), servings, grams: servingGrams * servings, ...totalMacros };
+                const foodItem = {
+                    name: foodName,
+                    brand: ui.foodBrandInput.value.trim(),
+                    servings,
+                    grams: servingGrams * servings, // Total grams for all servings
+                    ...totalMacros
+                };
 
                 if (editingFoodLogIndex !== null) {
                     const originalItem = { ...dayLog.entries[editingFoodLogIndex] };
@@ -1561,19 +1477,254 @@
                 }
 
                 ui.logMealForm.reset();
-                ui.foodServingsInput.value = 1;
+                ui.foodServingsInput.value = 1; // Reset servings to 1
                 saveData();
-                updateDayView(viewDate);
+                updateDayView(viewDate); // This calls fullRender
             });
 
-            ui.addWaterBtn.addEventListener('click', () => {
-                const waterServingSize = userProfile.waterServingSize || 250;
+            // Log Water
+            // REMOVED: Old water button listener
+            // ui.addWaterBtn.addEventListener('click', () => { ... });
+
+            // --- New Water Modal Listeners ---
+            // REMOVED: All water modal listeners
+            // ui.closeWaterLogModalBtn.addEventListener('click', () => hideModal(ui.waterLogModal));
+            
+            const updateWater = (amount, isSetTotal = false) => {
                 const dayLog = getDayLog(viewDate);
-                dayLog.water += waterServingSize;
+                const currentWater = dayLog.water || 0;
+                let originalWater = currentWater; // Store for undo
+                
+                if (isSetTotal) {
+                    dayLog.water = Math.max(0, amount);
+                } else {
+                    dayLog.water = Math.max(0, currentWater + amount);
+                    lastWaterLogAmount = amount; // Store the amount *added* or *subtracted*
+                }
+                
                 saveData();
-                updateDayView(viewDate);
+                updateDayView(viewDate); // This updates the main summary and fill
+                
+                // Don't show undo for setting total, only for incremental changes
+                if (!isSetTotal) {
+                    // This is slightly different from user request, but more robust
+                    // Let's stick to the "undo last log amount"
+                    // We'll handle the undo logic in the gesture handler where `lastWaterLogAmount` is set
+                }
+            };
+
+            // REMOVED: Water modal button listeners
+            // ui.waterModalAddDefaultBtn.addEventListener('click', () => { ... });
+            // ... all other modal listeners ...
+
+            // --- NEW: Water Button Gesture Handling ---
+            let waterPointerStart = { x: 0, y: 0 };
+            let waterPointerDelta = { x: 0, y: 0 };
+            let isWaterSwiping = false;
+
+            function onWaterPointerDown(e) {
+                const coords = getPointerCoordinates(e);
+                waterPointerStart.x = coords.x;
+                waterPointerStart.y = coords.y;
+                waterPointerDelta = { x: 0, y: 0 };
+                isWaterSwiping = false;
+
+                document.addEventListener('mousemove', onWaterPointerMove);
+                document.addEventListener('mouseup', onWaterPointerUp);
+                document.addEventListener('touchmove', onWaterPointerMove, { passive: false });
+                document.addEventListener('touchend', onWaterPointerUp);
+            }
+
+            function onWaterPointerMove(e) {
+                const coords = getPointerCoordinates(e);
+                waterPointerDelta.x = coords.x - waterPointerStart.x;
+                waterPointerDelta.y = coords.y - waterPointerStart.y;
+
+                if (!isWaterSwiping && (Math.abs(waterPointerDelta.x) > 10 || Math.abs(waterPointerDelta.y) > 10)) {
+                    isWaterSwiping = true;
+                }
+
+                if (isWaterSwiping) {
+                    // Prioritize vertical scroll prevention if swiping vertically
+                    if (Math.abs(waterPointerDelta.y) > Math.abs(waterPointerDelta.x)) {
+                         if (e.cancelable) e.preventDefault();
+                    }
+                }
+            }
+
+            function onWaterPointerUp(e) {
+                document.removeEventListener('mousemove', onWaterPointerMove);
+                document.removeEventListener('mouseup', onWaterPointerUp);
+                document.removeEventListener('touchmove', onWaterPointerMove);
+                document.removeEventListener('touchend', onWaterPointerUp);
+
+                const totalDistance = Math.sqrt(waterPointerDelta.x**2 + waterPointerDelta.y**2);
+                const dayLog = getDayLog(viewDate);
+
+                if (!isWaterSwiping && totalDistance < 10) {
+                    // --- TAP ---
+                    const defaultSize = userProfile.waterServingSize || 250;
+                    updateWater(defaultSize);
+                } else if (isWaterSwiping) {
+                    if (Math.abs(waterPointerDelta.y) > Math.abs(waterPointerDelta.x)) {
+                        // --- VERTICAL SWIPE ---
+                        if (waterPointerDelta.y < -20) { // Swipe Up
+                            updateWater(50);
+                        } else if (waterPointerDelta.y > 20) { // Swipe Down
+                            updateWater(-50);
+                        }
+                    } else {
+                        // --- HORIZONTAL SWIPE ---
+                        if (waterPointerDelta.x < -20) { // Swipe Left: Undo last log
+                            if (lastWaterLogAmount !== 0) {
+                                const originalWater = dayLog.water;
+                                const amountToUndo = lastWaterLogAmount;
+                                dayLog.water = Math.max(0, originalWater - amountToUndo);
+                                lastWaterLogAmount = 0; // Clear undo
+                                saveData();
+                                updateDayView(viewDate);
+                                // Show the undo toast
+                                showUndo('water', { originalWater: originalWater, newWater: dayLog.water });
+                            }
+                        } else if (waterPointerDelta.x > 20) { // Swipe Right: Edit Goal
+                            showPromptModal("Set Water Goal", "Enter your new daily water goal (ml):", goals.water, (newGoalStr) => {
+                                if (newGoalStr === null) return;
+                                const newGoal = parseInt(newGoalStr);
+                                if (!isNaN(newGoal) && newGoal > 0) {
+                                    goals.water = newGoal;
+                                    saveData();
+                                    updateDayView(viewDate); // This will re-render fill %
+                                } else {
+                                    showCustomAlert("Invalid Goal", "Please enter a positive number for your goal.");
+                                }
+                            });
+                        }
+                    }
+                }
+                
+                // Reset state
+                isWaterSwiping = false;
+                waterPointerDelta = { x: 0, y: 0 };
+            }
+
+            ui.addWaterBtn.addEventListener('mousedown', onWaterPointerDown);
+            ui.addWaterBtn.addEventListener('touchstart', onWaterPointerDown, { passive: true });
+            // --- END Water Button Gesture Handling ---
+
+            // --- Combined Scanner Button Logic ---
+            ui.scanCombinedBtn.addEventListener('click', () => {
+                // Open the single AI scanner modal
+                ui.scannerResultsContainer.innerHTML = '';
+                ui.foodScannerStatus.textContent = '';
+                ui.liveCameraContainer.classList.add('hidden');
+                ui.foodScannerInitialOptions.classList.remove('hidden');
+                ui.foodScannerCarouselWrapper.classList.add('hidden');
+                showModal(ui.foodScannerModal); // ui.foodScannerModal now points to 'ai-scanner-modal'
+            });
+            // REMOVED Chooser modal listeners
+            // ui.chooserScanBarcodeBtn.addEventListener('click', () => { ... });
+            // ui.chooserScanFoodBtn.addEventListener('click', () => { ... });
+            // ui.chooserScanCancelBtn.addEventListener('click', () => { ... });
+
+            // --- AI Macro Swap Button ---
+            ui.aiMacroSwapBtn.addEventListener('click', async () => {
+                const btn = ui.aiMacroSwapBtn;
+                const btnText = btn.querySelector('.btn-text');
+                const loader = btn.querySelector('.loader');
+
+                const foodName = capitalizeWords(ui.foodNameInput.value.trim());
+                if (!foodName) {
+                    showCustomAlert("No Food Entered", "Please enter a food name in the form first.");
+                    return;
+                }
+
+                btn.disabled = true;
+                btnText.style.display = 'none';
+                loader.classList.remove('hidden');
+                
+                ui.aiSwapFoodName.textContent = foodName;
+                showModal(ui.aiMacroSwapModal);
+                ui.aiMacroSwapOutput.innerHTML = '<div class="loader mx-auto"></div>';
+
+                try {
+                    const swaps = await getAiMacroSwaps(foodName);
+                    
+                    if (swaps && swaps.length > 0) {
+                        ui.aiMacroSwapOutput.innerHTML = swaps.map(swap => `
+                            <button type="button" class="btn btn-secondary w-full !justify-between !text-left swap-suggestion-btn" data-food-name="${swap.name}">
+                                <div class="flex flex-col">
+                                    <span class="font-semibold text-white">${swap.name}</span>
+                                    <span class="text-xs text-gray-400 font-normal">${swap.reason}</span>
+                                </div>
+                                <i data-lucide="chevron-right" class="w-5 h-5 text-gray-400"></i>
+                            </button>
+                        `).join('');
+                        lucide.createIcons();
+                    } else {
+                        ui.aiMacroSwapOutput.innerHTML = `<p class="text-gray-400 text-center">No swap suggestions found for "${foodName}".</p>`;
+                    }
+
+                } catch (error) {
+                    console.error("AI Macro Swap Error:", error);
+                    ui.aiMacroSwapOutput.innerHTML = `<p class="text-red-400">${error.message}</p>`;
+                } finally {
+                    btn.disabled = false;
+                    btnText.style.display = 'inline-block';
+                    loader.classList.add('hidden');
+                }
             });
 
+            async function getAiMacroSwaps(foodName) {
+                const systemPrompt = `User is considering eating '${foodName}'. Their goal is ${userProfile.goal}. Suggest 3-5 healthier alternatives that fit a similar craving (e.g., salty, sweet, crunchy). For each, provide 'name' and 'reason' (why it's better, e.g., "Lower in fat", "Higher in protein"). Respond ONLY with a valid JSON array of objects: [{name: "Food 1", reason: "Lower in fat"}, {name: "Food 2", reason: "Higher in protein"}]`;
+                
+                const userQuery = `Suggest swaps for ${foodName}`;
+
+                const apiUrl = getApiUrl('gemini-2.5-flash-preview-09-2025');
+                const payload = {
+                     contents: [{ parts: [{ text: userQuery }] }],
+                     systemInstruction: { parts: [{ text: systemPrompt }] },
+                     generationConfig: { responseMimeType: "application/json" }
+                };
+
+                try {
+                    const result = await fetchWithBackoff(apiUrl, payload);
+                    if (!result.candidates?.[0]?.content?.parts?.[0]?.text) throw new Error("Invalid API response format.");
+                    return JSON.parse(result.candidates[0].content.parts[0].text);
+                } catch (error) {
+                    console.error("getAiMacroSwaps Error:", error);
+                    throw error;
+                }
+            }
+
+            ui.closeAiMacroSwapModalBtn.addEventListener('click', () => hideModal(ui.aiMacroSwapModal));
+            
+            // Event delegation for swap suggestions
+            ui.aiMacroSwapOutput.addEventListener('click', (e) => {
+                const swapBtn = e.target.closest('.swap-suggestion-btn');
+                if (swapBtn) {
+                    const foodName = swapBtn.dataset.foodName;
+                    if (foodName) {
+                        // 1. Update form
+                        ui.foodNameInput.value = foodName;
+                        // 2. Clear all macro inputs
+                        const macroInputs = ui.logMealForm.querySelectorAll('.macro-input');
+                        macroInputs.forEach(input => input.value = '');
+                        ui.foodGramsInput.value = '';
+                        ui.foodBrandInput.value = '';
+                        ui.foodServingsInput.value = 1;
+
+                        // 3. Hide modal
+                        hideModal(ui.aiMacroSwapModal);
+
+                        // 4. Scroll to form and trigger AI lookup
+                        ui.logMealForm.scrollIntoView({ behavior: 'smooth' });
+                        ui.addFoodBtn.click();
+                    }
+                }
+            });
+
+
+            // --- Edit/Delete Log Item Handlers ---
              const handleEditLogItem = (index) => {
                  const item = getCurrentDayLogEntries()[index];
                  if(!item) return;
@@ -1581,10 +1732,10 @@
                 editingFoodLogIndex = index;
                 ui.foodNameInput.value = item.name;
                 ui.foodServingsInput.value = item.servings;
-                
+
+                // Calculate single serving macros and grams
                 const singleServingGrams = (item.grams / item.servings) || 0;
-                
-                ui.foodGramsInput.value = singleServingGrams.toFixed(1);
+                ui.foodGramsInput.value = singleServingGrams > 0 ? singleServingGrams.toFixed(1) : '';
 
                 document.getElementById('food-calories-input').value = ((item.calories / item.servings) || 0).toFixed(2);
                 document.getElementById('food-protein-input').value = ((item.protein / item.servings) || 0).toFixed(2);
@@ -1593,6 +1744,10 @@
                 document.getElementById('food-sugar-input').value = ((item.sugar / item.servings) || 0).toFixed(2);
                 document.getElementById('food-sodium-input').value = ((item.sodium / item.servings) || 0).toFixed(2);
                 document.getElementById('food-potassium-input').value = ((item.potassium / item.servings) || 0).toFixed(2);
+
+                // Open the details section if it exists
+                const detailsElement = ui.logMealForm.querySelector('details');
+                if (detailsElement) detailsElement.open = true;
 
                 ui.logMealForm.scrollIntoView({ behavior: 'smooth' });
              };
@@ -1609,20 +1764,21 @@
                 });
             };
 
-            // Connect the AI Daily Report button
+            // AI Daily Report
             ui.aiDailyReportBtn.addEventListener('click', getDailyLogAIReport);
             ui.closeAiReportModalBtn.addEventListener('click', () => hideModal(ui.aiReportModal));
             ui.aiReportModalOkBtn.addEventListener('click', () => hideModal(ui.aiReportModal));
 
+            // Clear AI base macros cache on input change
             ['food-name-input', 'food-brand-input'].forEach(id => document.getElementById(id).addEventListener('input', () => { aiBaseMacros = null; }));
 
+            // AI Meal Suggester
             ui.aiMealSuggesterBtn.addEventListener('click', () => {
                 ui.aiSuggestionsOutput.innerHTML = '';
                 ui.aiIngredientsInput.value = '';
                 showModal(ui.aiSuggesterModal);
             });
             ui.closeAiSuggesterModalBtn.addEventListener('click', () => hideModal(ui.aiSuggesterModal));
-
             ui.aiSuggestionBtn.addEventListener('click', async () => {
                 const btn = ui.aiSuggestionBtn, btnText = btn.querySelector('.btn-text'), loader = btn.querySelector('.loader');
                 const ingredients = ui.aiIngredientsInput.value.trim();
@@ -1647,505 +1803,39 @@
                 }
             });
 
+            // Convert uploaded file to generative part
             function fileToGenerativePart(file) { return new Promise((resolve, reject) => { const reader = new FileReader(); reader.onloadend = () => { const base64Data = reader.result.split(',')[1]; resolve({ inlineData: { mimeType: file.type, data: base64Data } }); }; reader.onerror = (err) => reject(err); reader.readAsDataURL(file); }); }
 
-            // --- UPDATED FOOD SCANNER ---
-
-            async function startFoodCamera() {
-                ui.foodScannerInitialOptions.classList.add('hidden');
-                ui.liveCameraContainer.classList.remove('hidden');
-                ui.foodScannerStatus.textContent = 'Starting camera...';
+            // --- UNIFIED AI SCANNER ---
+            
+            // New function to classify image
+            async function getAiImageClassification(imagePart) {
+                const prompt = "Is this image primarily a barcode or a picture of food? Respond with ONLY 'barcode' or 'food'.";
+                const apiUrl = getApiUrl('gemini-2.5-flash-preview-09-2025');
+                const payload = { contents: [{ parts: [{ text: prompt }, imagePart] }] };
                 try {
-                    foodCameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
-                    ui.foodCameraVideo.srcObject = foodCameraStream;
-                    ui.foodScannerStatus.textContent = 'Camera active. Point and capture.';
-                } catch (err) {
-                    console.error("Camera access error:", err);
-                    ui.foodScannerStatus.textContent = 'Could not access camera.';
-                    stopFoodCamera();
-                }
-            }
-
-            function stopFoodCamera() {
-                if (foodCameraStream) {
-                    foodCameraStream.getTracks().forEach(track => track.stop());
-                }
-                foodCameraStream = null;
-                ui.liveCameraContainer.classList.add('hidden');
-                ui.foodScannerInitialOptions.classList.remove('hidden');
-                ui.foodScannerStatus.textContent = '';
-            }
-
-            function captureFoodPhoto() {
-                const video = ui.foodCameraVideo;
-                const canvas = ui.foodCameraCanvas;
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-                const context = canvas.getContext('2d');
-                context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-                canvas.toBlob(blob => {
-                    if (blob) {
-                        const file = new File([blob], `capture-${Date.now()}.jpg`, { type: 'image/jpeg' });
-                        handleImageFiles([file]);
-                    }
-                }, 'image/jpeg', 0.9);
-            }
-
-            ui.scanFoodBtn.addEventListener('click', () => {
-                scanningIngredientRow = null;
-                ui.scannerResultsContainer.innerHTML = '';
-                ui.foodScannerStatus.textContent = '';
-                // Reset to initial state
-                ui.liveCameraContainer.classList.add('hidden');
-                ui.foodScannerInitialOptions.classList.remove('hidden');
-                ui.foodScannerCarouselWrapper.classList.add('hidden'); // Use wrapper ID
-                showModal(ui.foodScannerModal);
-            });
-
-            ui.closeFoodScannerModalBtn.addEventListener('click', () => {
-                stopFoodCamera();
-                hideModal(ui.foodScannerModal);
-            });
-
-            ui.startFoodCameraBtn.addEventListener('click', startFoodCamera);
-            ui.stopFoodCameraBtn.addEventListener('click', stopFoodCamera);
-            ui.captureFoodPhotoBtn.addEventListener('click', captureFoodPhoto);
-
-
-            async function processImageWithAI(file, resultElement) {
-                try {
-                    const imagePart = await fileToGenerativePart(file);
-                    let prompt = `Identify the food in this image. Respond ONLY with a valid JSON object with these fields: "name", "brand", "servings" (estimated number of standard servings shown), "totalGrams" (estimated total grams for all servings shown), "calories", "protein", "carbs", "fat", "sugar", "sodium", "potassium". The nutritional values (calories, protein, etc.) should be for the TOTAL amount of food pictured.`;
-                    
-                    // --- MODIFICATION 2: Check if scanning for a recipe ingredient ---
-                    if (scanningIngredientRow) {
-                        prompt = `Identify the food in this image. I only want the nutritional information for 100g. Respond ONLY with a valid JSON object with these fields: "name", "brand", "servingGrams" (which must be 100), "calories", "protein", "carbs", "fat", "sugar", "sodium", "potassium". The nutritional values must be for 100g.`;
-                    }
-                    // --- END MODIFICATION ---
-
-                    const apiUrl = getApiUrl('gemini-2.5-flash-preview-09-2025');
-                    const payload = { contents: [{ parts: [{ text: prompt }, imagePart] }], generationConfig: { responseMimeType: "application/json" } };
-
-                    const result = await fetchWithBackoff(apiUrl, payload); // Use fetchWithBackoff
-                    if (!result.candidates?.[0]?.content?.parts?.[0]?.text) throw new Error("Invalid API response format.");
-
-                    const data = JSON.parse(result.candidates[0].content.parts[0].text);
-                    resultElement.querySelector('.loader').remove();
-
-                    const detailsDiv = document.createElement('div');
-                    detailsDiv.className = 'text-xs text-gray-400 whitespace-normal';
-                    
-                    // --- MODIFICATION 2: Different UI for recipe scan vs general log ---
-                    if (scanningIngredientRow) {
-                        detailsDiv.innerHTML = `
-                            <p class="font-bold text-sm text-white mb-1">${capitalizeWords(data.name) || 'Unknown Food'}</p>
-                            <p>${(data.servingGrams || 100).toFixed(0)}g | ${data.calories?.toFixed(0) || '?'} kcal</p>
-                            <p>${data.protein?.toFixed(1) || '?'}p | ${data.carbs?.toFixed(1) || '?'}c | ${data.fat?.toFixed(1) || '?'}f</p>
-                        `;
-
-                        const useButton = document.createElement('button');
-                        useButton.className = 'btn btn-primary !p-2 mt-3 w-full';
-                        useButton.innerHTML = 'Use this';
-                        useButton.onclick = () => {
-                            scanningIngredientRow.querySelector('.ingredient-name').value = capitalizeWords(data.name) || '';
-                            // Pass 100g-based data to fill function
-                            fillIngredientRowFromAI(scanningIngredientRow, data); 
-                            updateRecipeTotals();
-                            stopFoodCamera();
-                            hideModal(ui.foodScannerModal);
-                        };
-                        resultElement.appendChild(detailsDiv);
-                        resultElement.appendChild(useButton);
-
-                    } else {
-                        // Original logging logic
-                        detailsDiv.innerHTML = `
-                            <p class="font-bold text-sm text-white mb-1">${capitalizeWords(data.name) || 'Unknown Food'} (${(data.servings || 1).toFixed(1)} serv.)</p>
-                            <p>${data.totalGrams?.toFixed(0) || '?'}g | ${data.calories?.toFixed(0) || '?'} kcal</p>
-                            <p>${data.protein?.toFixed(1) || '?'}p | ${data.carbs?.toFixed(1) || '?'}c | ${data.fat?.toFixed(1) || '?'}f</p>
-                        `;
-
-                        const logButton = document.createElement('button');
-                        logButton.className = 'btn btn-primary !p-2 mt-3 w-full';
-                        logButton.innerHTML = 'Log this';
-                        logButton.isLogged = false;
-                        logButton.logId = null;
-
-                        logButton.onclick = () => {
-                            if (logButton.isLogged) {
-                                // --- UNLOG ---
-                                const logIndex = getDayLog(viewDate).entries.findIndex(entry => entry.logId === logButton.logId);
-                                if (logIndex > -1) {
-                                    getDayLog(viewDate).entries.splice(logIndex, 1);
-                                    saveData();
-                                    updateDayView(viewDate);
-                                }
-                                logButton.textContent = 'Log this';
-                                logButton.classList.remove('btn-secondary');
-                                logButton.classList.add('btn-primary');
-                                logButton.isLogged = false;
-                                logButton.logId = null;
-                            } else {
-                                // --- LOG ---
-                                const logId = Date.now();
-                                const foodItem = {
-                                    logId: logId,
-                                    name: capitalizeWords(data.name) || 'Scanned Food',
-                                    brand: data.brand || '',
-                                    servings: data.servings || 1,
-                                    grams: data.totalGrams || 0,
-                                    calories: data.calories || 0,
-                                    protein: data.protein || 0,
-                                    carbs: data.carbs || 0,
-                                    fat: data.fat || 0,
-                                    sugar: data.sugar || 0,
-                                    sodium: data.sodium || 0,
-                                    potassium: data.potassium || 0,
-                                };
-                                const dayLog = getDayLog(viewDate);
-                                dayLog.entries.push(foodItem);
-                                saveData();
-                                updateDayView(viewDate);
-
-                                logButton.textContent = 'Logged! (Tap to undo)';
-                                logButton.classList.remove('btn-primary');
-                                logButton.classList.add('btn-secondary');
-                                logButton.isLogged = true;
-                                logButton.logId = logId;
-                            }
-                        };
-                        resultElement.appendChild(detailsDiv);
-                        resultElement.appendChild(logButton);
-                    }
-                    // --- END MODIFICATION ---
-
+                    const result = await fetchWithBackoff(apiUrl, payload);
+                    if (!result.candidates?.[0]?.content?.parts?.[0]?.text) throw new Error("Invalid classification response.");
+                    return result.candidates[0].content.parts[0].text.trim().toLowerCase();
                 } catch (error) {
-                    console.error("AI Image Scan Error:", error);
-                    resultElement.querySelector('.loader').remove();
-                     resultElement.innerHTML += `<p class="text-red-400 text-xs">Error analyzing. ${error.message}</p>`;
+                    console.error("AI Classification Error:", error);
+                    return 'error'; // Return 'error' on failure
                 }
             }
 
-
-            function handleImageFiles(files) {
-                if (!files || files.length === 0) return;
-                 ui.foodScannerCarouselWrapper.classList.remove('hidden'); // Use wrapper ID
-
-                for(const file of files) {
-                    const resultElement = document.createElement('div');
-                    resultElement.className = 'scroll-item p-4 bg-input-bg rounded-lg text-center';
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        resultElement.innerHTML = `
-                            <img src="${e.target.result}" class="w-full h-24 object-cover rounded-md mb-2">
-                            <div class="loader mx-auto"></div>
-                        `;
-                    };
-                    reader.readAsDataURL(file);
-                    ui.scannerResultsContainer.appendChild(resultElement);
-                    processImageWithAI(file, resultElement);
-                }
-                // Update carousel after adding items
-                setupCarousel('scanner-results-container', 'food-scanner-prev', 'food-scanner-next');
-            }
-
-            ui.uploadPhotoInput.addEventListener('change', (e) => handleImageFiles(e.target.files));
-
-            ui.createRecipeBtn.addEventListener('click', () => {
-                editingRecipeIndex = null; ui.compoundFoodModal.querySelector('h2').textContent = "Create a Recipe";
-                ui.saveRecipeBtn.textContent = "Save & Log Recipe"; ui.compoundFoodForm.reset();
-                ui.ingredientListContainer.innerHTML = ''; 
-                addIngredientRow();
-                updateRecipeTotals(); 
-                // document.getElementById('recipe-totals-details').open = false; // Close details by default
-                showModal(ui.compoundFoodModal);
-                // Setup carousel after adding initial rows
-                setupCarousel('ingredient-list-container', 'recipe-prev-ingredient', 'recipe-next-ingredient');
-            });
-
-            // --- --- MODIFICATION 5: Add Ingredient button listener --- ---
-            ui.addIngredientBtn.addEventListener('click', async () => {
-                // 1. Check the last row
-                const allRows = ui.ingredientListContainer.querySelectorAll('.ingredient-row');
-                if (allRows.length > 0) {
-                    const lastRow = allRows[allRows.length - 1];
-                    const name = lastRow.querySelector('.ingredient-name').value.trim();
-                    const grams = lastRow.querySelector('.ingredient-grams').value;
-
-                    if (!name || !grams || parseFloat(grams) <= 0) {
-                        // Last row is empty, just scroll to it
-                        lastRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                        // Flash the empty fields
-                        if (!name) lastRow.querySelector('.ingredient-name').classList.add('!border-red-500');
-                        if (!grams || parseFloat(grams) <= 0) lastRow.querySelector('.ingredient-grams').classList.add('!border-red-500');
-                        setTimeout(() => {
-                             lastRow.querySelector('.ingredient-name').classList.remove('!border-red-500');
-                             lastRow.querySelector('.ingredient-grams').classList.remove('!border-red-500');
-                        }, 1500);
-                        return; // Stop here
-                    }
-                }
+            // New function to process barcode scan results and populate element
+            async function processBarcodeScan(decodedText, file, resultElement) {
+                const imageUrl = URL.createObjectURL(file);
+                resultElement.querySelector('img').src = imageUrl;
+                resultElement.querySelector('img').onerror = function() { this.onerror=null; this.src='https://placehold.co/300x150/191919/FFFFFF?text=No+Image'; };
                 
-                // 2. Process all existing rows with names but no calories (if last row was filled)
-                await processAllIngredientsAI(false); // false = don't force
-
-                // 3. Now add the new blank row
-                addIngredientRow();
-
-                // 4. Scroll to the new row (it's the last one)
-                const newRow = ui.ingredientListContainer.lastElementChild;
-                if (newRow) {
-                    newRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                    newRow.querySelector('.ingredient-name').focus();
-                }
-
-                // 5. Update carousel (in case buttons are needed on desktop)
-                setupCarousel('ingredient-list-container', 'recipe-prev-ingredient', 'recipe-next-ingredient');
-            });
-            // --- --- END MODIFICATION 5 --- ---
-
-            // --- Find Macros AI button listener ---
-            // ui.findMacrosAiBtn.addEventListener('click', async (e) => { // Removed
-            // });
-
-            // --- --- MODIFICATION 2 & 6: Updated Ingredient List Listener --- ---
-            ui.ingredientListContainer.addEventListener('input', updateRecipeTotals);
-            ui.ingredientListContainer.addEventListener('click', async (e) => {
-                 const removeBtn = e.target.closest('.remove-ingredient-btn');
-                 const scanBtn = e.target.closest('.recipe-scan-btn'); // New scan button
-                 const findMacrosBtn = e.target.closest('.find-macros-ai-btn'); // New find macros button
-                 const row = e.target.closest('.ingredient-row');
-
-                 if (removeBtn && row) {
-                     row.remove();
-                     updateIngredientNumbers(); // Update numbers after removal
-                     updateRecipeTotals();
-                     setupCarousel('ingredient-list-container', 'recipe-prev-ingredient', 'recipe-next-ingredient');
-                 }
-
-                 if (scanBtn && row) {
-                     scanningIngredientRow = row;
-                     // Open the new chooser modal
-                     showModal(ui.ingredientScanChooserModal);
-                 }
-                 
-                 // --- NEW LOGIC ---
-                 if (findMacrosBtn && row) {
-                     const icon = findMacrosBtn.querySelector('i');
-                     const loader = findMacrosBtn.querySelector('.loader');
-
-                     if(icon) icon.style.display = 'none';
-                     if(loader) loader.classList.remove('hidden');
-                     findMacrosBtn.disabled = true;
-
-                     try {
-                         await handleIngredientAILookup(row, true); // true = force
-                     } catch (err) {
-                         console.error("Individual AI lookup failed", err);
-                     } finally {
-                         if(icon) icon.style.display = '';
-                         if(loader) loader.classList.add('hidden');
-                         findMacrosBtn.disabled = false;
-                     }
-                 }
-                 // --- END NEW LOGIC ---
-            });
-            // --- --- END MODIFICATION 2 & 6 --- ---
-
-            // --- --- MODIFICATION 3: New Scan Chooser Listeners --- ---
-            ui.chooserScanBarcode.addEventListener('click', () => {
-                hideModal(ui.ingredientScanChooserModal);
-                // scanningIngredientRow is already set
-                startBarcodeScanner();
-            });
-            ui.chooserScanFood.addEventListener('click', () => {
-                hideModal(ui.ingredientScanChooserModal);
-                // scanningIngredientRow is already set
-                ui.scannerResultsContainer.innerHTML = '';
-                ui.foodScannerStatus.textContent = '';
-                ui.liveCameraContainer.classList.add('hidden');
-                ui.foodScannerInitialOptions.classList.remove('hidden');
-                ui.foodScannerCarouselWrapper.classList.add('hidden');
-                showModal(ui.foodScannerModal);
-            });
-            ui.chooserScanCancel.addEventListener('click', () => {
-                hideModal(ui.ingredientScanChooserModal);
-                scanningIngredientRow = null; // Clear it
-            });
-            // --- --- END MODIFICATION 3 --- ---
-
-
-            ui.compoundFoodForm.addEventListener('submit', (e) => {
-                e.preventDefault(); const name = capitalizeWords(ui.recipeNameInput.value.trim());
-                if(!name) { showCustomAlert('Missing Name', 'Please give your recipe a name.'); return; }
-                const ingredients = []; let totalGrams = 0, totalCalories = 0, totalProtein = 0, totalCarbs = 0, totalFat = 0, totalSugar = 0, totalSodium = 0, totalPotassium = 0;
-                document.querySelectorAll('.ingredient-row').forEach(row => {
-                    const ingName = capitalizeWords(row.querySelector('.ingredient-name').value.trim()); const ingGrams = parseFloat(row.querySelector('.ingredient-grams').value) || 0;
-                    if(ingName && ingGrams > 0) {
-                        const ing = {
-                            name: ingName,
-                            grams: ingGrams,
-                            calories: parseFloat(row.querySelector('.ingredient-calories').value) || 0,
-                            protein: parseFloat(row.querySelector('.ingredient-protein').value) || 0,
-                            carbs: parseFloat(row.querySelector('.ingredient-carbs').value) || 0,
-                            fat: parseFloat(row.querySelector('.ingredient-fat').value) || 0,
-                            sugar: parseFloat(row.querySelector('.ingredient-sugar').value) || 0,
-                            sodium: parseFloat(row.querySelector('.ingredient-sodium').value) || 0,
-                            potassium: parseFloat(row.querySelector('.ingredient-potassium').value) || 0
-                        };
-                        ingredients.push(ing);
-                        totalGrams += ing.grams;
-                        totalCalories += ing.calories;
-                        totalProtein += ing.protein;
-                        totalCarbs += ing.carbs;
-                        totalFat += ing.fat;
-                        totalSugar += ing.sugar;
-                        totalSodium += ing.sodium;
-                        totalPotassium += ing.potassium;
-                    }
-                });
-                if(ingredients.length === 0) { showCustomAlert('No Ingredients', 'Add at least one valid ingredient (name and grams > 0) to the recipe.'); return; } // Modified check
-                const newRecipe = { name, ingredients, totalGrams, calories: totalCalories, protein: totalProtein, carbs: totalCarbs, fat: totalFat, sugar: totalSugar, sodium: totalSodium, potassium: totalPotassium };
-
-                if (editingRecipeIndex !== null) {
-                    const oldRecipeName = savedRecipes[editingRecipeIndex].name;
-                    const oldFavIndex = favoriteFoods.findIndex(f => f.name.toLowerCase() === oldRecipeName.toLowerCase());
-                    if (oldFavIndex > -1) favoriteFoods.splice(oldFavIndex, 1);
-                    savedRecipes[editingRecipeIndex] = newRecipe;
-                } else {
-                    savedRecipes.push(newRecipe);
-                    const dayLog = getDayLog(viewDate);
-                    const logEntry = { ...newRecipe, servings: 1, grams: totalGrams };
-                    dayLog.entries.unshift(logEntry); // Log immediately when creating
-                }
-
-                if (newRecipe.totalGrams > 0) {
-                    const ratio = 100 / newRecipe.totalGrams;
-                    const recipeAsFavorite = { name: newRecipe.name, calories: newRecipe.calories * ratio, protein: newRecipe.protein * ratio, carbs: newRecipe.carbs * ratio, fat: newRecipe.fat * ratio };
-                    const existingFavIndex = favoriteFoods.findIndex(f => f.name.toLowerCase() === newRecipe.name.toLowerCase());
-                    if (existingFavIndex > -1) favoriteFoods.splice(existingFavIndex, 1); // Remove if exists to update
-                    favoriteFoods.push(recipeAsFavorite);
-                }
-
-                saveData(); updateDayView(viewDate); hideModal(ui.compoundFoodModal); showCustomAlert('Success', `Recipe "${name}" has been saved.`);
-            });
-
-            ui.savedItemsListDiv.addEventListener('click', (e) => {
-                 const logBtn = e.target.closest('.log-item-btn');
-                 if(!logBtn) return;
-                const container = logBtn.closest('.swipe-item');
-                const type = container.dataset.type;
-                const index = parseInt(container.dataset.index);
-
-                if (type === 'food') {
-                    const food = favoriteFoods[index]; if (!food) return;
-                    showPromptModal(`Log Food: ${food.name}`, `How many grams of ${food.name}?`, "100", (weightStr) => {
-                        if (weightStr === null) return; const grams = parseFloat(weightStr); if (isNaN(grams) || grams <= 0) { showCustomAlert('Invalid Input', 'Please enter a valid number for grams.'); return; }
-                        const ratio = grams / 100; const foodItem = { name: food.name, servings: 1, grams, calories: food.calories * ratio, protein: food.protein * ratio, carbs: food.carbs * ratio, fat: food.fat * ratio, };
-                        const dayLog = getDayLog(viewDate);
-                        dayLog.entries.unshift(foodItem);
-                        saveData(); updateDayView(viewDate); showCustomAlert('Success', `${grams}g of ${food.name} added to the log.`);
-                    });
-                } else if (type === 'recipe') {
-                    const recipe = savedRecipes[index]; if (!recipe) return;
-                    showPromptModal(`Log Recipe: ${recipe.name}`, `How many grams of ${recipe.name}?`, recipe.totalGrams.toFixed(0), (weightStr) => {
-                        if (weightStr === null) return; const grams = parseFloat(weightStr); if (isNaN(grams) || grams <= 0) { showCustomAlert('Invalid Input', 'Please enter a valid number for grams.'); return; }
-                        const ratio = recipe.totalGrams > 0 ? grams / recipe.totalGrams : 0; const foodItem = { name: recipe.name, servings: 1, grams, calories: recipe.calories * ratio, protein: recipe.protein * ratio, carbs: recipe.carbs * ratio, fat: recipe.fat * ratio, sugar: recipe.sugar * ratio, sodium: recipe.sodium * ratio, potassium: recipe.potassium * ratio, };
-                        const dayLog = getDayLog(viewDate);
-                        dayLog.entries.unshift(foodItem);
-                        saveData(); updateDayView(viewDate); showCustomAlert('Success', `${grams}g of ${recipe.name} added to the log.`);
-                    });
-                }
-            });
-
-            ui.editFavoriteForm.addEventListener('submit', (e) => {
-                e.preventDefault(); const favIndex = favoriteFoods.findIndex(f => f.name === editingFavoriteFoodName); if (favIndex === -1) return;
-                const newName = capitalizeWords(document.getElementById('edit-fav-food-name').value.trim());
-                if (newName.toLowerCase() !== editingFavoriteFoodName.toLowerCase() && (favoriteFoods.some(f => f.name.toLowerCase() === newName.toLowerCase()) || savedRecipes.some(r => r.name.toLowerCase() === newName.toLowerCase()))) { showCustomAlert('Name Exists', 'A favorite food or recipe with this name already exists.'); return; }
-                favoriteFoods[favIndex].name = newName; favoriteFoods[favIndex].calories = parseFloat(document.getElementById('edit-fav-food-calories').value); favoriteFoods[favIndex].protein = parseFloat(document.getElementById('edit-fav-food-protein').value); favoriteFoods[favIndex].carbs = parseFloat(document.getElementById('edit-fav-food-carbs').value); favoriteFoods[favIndex].fat = parseFloat(document.getElementById('edit-fav-food-fat').value);
-                saveData(); fullRender(); hideModal(ui.editFavoriteModal);
-            });
-
-
-            // OTHER MODAL LISTENERS
-            ui.closeEditFavoriteModalBtn.addEventListener('click', () => hideModal(ui.editFavoriteModal));
-            ui.closeCompoundFoodModalBtn.addEventListener('click', () => hideModal(ui.compoundFoodModal));
-            ui.alertModalOkBtn.addEventListener('click', () => hideModal(ui.alertModal));
-            ui.confirmModalCancelBtn.addEventListener('click', () => hideModal(ui.confirmModal));
-            ui.confirmModalConfirmBtn.addEventListener('click', () => { if (confirmCallback) confirmCallback(); hideModal(ui.confirmModal); });
-            ui.promptModalCancelBtn.addEventListener('click', () => { if (promptCallback) promptCallback(null); hideModal(ui.promptModal); });
-            ui.promptModalOkBtn.addEventListener('click', () => { if(promptCallback) promptCallback(ui.promptModalInput.value); hideModal(ui.promptModal); });
-
-            // BARCODE LISTENERS
-            const startBarcodeScanner = () => {
-                showModal(ui.barcodeScannerModal);
-                document.getElementById('barcode-initial-options')?.classList.remove('hidden');
-                ui.barcodeReader.classList.add('hidden');
-                ui.barcodeResults.innerHTML = '';
-                ui.barcodeScannerCarouselWrapper.classList.add('hidden'); // Use wrapper ID
-                ui.barcodeScannerStatus.textContent = 'Choose an option to scan a barcode.';
-            };
-
-            const stopBarcodeScanner = () => {
-                if (html5QrCode && html5QrCode.isScanning) {
-                    html5QrCode.stop().then(() => {}).catch(err => {});
-                }
-                 hideModal(ui.barcodeScannerModal);
-            };
-
-            const initiateLiveScanner = () => {
-                const initialOptions = document.getElementById('barcode-initial-options');
-                if(initialOptions) initialOptions.classList.add('hidden');
-                ui.barcodeReader.classList.remove('hidden');
-                ui.barcodeScannerStatus.textContent = "Starting camera...";
-
-                if (html5QrCode && html5QrCode.isScanning) { html5QrCode.stop(); }
-                html5QrCode = new Html5Qrcode("barcode-reader");
-                const config = { fps: 10, qrbox: { width: 250, height: 250 } };
-
-                html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess, onScanFailure)
-                    .catch(err => {
-                        ui.barcodeScannerStatus.innerHTML = `Camera permission denied. <br>Please allow camera access or use the upload option.`;
-                        setTimeout(() => {
-                            if(initialOptions) initialOptions.classList.remove('hidden');
-                            ui.barcodeReader.classList.add('hidden');
-                            ui.barcodeScannerStatus.textContent = 'Choose an option to scan a barcode.';
-                        }, 3000);
-                    });
-            };
-
-            async function onScanSuccess(decodedText, decodedResult, imageUrl = null) {
-                const now = Date.now();
-                if (decodedText === lastScannedBarcode.code && (now - lastScannedBarcode.time) < 3000) {
-                    return; // Ignore rapid duplicate scans
-                }
-                lastScannedBarcode = { code: decodedText, time: now };
-
-                ui.barcodeScannerStatus.textContent = `Found: ${decodedText}. Fetching...`;
-                ui.barcodeScannerCarouselWrapper.classList.remove('hidden'); // Use wrapper ID
-
-                let finalImageUrl = imageUrl;
-                if (!finalImageUrl) {
-                    // It's a live scan, grab a frame from the video
-                    const video = document.querySelector('#barcode-reader video');
-                    if (video) {
-                        const canvas = document.createElement('canvas');
-                        canvas.width = video.videoWidth;
-                        canvas.height = video.videoHeight;
-                        const context = canvas.getContext('2d');
-                        context.drawImage(video, 0, 0, canvas.width, canvas.height);
-                        finalImageUrl = canvas.toDataURL('image/jpeg');
-                    }
-                }
-
                 try {
-                    const response = await fetch(`https://world.openfoodfacts.org/api/v2/product/${decodedText}?fields=product_name,brands,nutriments,serving_size,quantity,image_url`);
+                    const response = await fetch(`https://world.openfoodfacts.org/api/v2/product/${decodedText}?fields=product_name,brands,nutriments,serving_size,quantity`);
                     if(!response.ok) throw new Error('Product not found in Open Food Facts database.');
                     const data = await response.json();
                     if(data.status === 0 || !data.product) throw new Error(data.status_verbose || 'Product not found.');
+                    
                     const product = data.product, nutriments = product.nutriments;
-
                     const per100g = {
                         calories: nutriments['energy-kcal_100g'] || 0, protein: nutriments.proteins_100g || 0, carbs: nutriments.carbohydrates_100g || 0, fat: nutriments.fat_100g || 0, sugar: nutriments.sugars_100g || 0, sodium: (nutriments.sodium_100g || 0) * 1000, potassium: (nutriments.potassium_100g || 0) * 1000,
                     };
@@ -2159,31 +1849,25 @@
                          if (quantityMatch) { defaultGrams = parseFloat(quantityMatch[0]); }
                     }
 
-                    const resultId = `barcode-result-${decodedText}-${now}`;
                     const productName = capitalizeWords(product.product_name) || 'Scanned Item';
-                    const displayImage = finalImageUrl || product.image_url || 'https://placehold.co/300x150/191919/FFFFFF?text=No+Image';
 
-                    const resultHtml = `
-                        <div id="${resultId}" class="scroll-item p-4 bg-input-bg rounded-lg text-center">
-                            <img src="${displayImage}" alt="Scanned barcode" class="w-full h-24 object-contain rounded-md mb-3" onerror="this.onerror=null;this.src='https://placehold.co/300x150/191919/FFFFFF?text=No+Image';">
-                            <p class="font-bold whitespace-normal">${productName}</p>
-                            <p class="text-xs text-gray-400 mb-3">Barcode: ${decodedText}</p>
-                            <div class="flex items-center gap-2">
-                                <input type="number" value="${defaultGrams.toFixed(0)}" class="form-input !py-1.5 text-center barcode-grams-input" min="0">
-                                <span class="text-gray-400">grams</span>
-                            </div>
-                            <!-- MODIFICATION 2: Check if scanning for recipe -->
-                            <button class="btn btn-primary !p-2 mt-3 w-full data-log-button">
-                                ${scanningIngredientRow ? 'Use this' : 'Log this'}
-                            </button>
-                        </div>`;
-                    ui.barcodeResults.insertAdjacentHTML('beforeend', resultHtml);
-
-                    const logButton = document.getElementById(resultId).querySelector('.data-log-button');
-                    const gramsInput = document.getElementById(resultId).querySelector('.barcode-grams-input');
-
+                    const detailsContainer = document.createElement('div');
+                    detailsContainer.innerHTML = `
+                        <p class="font-bold whitespace-normal">${productName}</p>
+                        <p class="text-xs text-gray-400 mb-3">Barcode: ${decodedText}</p>
+                        <div class="flex items-center gap-2">
+                            <input type="number" value="${defaultGrams.toFixed(0)}" class="form-input !py-1.5 text-center barcode-grams-input" min="0">
+                            <span class="text-gray-400">grams</span>
+                        </div>
+                    `;
+                    
+                    const logButton = document.createElement('button');
+                    logButton.className = 'btn btn-primary !p-2 mt-3 w-full data-log-button';
+                    logButton.textContent = 'Log this';
                     logButton.isLogged = false;
                     logButton.logId = null;
+
+                    const gramsInput = detailsContainer.querySelector('.barcode-grams-input');
 
                     logButton.onclick = () => {
                         const grams = parseFloat(gramsInput.value);
@@ -2193,40 +1877,8 @@
                             return;
                         }
 
-                        // --- MODIFICATION 2: Handle recipe fill ---
-                        if (scanningIngredientRow) {
-                             scanningIngredientRow.querySelector('.ingredient-name').value = productName;
-                             scanningIngredientRow.querySelector('.ingredient-grams').value = grams.toFixed(0);
-                             
-                             const ratio = grams / 100.0;
-                             const data = {
-                                 servingGrams: 100.0, // Base is 100g
-                                 calories: (per100g.calories * ratio) || 0,
-                                 protein: (per100g.protein * ratio) || 0,
-                                 carbs: (per100g.carbs * ratio) || 0,
-                                 fat: (per100g.fat * ratio) || 0,
-                                 sugar: (per100g.sugar * ratio) || 0,
-                                 sodium: (per100g.sodium * ratio) || 0,
-                                 potassium: (per100g.potassium * ratio) || 0,
-                             };
-                             // Use fill function, but data is already scaled
-                             scanningIngredientRow.querySelector('.ingredient-calories').value = data.calories.toFixed(0);
-                             scanningIngredientRow.querySelector('.ingredient-protein').value = data.protein.toFixed(1);
-                             scanningIngredientRow.querySelector('.ingredient-carbs').value = data.carbs.toFixed(1);
-                             scanningIngredientRow.querySelector('.ingredient-fat').value = data.fat.toFixed(1);
-                             scanningIngredientRow.querySelector('.ingredient-sugar').value = data.sugar.toFixed(1);
-                             scanningIngredientRow.querySelector('.ingredient-sodium').value = data.sodium.toFixed(0);
-                             scanningIngredientRow.querySelector('.ingredient-potassium').value = data.potassium.toFixed(0);
-
-                             updateRecipeTotals();
-                             stopBarcodeScanner();
-                             return; // Stop here, don't log it
-                        }
-                        // --- END MODIFICATION ---
-
-
                         if (logButton.isLogged) {
-                            // --- UNLOG ---
+                            // UNLOG
                             const logIndex = getDayLog(viewDate).entries.findIndex(entry => entry.logId === logButton.logId);
                             if (logIndex > -1) {
                                 getDayLog(viewDate).entries.splice(logIndex, 1);
@@ -2240,21 +1892,14 @@
                             logButton.logId = null;
                             gramsInput.disabled = false;
                         } else {
-                            // --- LOG ---
+                            // LOG
                             const logId = Date.now();
                             const ratio = grams / 100.0;
                             const foodItem = {
-                                logId: logId,
-                                name: productName,
-                                brand: product.brands || '',
-                                servings: 1,
-                                grams: grams,
-                                calories: (per100g.calories * ratio) || 0,
-                                protein: (per100g.protein * ratio) || 0,
-                                carbs: (per100g.carbs * ratio) || 0,
-                                fat: (per100g.fat * ratio) || 0,
-                                sugar: (per100g.sugar * ratio) || 0,
-                                sodium: (per100g.sodium * ratio) || 0,
+                                logId: logId, name: productName, brand: product.brands || '', servings: 1, grams: grams,
+                                calories: (per100g.calories * ratio) || 0, protein: (per100g.protein * ratio) || 0,
+                                carbs: (per100g.carbs * ratio) || 0, fat: (per100g.fat * ratio) || 0,
+                                sugar: (per100g.sugar * ratio) || 0, sodium: (per100g.sodium * ratio) || 0,
                                 potassium: (per100g.potassium * ratio) || 0,
                             };
                             const dayLog = getDayLog(viewDate);
@@ -2271,60 +1916,263 @@
                         }
                     };
 
+                    resultElement.querySelector('.loader')?.remove();
+                    resultElement.appendChild(detailsContainer);
+                    resultElement.appendChild(logButton);
+
                 } catch (error) {
-                    ui.barcodeResults.innerHTML += `<div class="scroll-item p-3 bg-input-bg rounded-lg text-yellow-400 text-center">Could not retrieve data for barcode. ${error.message}</div>`;
-                } finally {
-                    ui.barcodeScannerStatus.textContent = 'Ready for next scan...';
-                    setupCarousel('barcode-results', 'barcode-scanner-prev', 'barcode-scanner-next');
+                    resultElement.querySelector('.loader')?.remove();
+                    resultElement.innerHTML += `<p class="text-red-400 text-xs">Error finding barcode data. ${error.message}</p>`;
                 }
             }
-            function onScanFailure(error) {
-                // Don't display error messages for every frame that doesn't have a barcode.
+
+
+            // Renamed function
+            async function startAiCamera() {
+                ui.foodScannerInitialOptions.classList.add('hidden');
+                ui.liveCameraContainer.classList.remove('hidden');
+                ui.foodScannerStatus.textContent = 'Starting camera...';
+                try {
+                    foodCameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+                    ui.foodCameraVideo.srcObject = foodCameraStream;
+                    ui.foodScannerStatus.textContent = 'Camera active. Point and capture.';
+                } catch (err) {
+                    console.error("Camera access error:", err);
+                    ui.foodScannerStatus.textContent = 'Could not access camera.';
+                    stopAiCamera();
+                }
             }
 
-            ui.scanBarcodeBtn.addEventListener('click', () => { scanningIngredientRow = null; startBarcodeScanner(); });
-            ui.closeBarcodeScannerModalBtn.addEventListener('click', stopBarcodeScanner);
-            document.getElementById('start-camera-scan-btn')?.addEventListener('click', initiateLiveScanner);
+            // Renamed function
+            function stopAiCamera() {
+                if (foodCameraStream) {
+                    foodCameraStream.getTracks().forEach(track => track.stop());
+                }
+                foodCameraStream = null;
+                ui.liveCameraContainer.classList.add('hidden');
+                ui.foodScannerInitialOptions.classList.remove('hidden');
+                ui.foodScannerStatus.textContent = '';
+            }
 
-            document.getElementById('barcode-upload-input')?.addEventListener('change', async (e) => {
-                const files = e.target.files; if (!files || files.length === 0) return;
-                ui.barcodeResults.innerHTML = '';
-                ui.barcodeScannerStatus.textContent = 'Scanning image(s)...';
-                document.getElementById('barcode-initial-options').classList.add('hidden');
-                ui.barcodeScannerCarouselWrapper.classList.remove('hidden'); // Use wrapper ID
+            // Renamed function
+            function captureAiPhoto() {
+                const video = ui.foodCameraVideo;
+                const canvas = ui.foodCameraCanvas;
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                const context = canvas.getContext('2d');
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-                for (const file of Array.from(files)) {
-                     const imageUrl = await new Promise((resolve) => {
-                         const reader = new FileReader();
-                         reader.onload = (event) => resolve(event.target.result);
-                         reader.readAsDataURL(file);
-                    });
-                     try {
-                        const qrCodeInstance = new Html5Qrcode("barcode-reader", { verbose: false });
-                        const decodedText = await qrCodeInstance.scanFile(file, false);
-                        onScanSuccess(decodedText, {}, imageUrl);
-                        qrCodeInstance.clear();
-                     } catch (err) {
-                         ui.barcodeResults.innerHTML += `<div class="scroll-item p-3 bg-input-bg rounded-lg text-yellow-400 text-center">No barcode found in image: ${file.name}.</div>`;
+                canvas.toBlob(blob => {
+                    if (blob) {
+                        const file = new File([blob], `capture-${Date.now()}.jpg`, { type: 'image/jpeg' });
+                        handleAiScanFiles([file]);
                     }
-                }
-                // Update carousel after adding items
-                 setupCarousel('barcode-results', 'barcode-scanner-prev', 'barcode-scanner-next');
+                }, 'image/jpeg', 0.9);
+            }
+
+            // Event listener for the renamed modal
+            ui.closeFoodScannerModalBtn.addEventListener('click', () => {
+                stopAiCamera(); // Use renamed function
+                hideModal(ui.foodScannerModal);
             });
 
-             ui.manualBarcodeSubmit.addEventListener('click', () => {
-                const barcode = ui.manualBarcodeInput.value.trim();
-                if (barcode) {
-                    onScanSuccess(barcode, {});
-                    ui.manualBarcodeInput.value = '';
+            // Event listeners for renamed buttons
+            ui.startFoodCameraBtn.addEventListener('click', startAiCamera);
+            ui.stopFoodCameraBtn.addEventListener('click', stopAiCamera);
+            ui.captureFoodPhotoBtn.addEventListener('click', captureAiPhoto);
+
+
+            // Renamed function, takes imagePart and resultElement
+            async function processFoodImageAI(imagePart, resultElement) {
+                try {
+                    let prompt = `Identify the food in this image. Respond ONLY with a valid JSON object with these fields: "name", "brand", "servings" (estimated number of standard servings shown), "totalGrams" (estimated total grams for all servings shown), "calories", "protein", "carbs", "fat", "sugar", "sodium", "potassium". The nutritional values (calories, protein, etc.) should be for the TOTAL amount of food pictured.`;
+
+                    const apiUrl = getApiUrl('gemini-2.5-flash-preview-09-2025');
+                    const payload = { contents: [{ parts: [{ text: prompt }, imagePart] }], generationConfig: { responseMimeType: "application/json" } };
+
+                    const result = await fetchWithBackoff(apiUrl, payload); // Use fetchWithBackoff
+                    if (!result.candidates?.[0]?.content?.parts?.[0]?.text) throw new Error("Invalid API response format.");
+
+                    const data = JSON.parse(result.candidates[0].content.parts[0].text);
+                    resultElement.querySelector('.loader')?.remove();
+
+                    const detailsDiv = document.createElement('div');
+                    detailsDiv.className = 'text-xs text-gray-400 whitespace-normal';
+
+                    detailsDiv.innerHTML = `
+                        <p class="font-bold text-sm text-white mb-1">${capitalizeWords(data.name) || 'Unknown Food'} (${(data.servings || 1).toFixed(1)} serv.)</p>
+                        <p>${data.totalGrams?.toFixed(0) || '?'}g | ${data.calories?.toFixed(0) || '?'} kcal</p>
+                        <p>${data.protein?.toFixed(1) || '?'}p | ${data.carbs?.toFixed(1) || '?'}c | ${data.fat?.toFixed(1) || '?'}f</p>
+                    `;
+
+                    const logButton = document.createElement('button');
+                    logButton.className = 'btn btn-primary !p-2 mt-3 w-full';
+                    logButton.innerHTML = 'Log this';
+                    logButton.isLogged = false;
+                    logButton.logId = null;
+
+                    logButton.onclick = () => {
+                        if (logButton.isLogged) {
+                            // UNLOG
+                            const logIndex = getDayLog(viewDate).entries.findIndex(entry => entry.logId === logButton.logId);
+                            if (logIndex > -1) {
+                                getDayLog(viewDate).entries.splice(logIndex, 1);
+                                saveData();
+                                updateDayView(viewDate);
+                            }
+                            logButton.textContent = 'Log this';
+                            logButton.classList.remove('btn-secondary');
+                            logButton.classList.add('btn-primary');
+                            logButton.isLogged = false;
+                            logButton.logId = null;
+                        } else {
+                            // LOG
+                            const logId = Date.now();
+                            const foodItem = {
+                                logId: logId, name: capitalizeWords(data.name) || 'Scanned Food', brand: data.brand || '',
+                                servings: data.servings || 1, grams: data.totalGrams || 0,
+                                calories: data.calories || 0, protein: data.protein || 0, carbs: data.carbs || 0, fat: data.fat || 0,
+                                sugar: data.sugar || 0, sodium: data.sodium || 0, potassium: data.potassium || 0,
+                            };
+                            const dayLog = getDayLog(viewDate);
+                            dayLog.entries.unshift(foodItem); // Add to beginning
+                            saveData();
+                            updateDayView(viewDate);
+
+                            logButton.textContent = 'Logged! (Tap to undo)';
+                            logButton.classList.remove('btn-primary');
+                            logButton.classList.add('btn-secondary');
+                            logButton.isLogged = true;
+                            logButton.logId = logId;
+                        }
+                    };
+                    resultElement.appendChild(detailsDiv);
+                    resultElement.appendChild(logButton);
+
+                } catch (error) {
+                    console.error("AI Image Scan Error:", error);
+                    resultElement.querySelector('.loader')?.remove();
+                     resultElement.innerHTML += `<p class="text-red-400 text-xs">Error analyzing. ${error.message}</p>`;
+                }
+            }
+
+            // New classifier function
+            async function classifyAndProcessImage(file, resultElement) {
+                try {
+                    const imagePart = await fileToGenerativePart(file);
+                    const classification = await getAiImageClassification(imagePart);
+
+                    if (classification.includes('barcode')) {
+                        ui.foodScannerStatus.textContent = 'Barcode detected, scanning...';
+                        try {
+                            // Try local barcode scan first
+                            const qrCodeInstance = new Html5Qrcode("barcode-reader-hidden-helper");
+                            const decodedText = await qrCodeInstance.scanFile(file, false);
+                            qrCodeInstance.clear();
+                            await processBarcodeScan(decodedText, file, resultElement);
+                        } catch (err) {
+                            // Local scan failed, fallback to food AI
+                            ui.foodScannerStatus.textContent = 'Barcode scan failed, trying food analysis...';
+                            await processFoodImageAI(imagePart, resultElement);
+                        }
+                    } else if (classification.includes('food')) {
+                        ui.foodScannerStatus.textContent = 'Food detected, analyzing...';
+                        await processFoodImageAI(imagePart, resultElement);
+                    } else {
+                        throw new Error("Could not classify image.");
+                    }
+                } catch (error) {
+                    resultElement.querySelector('.loader')?.remove();
+                    resultElement.innerHTML += `<p class="text-red-400 text-xs">Scan failed. ${error.message}</p>`;
+                }
+            }
+
+            // Renamed function
+            function handleAiScanFiles(files) {
+                if (!files || files.length === 0) return;
+                 ui.foodScannerCarouselWrapper.classList.remove('hidden'); // Use wrapper ID
+
+                for(const file of files) {
+                    const resultElement = document.createElement('div');
+                    resultElement.className = 'scroll-item p-4 bg-input-bg rounded-lg text-center';
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        resultElement.innerHTML = `
+                            <img src="${e.target.result}" class="w-full h-24 object-cover rounded-md mb-2">
+                            <div class="loader mx-auto"></div>
+                        `;
+                    };
+                    reader.readAsDataURL(file);
+                    ui.scannerResultsContainer.appendChild(resultElement); // Use renamed container
+                    classifyAndProcessImage(file, resultElement); // Call new classifier
+                }
+                setupCarousel('ai-scanner-results-container', 'ai-scanner-prev', 'ai-scanner-next');
+            }
+
+            ui.uploadPhotoInput.addEventListener('change', (e) => handleAiScanFiles(e.target.files)); // Use renamed handler
+
+            // --- Create Recipe Button (Removed) ---
+            // ui.createRecipeBtn.addEventListener('click', () => { ... });
+
+            // --- Log from Saved Items ---
+            ui.savedItemsListDiv.addEventListener('click', (e) => {
+                 const logBtn = e.target.closest('.log-item-btn');
+                 if(!logBtn) return;
+                const container = logBtn.closest('.swipe-item');
+                const type = container.dataset.type;
+                const index = parseInt(container.dataset.index);
+
+                if (type === 'food') {
+                    const food = favoriteFoods[index]; if (!food) return;
+                    showPromptModal(`Log Food: ${food.name}`, `How many grams of ${food.name}?`, "100", (weightStr) => {
+                        if (weightStr === null) return; const grams = parseFloat(weightStr); if (isNaN(grams) || grams <= 0) { showCustomAlert('Invalid Input', 'Please enter a valid number for grams.'); return; }
+                        const ratio = grams / 100; const foodItem = { name: food.name, servings: 1, grams, calories: (food.calories || 0) * ratio, protein: (food.protein || 0) * ratio, carbs: (food.carbs || 0) * ratio, fat: (food.fat || 0) * ratio, sugar: (food.sugar || 0) * ratio, sodium: (food.sodium || 0) * ratio, potassium: (food.potassium || 0) * ratio };
+                        const dayLog = getDayLog(viewDate);
+                        dayLog.entries.unshift(foodItem);
+                        saveData(); updateDayView(viewDate); showCustomAlert('Success', `${grams}g of ${food.name} added to the log.`);
+                    });
+                } else if (type === 'recipe') {
+                    // Recipe logging logic removed as recipe creation is removed
+                     showCustomAlert("Error", "Recipe logging is currently unavailable.");
                 }
             });
-             ui.manualBarcodeInput.addEventListener('keydown', (e) => {
-                if(e.key === 'Enter') {
-                    e.preventDefault();
-                    ui.manualBarcodeSubmit.click();
-                }
+
+            // --- Edit Favorite Food Form ---
+            ui.editFavoriteForm.addEventListener('submit', (e) => {
+                e.preventDefault(); const favIndex = favoriteFoods.findIndex(f => f.name === editingFavoriteFoodName); if (favIndex === -1) return;
+                const newName = capitalizeWords(document.getElementById('edit-fav-food-name').value.trim());
+                if (newName.toLowerCase() !== editingFavoriteFoodName.toLowerCase() && (favoriteFoods.some(f => f.name.toLowerCase() === newName.toLowerCase()) || savedRecipes.some(r => r.name.toLowerCase() === newName.toLowerCase()))) { showCustomAlert('Name Exists', 'A favorite food or recipe with this name already exists.'); return; }
+                favoriteFoods[favIndex].name = newName; favoriteFoods[favIndex].calories = parseFloat(document.getElementById('edit-fav-food-calories').value); favoriteFoods[favIndex].protein = parseFloat(document.getElementById('edit-fav-food-protein').value); favoriteFoods[favIndex].carbs = parseFloat(document.getElementById('edit-fav-food-carbs').value); favoriteFoods[favIndex].fat = parseFloat(document.getElementById('edit-fav-food-fat').value);
+                // Also save optional fields if they exist in the modal
+                 favoriteFoods[favIndex].sugar = parseFloat(document.getElementById('edit-fav-food-sugar')?.value) || 0;
+                 favoriteFoods[favIndex].sodium = parseFloat(document.getElementById('edit-fav-food-sodium')?.value) || 0;
+                 favoriteFoods[favIndex].potassium = parseFloat(document.getElementById('edit-fav-food-potassium')?.value) || 0;
+                saveData(); fullRender(); hideModal(ui.editFavoriteModal);
             });
+
+
+            // OTHER MODAL LISTENERS
+            ui.closeEditFavoriteModalBtn.addEventListener('click', () => hideModal(ui.editFavoriteModal));
+            // ui.closeCompoundFoodModalBtn.addEventListener('click', () => hideModal(ui.compoundFoodModal)); // Removed
+            ui.alertModalOkBtn.addEventListener('click', () => hideModal(ui.alertModal));
+            ui.confirmModalCancelBtn.addEventListener('click', () => hideModal(ui.confirmModal));
+            ui.confirmModalConfirmBtn.addEventListener('click', () => { if (confirmCallback) confirmCallback(); hideModal(ui.confirmModal); });
+            ui.promptModalCancelBtn.addEventListener('click', () => { if (promptCallback) promptCallback(null); hideModal(ui.promptModal); });
+            ui.promptModalOkBtn.addEventListener('click', () => { if(promptCallback) promptCallback(ui.promptModalInput.value); hideModal(ui.promptModal); });
+
+            // REMOVED BARCODE LISTENERS
+            // const startBarcodeScanner = () => { ... };
+            // const stopBarcodeScanner = () => { ... };
+            // const initiateLiveScanner = () => { ... };
+            // async function onScanSuccess(decodedText, decodedResult, imageUrl = null) { ... }
+            // function onScanFailure(error) { ... }
+            // ui.closeBarcodeScannerModalBtn.addEventListener('click', stopBarcodeScanner);
+            // document.getElementById('start-camera-scan-btn')?.addEventListener('click', initiateLiveScanner);
+            // document.getElementById('barcode-upload-input')?.addEventListener('change', async (e) => { ... });
+            // ui.manualBarcodeSubmit.addEventListener('click', () => { ... });
+            // ui.manualBarcodeInput.addEventListener('keydown', (e) => { ... });
+
 
             // --- AI Nutritionist Chat ---
             ui.openNutritionistChatBtn.addEventListener('click', () => {
@@ -2424,9 +2272,11 @@
                         if (type === 'food') {
                             favoriteFoods.splice(index, 1);
                         } else if (type === 'recipe') {
-                            savedRecipes.splice(index, 1);
-                             const favIndex = favoriteFoods.findIndex(f => f.name.toLowerCase() === name.toLowerCase());
-                            if (favIndex > -1) favoriteFoods.splice(favIndex, 1);
+                            // Recipe deletion logic removed
+                            // savedRecipes.splice(index, 1);
+                            // const favIndex = favoriteFoods.findIndex(f => f.name.toLowerCase() === name.toLowerCase());
+                            // if (favIndex > -1) favoriteFoods.splice(favIndex, 1);
+                             showCustomAlert("Action Unavailable", "Recipe deletion is currently disabled."); // Inform user
                         }
                         saveData();
                         fullRender();
@@ -2445,26 +2295,31 @@
                     if (!food) return;
                     editingFavoriteFoodName = food.name;
                     document.getElementById('edit-fav-food-name').value = food.name;
-                    document.getElementById('edit-fav-food-calories').value = food.calories.toFixed(2);
-                    document.getElementById('edit-fav-food-protein').value = food.protein.toFixed(2);
-                    document.getElementById('edit-fav-food-carbs').value = food.carbs.toFixed(2);
-                    document.getElementById('edit-fav-food-fat').value = food.fat.toFixed(2);
-                    showModal(ui.editFavoriteModal);
+                    document.getElementById('edit-fav-food-calories').value = (food.calories || 0).toFixed(2);
+                    document.getElementById('edit-fav-food-protein').value = (food.protein || 0).toFixed(2);
+                    document.getElementById('edit-fav-food-carbs').value = (food.carbs || 0).toFixed(2);
+                    document.getElementById('edit-fav-food-fat').value = (food.fat || 0).toFixed(2);
+                     // Add optional fields if they exist in the modal/data
+                    // document.getElementById('edit-fav-food-sugar').value = (food.sugar || 0).toFixed(2);
+                document.getElementById('edit-fav-food-sugar').value = (food.sugar || 0).toFixed(2);
+                document.getElementById('edit-fav-food-sodium').value = (food.sodium || 0).toFixed(0);
+                document.getElementById('edit-fav-food-potassium').value = (food.potassium || 0).toFixed(0);
+                showModal(ui.editFavoriteModal);
                 } else if (type === 'recipe') {
-                    const recipe = savedRecipes[index];
-                    if (!recipe) return;
-                    editingRecipeIndex = index;
-                    ui.compoundFoodModal.querySelector('h2').textContent = "Edit Recipe";
-                    ui.saveRecipeBtn.textContent = "Update Recipe";
-                    ui.recipeNameInput.value = recipe.name;
-                    ui.ingredientListContainer.innerHTML = '';
-                    recipe.ingredients.forEach((ing, i) => addIngredientRow(ing, i)); // Pass index here
-                    if (recipe.ingredients.length === 0) addIngredientRow();
-                    updateRecipeTotals();
-                    // document.getElementById('recipe-totals-details').open = true; // Open details on edit
-                    showModal(ui.compoundFoodModal);
-                    // Ensure carousel buttons are updated after adding rows
-                    setupCarousel('ingredient-list-container', 'recipe-prev-ingredient', 'recipe-next-ingredient');
+                     showCustomAlert("Coming Soon", "Recipe editing is currently under development.");
+                    // Recipe editing logic removed
+                    // const recipe = savedRecipes[index];
+                    // if (!recipe) return;
+                    // editingRecipeIndex = index;
+                    // ui.compoundFoodModal.querySelector('h2').textContent = "Edit Recipe";
+                    // ui.saveRecipeBtn.textContent = "Update Recipe";
+                    // ui.recipeNameInput.value = recipe.name;
+                    // ui.ingredientListContainer.innerHTML = '';
+                    // recipe.ingredients.forEach((ing, i) => addIngredientRow(ing, i));
+                    // if (recipe.ingredients.length === 0) addIngredientRow();
+                    // updateRecipeTotals();
+                    // showModal(ui.compoundFoodModal);
+                    // setupCarousel('ingredient-list-container', 'recipe-prev-ingredient', 'recipe-next-ingredient');
                 }
             }
 
@@ -2553,7 +2408,7 @@
                         content.style.transform = 'translateX(0)';
                     } else if (currentX > swipeThreshold) { // Swiped right for Delete
                         handleItemDelete(elementToClean);
-                        // Element might be removed, so don't reset transform
+                        // Element might be removed, so don't reset transform immediately
                     } else {
                         content.style.transform = 'translateX(0)';
                     }
@@ -2688,6 +2543,8 @@
                     dayLog.entries.splice(lastAction.data.index, 0, lastAction.data.item);
                 } else if (lastAction.type === 'edit') {
                     dayLog.entries[lastAction.data.index] = lastAction.data.originalItem;
+                } else if (lastAction.type === 'water') {
+                    dayLog.water = lastAction.data.originalWater;
                 }
 
                 saveData();
@@ -2699,9 +2556,9 @@
             loadData();
             updateDayView(viewDate);
             // Setup carousels on initial load
-            setupCarousel('scanner-results-container', 'food-scanner-prev', 'food-scanner-next');
-            setupCarousel('barcode-results', 'barcode-scanner-prev', 'barcode-scanner-next');
-            setupCarousel('ingredient-list-container', 'recipe-prev-ingredient', 'recipe-next-ingredient');
+            setupCarousel('ai-scanner-results-container', 'ai-scanner-prev', 'ai-scanner-next');
+            // setupCarousel('barcode-results', 'barcode-scanner-prev', 'barcode-scanner-next'); // Removed
+            // setupCarousel('ingredient-list-container', 'recipe-prev-ingredient', 'recipe-next-ingredient'); // Removed
         });
     </script>
 </body>
